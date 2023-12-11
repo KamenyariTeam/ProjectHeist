@@ -12,16 +12,16 @@ public class Door : MonoBehaviour
     [SerializeField]
     private float _maxTimeOpened;
 
-    private Animator _animator;
+    [SerializeField]
+    private List<Animator> _doorAnimators;
 
     private bool _isOpened;
     private float _timeOpened;
     private void Start()
     {
-        _animator = GetComponent<Animator>();
         _interactableArea.OnInteractEvent += ChangeState;
 
-        _isOpened = true;
+        _isOpened = false;
         _timeOpened = 0.0f;
     }
 
@@ -45,7 +45,10 @@ public class Door : MonoBehaviour
     public void ChangeState()
     {
         _isOpened = !_isOpened;
-        _animator.SetBool(IsOpen, _isOpened);
+        foreach (Animator animator in _doorAnimators)
+        {
+            animator.SetBool(IsOpen, _isOpened);
+        }
         _timeOpened = 0.0f;
     }
 
