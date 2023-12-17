@@ -12,7 +12,6 @@ namespace Player.Scripts
         private PlayerInput _playerInput;
         private Vector2 _movementInput;
         private Vector2 _lookInput;
-        private readonly List<Collider2D> _activeTriggers = new();
 
         private Animator _animator;
         private static readonly int IsMoving = Animator.StringToHash("isMoving");
@@ -42,30 +41,10 @@ namespace Player.Scripts
             var angle = Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg;
             _rigidbody.rotation = angle;
         }
-        private void OnTriggerEnter2D(Collider2D collider)
-        {
-            _activeTriggers.Add(collider);
-        }
 
-        private void OnTriggerExit2D(Collider2D collider)
-        {
-            _activeTriggers.Remove(collider);
-        }
         private void OnMove(InputValue movementValue)
         {
             _movementInput = movementValue.Get<Vector2>();
-        }
-
-        private void OnInteract()
-        {
-            foreach (Collider2D trigger in _activeTriggers)
-            {
-                var interactable = trigger.GetComponent<Interactable>();
-                if (interactable != null)
-                {
-                    interactable.Interact();
-                }
-            }
         }
     }
 }
