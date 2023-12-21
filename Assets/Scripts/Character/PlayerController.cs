@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Numerics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,12 +11,19 @@ namespace Player.Scripts
 
         private Rigidbody2D _rigidbody;
         private PlayerInput _playerInput;
-        private Vector2 _movementInput;
-        private Vector2 _lookInput;
+        private UnityEngine.Vector2 _movementInput;
+        private UnityEngine.Vector2 _lookInput;
         private readonly List<Collider2D> _activeTriggers = new();
 
         private Animator _animator;
         private static readonly int IsMoving = Animator.StringToHash("isMoving");
+
+        //Pick up subsystem
+        public BoxCollider2D _interactBoxCollider;
+
+        //Shotting
+        public WeaponComponent _currentWeapon;
+        public Transform _firePointTransform;
 
         private void Start()
         {
@@ -36,12 +44,13 @@ namespace Player.Scripts
         private void FixedUpdate()
         {
             _rigidbody.velocity = _movementInput * moveSpeed;
-            _animator.SetBool(IsMoving, _movementInput != Vector2.zero);
-
+            _animator.SetBool(IsMoving, _movementInput != UnityEngine.Vector2.zero);
+            
             var lookDirection = _lookInput - _rigidbody.position;
             var angle = Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg;
             _rigidbody.rotation = angle;
         }
+
         private void OnTriggerEnter2D(Collider2D collider)
         {
             _activeTriggers.Add(collider);
@@ -51,9 +60,10 @@ namespace Player.Scripts
         {
             _activeTriggers.Remove(collider);
         }
+
         private void OnMove(InputValue movementValue)
         {
-            _movementInput = movementValue.Get<Vector2>();
+            _movementInput = movementValue.Get<UnityEngine.Vector2>();
         }
 
         private void OnInteract()
@@ -65,6 +75,26 @@ namespace Player.Scripts
                 {
                     interactable.Interact();
                 }
+            }
+        }
+
+        private void OnReload()
+        {
+            _currentWeapon.Reload();
+
+            gameObject.GetComponent<Animator>().Play("PlayerPlaceholder_HandGun_Reload");
+        }
+
+        private void OnReloadEnd()
+        {
+            _currentWeapon.ReloadEnded();
+        }
+
+        private void OnFire()
+        {
+            if (_currentWeapon.canShoot)
+            {
+                _currentWeapon.Shoot();
             }
         }
     }
