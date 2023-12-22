@@ -1,4 +1,4 @@
-﻿Shader "Test/2D/Sprite-Lit-Default"
+﻿Shader "Sprite-Lit-Background"
 {
     Properties
     {
