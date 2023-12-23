@@ -133,6 +133,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 1
+  _interactBoxCollider: {fileID: 0}
+  _currentWeapon: {fileID: 0}
+  _firePointTransform: {fileID: 0}
 --- !u!50 &879737215763683402
 Rigidbody2D:
   serializedVersion: 4
@@ -230,7 +233,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ComponentVersion: 1
   m_LightType: 3
-  m_BlendStyleIndex: 3
+  m_BlendStyleIndex: 1
   m_FalloffIntensity: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
