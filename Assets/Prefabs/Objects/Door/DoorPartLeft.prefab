@@ -45,6 +45,7 @@ GameObject:
   - component: {fileID: 8717062208052854856}
   - component: {fileID: 1458535584395763407}
   - component: {fileID: 6424996436264520730}
+  - component: {fileID: 2032646956416690735}
   m_Layer: 0
   m_Name: DoorSprite
   m_TagString: Untagged
@@ -199,7 +200,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.054989018}
+  m_Offset: {x: 0, y: -0.055298038}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -210,5 +211,35 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.16, y: 0.040951684}
+  m_Size: {x: 0.16, y: 0.032299057}
   m_EdgeRadius: 0
+--- !u!114 &2032646956416690735
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6048970654130338320}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7db70e0ea77f5ac47a8f4565a9406397, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ShadowGroup: 0
+  m_ComponentVersion: 1
+  m_HasRenderer: 1
+  m_UseRendererSilhouette: 0
+  m_CastsShadows: 1
+  m_SelfShadows: 1
+  m_ApplyToSortingLayers: 00000000
+  m_ShapePath:
+  - {x: -0.08345136, y: -0.07134738, z: 0}
+  - {x: -0.08345135, y: -0.039767385, z: 0}
+  - {x: 0.08431419, y: -0.039182898, z: 0}
+  - {x: 0.08400516, y: -0.07079356, z: 0}
+  m_ShapePathHash: -263960635
+  m_Mesh: {fileID: 0}
+  m_InstanceId: 38036
+  m_LocalBounds:
+    m_Center: {x: 0.00043141842, y: -0.055265136, z: 0}
+    m_Extent: {x: 0.08388278, y: 0.01608224, z: 0}
