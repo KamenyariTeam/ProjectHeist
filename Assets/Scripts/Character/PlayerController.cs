@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using System.Numerics;
+using InteractableObjects;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Player.Scripts
+namespace Character
 {
     public class PlayerController : MonoBehaviour
     {
@@ -11,19 +11,19 @@ namespace Player.Scripts
 
         private Rigidbody2D _rigidbody;
         private PlayerInput _playerInput;
-        private UnityEngine.Vector2 _movementInput;
-        private UnityEngine.Vector2 _lookInput;
+        private Vector2 _movementInput;
+        private Vector2 _lookInput;
         private readonly List<Collider2D> _activeTriggers = new();
 
+        // Animation
         private Animator _animator;
         private static readonly int IsMoving = Animator.StringToHash("isMoving");
 
-        //Pick up subsystem
-        public BoxCollider2D _interactBoxCollider;
+        // Pick up subsystem
+        public BoxCollider2D interactBoxCollider;
 
-        //Shotting
-        public WeaponComponent _currentWeapon;
-        public Transform _firePointTransform;
+        // Shooting
+        public WeaponComponent currentWeapon;
 
         private void Start()
         {
@@ -44,58 +44,52 @@ namespace Player.Scripts
         private void FixedUpdate()
         {
             _rigidbody.velocity = _movementInput * moveSpeed;
-            _animator.SetBool(IsMoving, _movementInput != UnityEngine.Vector2.zero);
-            
+            _animator.SetBool(IsMoving, _movementInput != Vector2.zero);
+
             var lookDirection = _lookInput - _rigidbody.position;
             var angle = Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg;
             _rigidbody.rotation = angle;
         }
 
-        private void OnTriggerEnter2D(Collider2D collider)
+        private void OnTriggerEnter2D(Collider2D triggeredCollider)
         {
-            _activeTriggers.Add(collider);
+            _activeTriggers.Add(triggeredCollider);
         }
 
-        private void OnTriggerExit2D(Collider2D collider)
+        private void OnTriggerExit2D(Collider2D triggeredCollider)
         {
-            _activeTriggers.Remove(collider);
+            _activeTriggers.Remove(triggeredCollider);
         }
 
         private void OnMove(InputValue movementValue)
         {
-            _movementInput = movementValue.Get<UnityEngine.Vector2>();
+            _movementInput = movementValue.Get<Vector2>();
         }
 
         private void OnInteract()
         {
-            foreach (Collider2D trigger in _activeTriggers)
+            foreach (var trigger in _activeTriggers)
             {
                 var interactable = trigger.GetComponent<Interactable>();
-                if (interactable != null)
-                {
-                    interactable.Interact();
-                }
+                if (interactable != null) interactable.Interact();
             }
         }
 
         private void OnReload()
         {
-            _currentWeapon.Reload();
+            currentWeapon.Reload();
 
-            gameObject.GetComponent<Animator>().Play("PlayerPlaceholder_HandGun_Reload");
+            _animator.Play("PlayerPlaceholder_HandGun_Reload");
         }
 
         private void OnReloadEnd()
         {
-            _currentWeapon.ReloadEnded();
+            currentWeapon.ReloadEnded();
         }
 
         private void OnFire()
         {
-            if (_currentWeapon.canShoot)
-            {
-                _currentWeapon.Shoot();
-            }
+            if (currentWeapon.CanShoot) currentWeapon.Shoot();
         }
     }
 }

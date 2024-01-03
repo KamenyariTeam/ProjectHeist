@@ -1,24 +1,22 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class HealthComponent : MonoBehaviour
+namespace Character
 {
-    public float currenthealth = 100f;
-    public float maxHealth = 100f;
-
-    void Start()
+    public class HealthComponent : MonoBehaviour
     {
-        
-    }
+        public float currentHealth = 100f;
+        public float maxHealth = 100f;
 
-    void Update()
-    {
-        
-    }
+        private void Start()
+        {
+        }
 
-    public void TakeDamage()
-    {
-        
+        private void Update()
+        {
+        }
+
+        public void TakeDamage()
+        {
+        }
     }
 }
