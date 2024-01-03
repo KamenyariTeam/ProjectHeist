@@ -5,9 +5,17 @@ using UnityEngine.InputSystem;
 
 namespace Character
 {
-    public class PlayerController : MonoBehaviour
+    public class PlayerController : MonoBehaviour, ICharacter
     {
+        private static readonly int IsMoving = Animator.StringToHash("isMoving");
+
         public float moveSpeed = 1f;
+
+        // Pick up subsystem
+        public BoxCollider2D interactBoxCollider;
+
+        // Shooting
+        public WeaponComponent currentWeapon;
 
         private Rigidbody2D _rigidbody;
         private PlayerInput _playerInput;
@@ -17,13 +25,11 @@ namespace Character
 
         // Animation
         private Animator _animator;
-        private static readonly int IsMoving = Animator.StringToHash("isMoving");
 
-        // Pick up subsystem
-        public BoxCollider2D interactBoxCollider;
-
-        // Shooting
-        public WeaponComponent currentWeapon;
+        public CharacterType GetCharacterType()
+        {
+            return CharacterType.Player;
+        }
 
         private void Start()
         {
@@ -70,8 +76,11 @@ namespace Character
         {
             foreach (var trigger in _activeTriggers)
             {
-                var interactable = trigger.GetComponent<Interactable>();
-                if (interactable != null) interactable.Interact();
+                var interactable = trigger.GetComponent<IInteractable>();
+                if (interactable != null)
+                {
+                    interactable.Interact(gameObject);
+                }
             }
         }
 
@@ -89,7 +98,11 @@ namespace Character
 
         private void OnFire()
         {
-            if (currentWeapon.CanShoot) currentWeapon.Shoot();
+            if (currentWeapon.CanShoot)
+            {
+                currentWeapon.Shoot();
+            }
         }
+
     }
 }
