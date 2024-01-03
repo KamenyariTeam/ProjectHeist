@@ -1,23 +1,24 @@
-using System.Collections;
-using System.Collections.Generic;
+using Character;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class HUDScript : MonoBehaviour
+namespace UI
 {
-    public GameObject player;
-    public TMP_Text text;
-
-    private WeaponComponent _weaponComponent;
-
-    void Start()
+    public class HUDScript : MonoBehaviour
     {
-        _weaponComponent = player.GetComponent<WeaponComponent>();
-    }
+        public GameObject player;
+        public TMP_Text text;
 
-    void Update()
-    {
-        text.SetText(_weaponComponent.currentAmmo + " / " + _weaponComponent.maxAmmo);
+        private WeaponComponent _weaponComponent;
+
+        private void Start()
+        {
+            _weaponComponent = player.GetComponent<WeaponComponent>();
+        }
+
+        private void Update()
+        {
+            text.SetText(_weaponComponent.CurrentAmmo + " / " + _weaponComponent.maxAmmo);
+        }
     }
 }

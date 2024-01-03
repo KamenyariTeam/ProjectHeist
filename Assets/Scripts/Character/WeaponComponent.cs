@@ -1,94 +1,82 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.Burst.Intrinsics;
-using Unity.VisualScripting;
+using InteractableObjects.Weapon;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-public class WeaponComponent : MonoBehaviour
+namespace Character
 {
-    public float damage = 1f;
-    public float maxAmmo = 7f;
-    public float angleUntolerance = 1.5f;
-
-    public float oneShotTime = 1f;
-
-    public Transform firePoint;
-    public GameObject bulletPrefab;
-    public GameObject flashFrefab;
-
-    private float _currentAmmo = 7f;
-    private float _timeSinceLastShoot;
-    private bool _canShoot;
-
-    void Start()
+    public class WeaponComponent : MonoBehaviour
     {
-        _currentAmmo = maxAmmo;
-        _canShoot = true;
-    }
+        public float damage = 1f;
+        public float maxAmmo = 7f;
+        public float angleInaccuracy = 1.5f;
+        public float shotCooldown = 1f;
 
-    void Update()
-    {
-        if (!_canShoot)
+        public Transform firePoint;
+        public GameObject bulletPrefab;
+        public GameObject flashPrefab;
+
+        private float _currentAmmo = 7f;
+        private float _timeSinceLastShot;
+
+        private void Start()
         {
-            if (_timeSinceLastShoot < oneShotTime)
+            _currentAmmo = maxAmmo;
+            CanShoot = true;
+        }
+
+        private void Update()
+        {
+            if (!CanShoot)
             {
-                _timeSinceLastShoot += Time.deltaTime;
+                if (_timeSinceLastShot < shotCooldown)
+                {
+                    _timeSinceLastShot += Time.deltaTime;
+                }
+                else
+                {
+                    _timeSinceLastShot = 0f;
+                    CanShoot = true;
+                }
             }
-            else
+        }
+
+        public float CurrentAmmo
+        {
+            get => _currentAmmo;
+            private set => _currentAmmo = value < 0f ? 0f : value;
+        }
+
+        public bool CanShoot { get; private set; }
+
+        public void Shoot()
+        {
+            if (CanShoot && _currentAmmo > 0)
             {
-                _timeSinceLastShoot = 0f;
-                _canShoot = true;
+                var firePointPosition = firePoint.position;
+                var firePointRotation = firePoint.rotation;
+                var bullet = Instantiate(bulletPrefab, firePointPosition, firePointRotation);
+                var flash = Instantiate(flashPrefab, firePointPosition, firePointRotation);
+
+                var randomInaccuracy = Random.Range(-angleInaccuracy, angleInaccuracy);
+                var directionVector = firePoint.right;
+                directionVector = Quaternion.Euler(0, 0, randomInaccuracy) * directionVector;
+
+                bullet.GetComponent<BulletComponent>().direction = directionVector;
+
+                --_currentAmmo;
+                CanShoot = false;
             }
         }
-    }
 
-    public float currentAmmo
-    {
-        get { return _currentAmmo; }
-        private set
+        public void Reload()
         {
-            if (value < 0f)
-                _currentAmmo = 0f;
-            else
-                _currentAmmo = value;
+            CanShoot = false;
+            _currentAmmo = maxAmmo;
         }
-    }
 
-    public bool canShoot
-    {
-        get { return _canShoot; }
-        private set
+        public void ReloadEnded()
         {
-            _canShoot = value;
+            CanShoot = true;
         }
-    }
-
-    public void Shoot()
-    {
-        if (_canShoot && _currentAmmo > 0)
-        {
-            GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-            GameObject flash = Instantiate(flashFrefab, firePoint.position, firePoint.rotation);
-
-            float randomUntolerance = Random.Range(-angleUntolerance, angleUntolerance);
-            Vector3 directionVector = firePoint.right;
-            directionVector = Quaternion.Euler(0, 0, randomUntolerance) * directionVector;
-
-            bullet.GetComponent<BulletComponent>().direction = directionVector;
-        
-            --_currentAmmo;
-            _canShoot = false;
-        }
-    }
-
-    public void Reload()
-    {
-        _canShoot = false;
-        _currentAmmo = maxAmmo;
-    }
-
-    public void ReloadEnded()
-    {
-        _canShoot = true;
     }
 }

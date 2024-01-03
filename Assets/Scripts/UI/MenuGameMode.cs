@@ -1,22 +1,23 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MenuGameMode : MonoBehaviour
+namespace UI
 {
-    public void OnPressNewGame()
+    public class MenuGameMode : MonoBehaviour
     {
-        SceneManager.LoadScene("SampleScene");
-    }
+        public void OnPressNewGame()
+        {
+            SceneManager.LoadScene("SampleScene");
+        }
 
-    public void OnPressSettings()
-    {
-        // SceneManager.LoadScene("SettingsScene");
-    }
+        public void OnPressSettings()
+        {
+            // SceneManager.LoadScene("SettingsScene");
+        }
 
-    public void OnPressQuit()
-    {
-        Application.Quit();
+        public void OnPressQuit()
+        {
+            Application.Quit();
+        }
     }
 }
