@@ -24,7 +24,6 @@ namespace Character
 
         // Shooting
         public WeaponComponent currentWeapon;
-        public Transform firePointTransform;
 
         private void Start()
         {
