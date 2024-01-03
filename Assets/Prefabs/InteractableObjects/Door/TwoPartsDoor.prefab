@@ -106,11 +106,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2032646956416690735, guid: 4724730f3d370e240a3a50b2a4f8a075, type: 3}
       propertyPath: m_InstanceId
-      value: -28202
+      value: -116454
       objectReference: {fileID: 0}
     - target: {fileID: 5926853170494856753, guid: 4724730f3d370e240a3a50b2a4f8a075, type: 3}
       propertyPath: m_Name
       value: DoorPartLeft
+      objectReference: {fileID: 0}
+    - target: {fileID: 5926853170494856753, guid: 4724730f3d370e240a3a50b2a4f8a075, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6048970654130338320, guid: 4724730f3d370e240a3a50b2a4f8a075, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7581742546797900607, guid: 4724730f3d370e240a3a50b2a4f8a075, type: 3}
       propertyPath: m_LocalPosition.x
@@ -177,7 +185,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1639283175383695764, guid: 9f282b39c846a3048bdbd973f50d29dd, type: 3}
       propertyPath: m_InstanceId
-      value: -28188
+      value: -116468
       objectReference: {fileID: 0}
     - target: {fileID: 5832836676530816454, guid: 9f282b39c846a3048bdbd973f50d29dd, type: 3}
       propertyPath: m_LocalPosition.x
@@ -186,6 +194,14 @@ PrefabInstance:
     - target: {fileID: 5926853170494856753, guid: 9f282b39c846a3048bdbd973f50d29dd, type: 3}
       propertyPath: m_Name
       value: DoorPartRight
+      objectReference: {fileID: 0}
+    - target: {fileID: 5926853170494856753, guid: 9f282b39c846a3048bdbd973f50d29dd, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6048970654130338320, guid: 9f282b39c846a3048bdbd973f50d29dd, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7581742546797900607, guid: 9f282b39c846a3048bdbd973f50d29dd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
