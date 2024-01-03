@@ -121,9 +121,9 @@
   </objectgroup>
  </tile>
  <tile id="58">
-  <objectgroup draworder="index" id="5">
-   <object id="7" x="0" y="0">
-    <polyline points="0,0 5,0 15.9944,11.0056 16,16 13.9922,16 -0.00390625,1.99219 0,0"/>
+  <objectgroup draworder="index" id="2">
+   <object id="9" x="0" y="0">
+    <polygon points="0,0 0.00390625,1.99609 14,16 16,16 16,11 5,0.00390625"/>
    </object>
   </objectgroup>
  </tile>
