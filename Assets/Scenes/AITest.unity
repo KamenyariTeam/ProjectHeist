@@ -352,7 +352,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.016666668
+  m_VoxelSize: 0.026666665
   m_BuildHeightMesh: 0
   m_HideEditorLogs: 0
   m_NavMeshData: {fileID: 23800000, guid: 896f8b604c8504a65b933190a84d4ab0, type: 2}
@@ -713,7 +713,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 6.1534505
+  orthographic size: 0.97
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1915,7 +1915,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1370866470}
   - component: {fileID: 1370866471}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: ShadowCaster2D
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2334,7 +2334,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1753165440}
   - component: {fileID: 1753165441}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: ShadowCaster2D
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2951,6 +2951,14 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 9de0fdd37e4a63c459326cb9bfc943d9, type: 2}
+    - target: {fileID: 3365369512107061365, guid: b9a78588688f30840968a97ac214b182, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5616107035528770950, guid: b9a78588688f30840968a97ac214b182, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 6649046372369238241, guid: b9a78588688f30840968a97ac214b182, type: 3}
       propertyPath: m_Name
       value: PlaceholderMap
@@ -3028,7 +3036,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1933110120}
   - component: {fileID: 1933110121}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: ShadowCaster2D
   m_TagString: Untagged
   m_Icon: {fileID: 0}
