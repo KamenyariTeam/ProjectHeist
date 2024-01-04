@@ -3,11 +3,9 @@ using UnityEngine;
 
 namespace InteractableObjects
 {
-    public class Door : MonoBehaviour
+    public class Door : MonoBehaviour, IInteractable
     {
         private static readonly int IsOpen = Animator.StringToHash("IsOpen");
-
-        [SerializeField] private Interactable interactableArea;
 
         [SerializeField] private float maxTimeOpened;
 
@@ -16,10 +14,22 @@ namespace InteractableObjects
         private bool _isOpened;
         private float _timeOpened;
 
+        public void Interact(GameObject interacter)
+        {
+            var character = interacter.GetComponent<Character.ICharacter>();
+            if (character == null)
+            {
+                return;
+            }
+
+            if (character.GetCharacterType() == Character.CharacterType.Player || !_isOpened)
+            {
+                ChangeState();
+            }
+        }
+
         private void Start()
         {
-            interactableArea.OnInteractEvent += ChangeState;
-
             _isOpened = false;
             _timeOpened = 0.0f;
         }
@@ -29,19 +39,21 @@ namespace InteractableObjects
             if (_isOpened)
             {
                 _timeOpened += Time.deltaTime;
-                if (_timeOpened > maxTimeOpened) ChangeState();
+                if (_timeOpened > maxTimeOpened)
+                {
+                    ChangeState();
+                }
             }
         }
 
-        private void OnDestroy()
-        {
-            interactableArea.OnInteractEvent -= ChangeState;
-        }
 
         private void ChangeState()
         {
             _isOpened = !_isOpened;
-            foreach (var animator in doorAnimators) animator.SetBool(IsOpen, _isOpened);
+            foreach (var animator in doorAnimators)
+            {
+                animator.SetBool(IsOpen, _isOpened);
+            }
             _timeOpened = 0.0f;
         }
     }

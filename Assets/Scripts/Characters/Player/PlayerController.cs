@@ -5,25 +5,31 @@ using UnityEngine.InputSystem;
 
 namespace Character
 {
-    public class PlayerController : MonoBehaviour
+    public class PlayerController : MonoBehaviour, ICharacter
     {
-        public float moveSpeed = 1f;
-
-        private Rigidbody2D _rigidbody;
-        private PlayerInput _playerInput;
-        private Vector2 _movementInput;
-        private Vector2 _lookInput;
-        private readonly List<Collider2D> _activeTriggers = new();
-
-        // Animation
-        private Animator _animator;
         private static readonly int IsMoving = Animator.StringToHash("isMoving");
+
+        public float moveSpeed = 1f;
 
         // Pick up subsystem
         public BoxCollider2D interactBoxCollider;
 
         // Shooting
         public WeaponComponent currentWeapon;
+
+        private Rigidbody2D _rigidbody;
+        private PlayerInput _playerInput;
+        private Vector2 _movementInput;
+        private Vector2 _lookInput;
+        private readonly List<IInteractable> _activeInteracts = new();
+
+        // Animation
+        private Animator _animator;
+
+        public CharacterType GetCharacterType()
+        {
+            return CharacterType.Player;
+        }
 
         private void Start()
         {
@@ -53,12 +59,22 @@ namespace Character
 
         private void OnTriggerEnter2D(Collider2D triggeredCollider)
         {
-            _activeTriggers.Add(triggeredCollider);
+            var interactable = triggeredCollider.GetComponent<IInteractable>();
+            if (interactable == null)
+            {
+                return;
+            }
+            _activeInteracts.Add(interactable);
         }
 
         private void OnTriggerExit2D(Collider2D triggeredCollider)
         {
-            _activeTriggers.Remove(triggeredCollider);
+            var interactable = triggeredCollider.GetComponent<IInteractable>();
+            if (interactable == null)
+            {
+                return;
+            }
+            _activeInteracts.Remove(interactable);
         }
 
         private void OnMove(InputValue movementValue)
@@ -68,10 +84,9 @@ namespace Character
 
         private void OnInteract()
         {
-            foreach (var trigger in _activeTriggers)
+            foreach (IInteractable interactable in _activeInteracts)
             {
-                var interactable = trigger.GetComponent<Interactable>();
-                if (interactable != null) interactable.Interact();
+                interactable.Interact(gameObject);
             }
         }
 
@@ -89,7 +104,11 @@ namespace Character
 
         private void OnFire()
         {
-            if (currentWeapon.CanShoot) currentWeapon.Shoot();
+            if (currentWeapon.CanShoot)
+            {
+                currentWeapon.Shoot();
+            }
         }
+
     }
 }
