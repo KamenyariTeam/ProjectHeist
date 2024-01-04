@@ -21,7 +21,7 @@ namespace Character
         private PlayerInput _playerInput;
         private Vector2 _movementInput;
         private Vector2 _lookInput;
-        private readonly List<Collider2D> _activeTriggers = new();
+        private readonly List<IInteractable> _activeInteracts = new();
 
         // Animation
         private Animator _animator;
@@ -59,12 +59,22 @@ namespace Character
 
         private void OnTriggerEnter2D(Collider2D triggeredCollider)
         {
-            _activeTriggers.Add(triggeredCollider);
+            var interactable = triggeredCollider.GetComponent<IInteractable>();
+            if (interactable == null)
+            {
+                return;
+            }
+            _activeInteracts.Add(interactable);
         }
 
         private void OnTriggerExit2D(Collider2D triggeredCollider)
         {
-            _activeTriggers.Remove(triggeredCollider);
+            var interactable = triggeredCollider.GetComponent<IInteractable>();
+            if (interactable == null)
+            {
+                return;
+            }
+            _activeInteracts.Remove(interactable);
         }
 
         private void OnMove(InputValue movementValue)
@@ -74,13 +84,9 @@ namespace Character
 
         private void OnInteract()
         {
-            foreach (var trigger in _activeTriggers)
+            foreach (IInteractable interactable in _activeInteracts)
             {
-                var interactable = trigger.GetComponent<IInteractable>();
-                if (interactable != null)
-                {
-                    interactable.Interact(gameObject);
-                }
+                interactable.Interact(gameObject);
             }
         }
 

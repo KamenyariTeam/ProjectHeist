@@ -1,22 +1,197 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace Character
 {
-    public class EnemyLogic : MonoBehaviour, ICharacter
+
+    class EnemyIdleState : IAIStateLogic
     {
-        private enum State
+        public Transform transform;
+        public Rigidbody2D rigidbody;
+        public NavMeshAgent agent;
+        public Transform[] path;
+        public Transform playerTransform;
+        public float attackDelay;
+
+        private int _pathIndex;
+        private float _timeTillAttack;
+
+        public EnemyIdleState()
         {
-            Idle,
-            Attacking,
-            OnAlarm,
-            ChasingPlayer,
-            SearchingForPlayer
+            _pathIndex = 0;
         }
 
+        public void OnStart()
+        {
+            _timeTillAttack = attackDelay;
+            agent.SetDestination(path[_pathIndex].position);
+        }
 
-        private static readonly float MinDistanceToPathPointMul = 2;
-        private static readonly float MinDistanceToPathPointAdd = 0.2f;
+        public void OnStop()
+        {
+        }
+
+        public AIState OnUpdate(float timeDelta, bool isDetectingPlayer)
+        {
+            agent.isStopped = isDetectingPlayer;
+
+            if (isDetectingPlayer)
+            {
+                Vector3 directionToPlayer = (playerTransform.position - transform.position).normalized;
+                float angle = Mathf.Atan2(directionToPlayer.y, directionToPlayer.x) * Mathf.Rad2Deg;
+                rigidbody.rotation = angle;
+                _timeTillAttack = Mathf.Max(_timeTillAttack - timeDelta, -1);
+                if (_timeTillAttack < 0.0f)
+                {
+                    attackDelay = 0.0f;
+                    return AIState.Attacking;
+                }
+                return AIState.Idle;
+            }
+
+            _timeTillAttack = attackDelay;
+
+            if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+            {
+                _pathIndex = (_pathIndex + 1) % path.Length;
+                agent.SetDestination(path[_pathIndex].position);
+            }
+            else
+            {
+                float angle = Mathf.Atan2(agent.velocity.y, agent.velocity.x) * Mathf.Rad2Deg;
+                rigidbody.rotation = angle;
+            }
+
+            agent.SetDestination(path[_pathIndex].position);
+
+            return AIState.Idle;
+        }
+    }
+
+    class EnemyAttackingState : IAIStateLogic
+    {
+        public Transform transform;
+        public Rigidbody2D rigidbody;
+        public NavMeshAgent agent;
+        public Transform playerTransform;
+        public WeaponComponent weapon;
+
+        public void OnStart()
+        {
+        }
+
+        public void OnStop()
+        {
+        }
+
+        public AIState OnUpdate(float timeDelta, bool isDetectingPlayer)
+        {
+            Vector3 directionToPlayer = (playerTransform.position - transform.position).normalized;
+            float angle = Mathf.Atan2(directionToPlayer.y, directionToPlayer.x) * Mathf.Rad2Deg;
+            rigidbody.rotation = angle;
+
+            if (isDetectingPlayer)
+            {
+                float distanceToPlayer = (transform.position - playerTransform.position).magnitude;
+                if (distanceToPlayer < 0.8)
+                {
+                    agent.isStopped = true;
+                    if (weapon.CurrentAmmo == 0)
+                    {
+                        weapon.Reload();
+                    }
+                    else if (weapon.CanShoot)
+                    {
+                        weapon.Shoot();
+                    }
+                }
+                else
+                {
+                    agent.isStopped = false;
+                    agent.SetDestination(playerTransform.position);
+                }
+                return AIState.Attacking;
+            }
+
+            return AIState.ChasingPlayer;
+        }
+    }
+
+    class EnemyChasingState : IAIStateLogic
+    {
+        public Transform transform;
+        public Rigidbody2D rigidbody;
+        public NavMeshAgent agent;
+        public Transform playerTransform;
+
+        public void OnStart()
+        {
+            agent.SetDestination(playerTransform.position);
+            agent.isStopped = false;
+        }
+
+        public void OnStop()
+        {
+        }
+
+        public AIState OnUpdate(float timeDelta, bool isDetectingPlayer)
+        {
+            if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+            {
+                return AIState.SearchingForPlayer;
+            }
+            return AIState.ChasingPlayer;
+        }
+    }
+
+    class EnemySearchingForPlayerState : IAIStateLogic
+    {
+        public Transform transform;
+        public Rigidbody2D rigidbody;
+        public NavMeshAgent agent;
+        public Transform playerTransform;
+        public float searchingRotationSpeed;
+
+        private float _totalRotation;
+
+        public void OnStart()
+        {
+            _totalRotation = 0;
+            agent.isStopped = true;
+        }
+
+        public void OnStop()
+        {
+        }
+
+        public AIState OnUpdate(float timeDelta, bool isDetectingPlayer)
+        {
+            if (isDetectingPlayer)
+            {
+                return AIState.Attacking;
+            }
+            float angleDelta = searchingRotationSpeed * timeDelta;
+            rigidbody.rotation += angleDelta;
+            if (rigidbody.rotation > 180.0f)
+            {
+                rigidbody.rotation -= 360.0f;
+            }
+
+            _totalRotation += angleDelta;
+            if (_totalRotation > 270.0f)
+            {
+                return AIState.Idle;
+            }
+
+            return AIState.SearchingForPlayer;
+        }
+    }
+
+
+
+    public class EnemyLogic : MonoBehaviour, ICharacter
+    {
 
         [SerializeField] private string playerTag;
         [SerializeField] private LayerMask wallMask;
@@ -29,18 +204,13 @@ namespace Character
         [SerializeField] private WeaponComponent weapon;
         [SerializeField] private Transform[] initialPath;
 
-        private NavMeshAgent _agent;
         private Rigidbody2D _rigidbody;
-        private int _pathIndex;
         private Transform _playerTransform;
-        private State _state;
-        private float _timeTillPlayerDetection;
         private bool _isDetectingPlayer;
+        private float _timeTillPlayerDetection;
 
-        private float _idleAttackTimer;
-        private float _searchTotalRotation;
-        private Vector3 _playerLastPosition;
-
+        private AIState _state;
+        private Dictionary<AIState, IAIStateLogic> _statesLogic;
 
         public CharacterType GetCharacterType()
         {
@@ -52,41 +222,65 @@ namespace Character
         {
             _rigidbody = GetComponent<Rigidbody2D>();
 
-            _agent = GetComponent<NavMeshAgent>();
-            _agent.updateUpAxis = false;
-            _agent.updateRotation = false;
+            NavMeshAgent agent = GetComponent<NavMeshAgent>();
+            agent.updateUpAxis = false;
+            agent.updateRotation = false;
 
-            _state = State.Idle;
-
-            _playerTransform = GameObject.FindGameObjectWithTag(playerTag).transform;
-
-            _pathIndex = 0;
-            _agent.SetDestination(initialPath[_pathIndex].position);
 
             // enemies check player at different time => should help to avoid freezes when all enemis
             // try to find the player
             _timeTillPlayerDetection = Random.Range(0, playerDetectionInterval);
-            _idleAttackTimer = delayBeforeAttack;
+
+            _playerTransform = GameObject.FindGameObjectWithTag(playerTag).transform;
+
+            var idleState = new EnemyIdleState();
+            idleState.transform = transform;
+            idleState.rigidbody = _rigidbody;
+            idleState.agent = agent;
+            idleState.attackDelay = delayBeforeAttack;
+            idleState.playerTransform = _playerTransform;
+            idleState.path = initialPath;
+            
+
+            var attackState = new EnemyAttackingState();
+            attackState.agent = agent;
+            attackState.transform = transform;
+            attackState.rigidbody = _rigidbody;
+            attackState.playerTransform = _playerTransform;
+            attackState.weapon = weapon;
+
+            var chasingState = new EnemyChasingState();
+            chasingState.agent = agent;
+            chasingState.transform = transform;
+            chasingState.rigidbody = _rigidbody;
+            chasingState.playerTransform = _playerTransform;
+
+            var searchingState = new EnemySearchingForPlayerState();
+            searchingState.playerTransform = _playerTransform;
+            searchingState.rigidbody = _rigidbody;
+            searchingState.searchingRotationSpeed = searchingRotationSpeed;
+            searchingState.transform = transform;
+            searchingState.agent = agent;
+
+            _statesLogic = new Dictionary<AIState, IAIStateLogic>();
+            _statesLogic[AIState.Idle] = idleState;
+            _statesLogic[AIState.Attacking] = attackState;
+            _statesLogic[AIState.ChasingPlayer] = chasingState;
+            _statesLogic[AIState.SearchingForPlayer] = searchingState;
+
+            _state = AIState.Idle;
+            _statesLogic[_state].OnStart();
         }
 
         // Update is called once per frame
         private void Update()
         {
-            switch (_state)
+            AIState newState = _statesLogic[_state].OnUpdate(Time.deltaTime, _isDetectingPlayer);
+            if (newState != _state)
             {
-                case State.Idle:
-                case State.OnAlarm:
-                    _state = PatrollingLogic(Time.deltaTime);
-                    break;
-                case State.Attacking:
-                    _state = AttackingLogic();
-                    break;
-                case State.ChasingPlayer:
-                    _state = ChasingLogic();
-                    break;
-                case State.SearchingForPlayer:
-                    _state = SearchingForPlayerLogic(Time.deltaTime);
-                    break;
+                _statesLogic[_state].OnStop();
+                _state = newState;
+                _statesLogic[_state].OnStart();
             }
 
             _timeTillPlayerDetection -= Time.deltaTime;
@@ -94,7 +288,6 @@ namespace Character
             {
                 _isDetectingPlayer = DetectPlayer();
                 _timeTillPlayerDetection = playerDetectionInterval;
-                Debug.Log(_isDetectingPlayer);
             }
         }
 
@@ -122,116 +315,7 @@ namespace Character
             {
                 return false;
             }
-            return !Physics2D.Linecast(transform.position, _playerTransform.position, wallMask);   
-        }
-
-        private State PatrollingLogic(float timeDelta)
-        {
-            _agent.isStopped = _isDetectingPlayer;
-
-            if (_isDetectingPlayer)
-            {
-                Vector3 directionToPlayer = (_playerTransform.position - transform.position).normalized;
-                float angle = Mathf.Atan2(directionToPlayer.y, directionToPlayer.x) * Mathf.Rad2Deg;
-                _rigidbody.rotation = angle;
-                _idleAttackTimer = Mathf.Max(_idleAttackTimer - timeDelta, -1);
-                if (_idleAttackTimer < 0.0f)
-                {
-                    return State.Attacking;
-                }
-                return _state;
-            }
-
-            if (_state == State.Idle)
-            {
-                _idleAttackTimer = delayBeforeAttack;
-            }
-
-            if (_agent.velocity != Vector3.zero)
-            {
-                float angle = Mathf.Atan2(_agent.velocity.y, _agent.velocity.x) * Mathf.Rad2Deg;
-                _rigidbody.rotation = angle;
-            }
-
-            float distanceToPathPoint = (transform.position - initialPath[_pathIndex].position).magnitude;
-            if (distanceToPathPoint < _agent.stoppingDistance * MinDistanceToPathPointMul + MinDistanceToPathPointAdd)
-            {
-                _pathIndex = (_pathIndex + 1) % initialPath.Length;
-                _agent.SetDestination(initialPath[_pathIndex].position);
-            }
-
-            _agent.SetDestination(initialPath[_pathIndex].position);
-
-            return _state;
-
-        }
-
-        private State AttackingLogic()
-        {
-            Vector3 directionToPlayer = (_playerTransform.position - transform.position).normalized;
-            float angle = Mathf.Atan2(directionToPlayer.y, directionToPlayer.x) * Mathf.Rad2Deg;
-            _rigidbody.rotation = angle;
-
-            if (_isDetectingPlayer)
-            {
-                float distanceToPlayer = (transform.position - _playerTransform.position).magnitude;
-                if (distanceToPlayer < 0.8)
-                {
-                    _agent.isStopped = true;
-                    if (weapon.CurrentAmmo == 0)
-                    {
-                        weapon.Reload();
-                    }
-                    else if (weapon.CanShoot)
-                    {
-                        weapon.Shoot();
-                    }
-                }
-                else
-                {
-                    _agent.isStopped = false;
-                    _agent.SetDestination(_playerTransform.position);
-                }
-                return State.Attacking;
-            }
-            _playerLastPosition = _playerTransform.position;
-            _agent.SetDestination(_playerLastPosition);
-            _agent.isStopped = false;
-            return State.ChasingPlayer;
-        }
-
-        private State ChasingLogic()
-        {
-            float distanceToLastPosition = (transform.position - _playerLastPosition).magnitude;
-            if (distanceToLastPosition < _agent.stoppingDistance * MinDistanceToPathPointMul + MinDistanceToPathPointAdd)
-            {
-                _searchTotalRotation = 0;
-                return State.SearchingForPlayer;
-            }
-            return State.ChasingPlayer;
-        }
-
-        private State SearchingForPlayerLogic(float timeDelta)
-        {
-            _agent.isStopped = true;
-            if (_isDetectingPlayer)
-            {
-                return State.Attacking;
-            }
-            float angleDelta = searchingRotationSpeed * timeDelta;
-            _rigidbody.rotation += angleDelta;
-            if (_rigidbody.rotation > 180.0f)
-            {
-                _rigidbody.rotation -= 360.0f;
-            }
-
-            _searchTotalRotation += angleDelta;
-            if (_searchTotalRotation > 270.0f)
-            {
-                return State.OnAlarm;
-            }
-
-            return State.SearchingForPlayer;
+            return !Physics2D.Linecast(transform.position, _playerTransform.position, wallMask);
         }
 
     }
