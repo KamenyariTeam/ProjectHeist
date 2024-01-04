@@ -2,9 +2,8 @@ namespace Character
 {
     enum AIState
     {
-        Idle,
+        Patrolling,
         Attacking,
-        OnAlarm,
         ChasingPlayer,
         SearchingForPlayer
     }
