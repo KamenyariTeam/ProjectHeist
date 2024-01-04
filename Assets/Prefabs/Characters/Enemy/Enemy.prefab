@@ -117,7 +117,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 4
+  m_Constraints: 7
 --- !u!95 &-6619163746556755249
 Animator:
   serializedVersion: 5
@@ -213,12 +213,16 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   playerDetectionInterval: 0.1
+  idleSpeed: 0.4
   viewDistance: 2
   viewAngle: 180
   guaranteedDetectDistance: 0.35
-  delayBeforeAttack: 2
-  searchingRotationSpeed: 180
+  delayBeforeAttack: 5
+  searchingRotationSpeed: 150
+  searchingTotalRotation: 200
   weapon: {fileID: 2490446724334395613}
+  shootingDistance: 0.7
+  chasingSpeed: 0.5
   initialPath: []
 --- !u!114 &2490446724334395613
 MonoBehaviour:

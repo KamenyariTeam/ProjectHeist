@@ -13,6 +13,7 @@ namespace Character
         public Transform[] path;
         public Transform playerTransform;
         public float attackDelay;
+        public float speed;
 
         private int _pathIndex;
         private float _timeTillAttack;
@@ -26,6 +27,7 @@ namespace Character
         {
             _timeTillAttack = attackDelay;
             agent.SetDestination(path[_pathIndex].position);
+            agent.speed = speed;
         }
 
         public void OnStop()
@@ -76,9 +78,11 @@ namespace Character
         public NavMeshAgent agent;
         public Transform playerTransform;
         public WeaponComponent weapon;
+        public float speed;
 
         public void OnStart()
         {
+            agent.speed = speed;
         }
 
         public void OnStop()
@@ -124,11 +128,13 @@ namespace Character
         public Rigidbody2D rigidbody;
         public NavMeshAgent agent;
         public Transform playerTransform;
+        public float speed;
 
         public void OnStart()
         {
             agent.SetDestination(playerTransform.position);
             agent.isStopped = false;
+            agent.speed = speed;
         }
 
         public void OnStop()
@@ -152,6 +158,7 @@ namespace Character
         public NavMeshAgent agent;
         public Transform playerTransform;
         public float searchingRotationSpeed;
+        public float totalRotationAngle;
 
         private float _totalRotation;
 
@@ -179,7 +186,7 @@ namespace Character
             }
 
             _totalRotation += angleDelta;
-            if (_totalRotation > 270.0f)
+            if (_totalRotation > totalRotationAngle)
             {
                 return AIState.Idle;
             }
@@ -196,12 +203,16 @@ namespace Character
         [SerializeField] private string playerTag;
         [SerializeField] private LayerMask wallMask;
         [SerializeField] private float playerDetectionInterval;
+        [SerializeField] private float idleSpeed;
         [SerializeField] private float viewDistance;
         [SerializeField] private float viewAngle;
         [SerializeField] private float guaranteedDetectDistance;
         [SerializeField] private float delayBeforeAttack;
         [SerializeField] private float searchingRotationSpeed;
+        [SerializeField] private float searchingTotalRotation;
         [SerializeField] private WeaponComponent weapon;
+        [SerializeField] private float shootingDistance;
+        [SerializeField] private float chasingSpeed;
         [SerializeField] private Transform[] initialPath;
 
         private Rigidbody2D _rigidbody;
@@ -244,6 +255,7 @@ namespace Character
             idleState.attackDelay = delayBeforeAttack;
             idleState.playerTransform = _playerTransform;
             idleState.path = initialPath;
+            idleState.speed = idleSpeed;
             
 
             var attackState = new EnemyAttackingState();
@@ -252,12 +264,14 @@ namespace Character
             attackState.rigidbody = _rigidbody;
             attackState.playerTransform = _playerTransform;
             attackState.weapon = weapon;
+            attackState.speed = chasingSpeed;
 
             var chasingState = new EnemyChasingState();
             chasingState.agent = _agent;
             chasingState.transform = transform;
             chasingState.rigidbody = _rigidbody;
             chasingState.playerTransform = _playerTransform;
+            chasingState.speed = chasingSpeed;
 
             var searchingState = new EnemySearchingForPlayerState();
             searchingState.playerTransform = _playerTransform;
@@ -265,6 +279,7 @@ namespace Character
             searchingState.searchingRotationSpeed = searchingRotationSpeed;
             searchingState.transform = transform;
             searchingState.agent = _agent;
+            searchingState.totalRotationAngle = searchingTotalRotation;
 
             _statesLogic = new Dictionary<AIState, IAIStateLogic>();
             _statesLogic[AIState.Idle] = idleState;
