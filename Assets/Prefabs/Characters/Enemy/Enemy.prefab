@@ -215,7 +215,7 @@ MonoBehaviour:
   playerDetectionInterval: 0.1
   viewDistance: 2
   viewAngle: 180
-  guaranteedDetectDistance: 0.2
+  guaranteedDetectDistance: 0.35
   delayBeforeAttack: 2
   searchingRotationSpeed: 180
   weapon: {fileID: 2490446724334395613}

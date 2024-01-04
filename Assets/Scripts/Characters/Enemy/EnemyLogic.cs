@@ -205,9 +205,11 @@ namespace Character
         [SerializeField] private Transform[] initialPath;
 
         private Rigidbody2D _rigidbody;
+        private NavMeshAgent _agent;
         private Transform _playerTransform;
         private bool _isDetectingPlayer;
         private float _timeTillPlayerDetection;
+        private List<InteractableObjects.IInteractable> _activeInteracts;
 
         private AIState _state;
         private Dictionary<AIState, IAIStateLogic> _statesLogic;
@@ -222,35 +224,37 @@ namespace Character
         {
             _rigidbody = GetComponent<Rigidbody2D>();
 
-            NavMeshAgent agent = GetComponent<NavMeshAgent>();
-            agent.updateUpAxis = false;
-            agent.updateRotation = false;
+            _agent = GetComponent<NavMeshAgent>();
+            _agent.updateUpAxis = false;
+            _agent.updateRotation = false;
 
 
             // enemies check player at different time => should help to avoid freezes when all enemis
             // try to find the player
             _timeTillPlayerDetection = Random.Range(0, playerDetectionInterval);
 
+            _activeInteracts = new List<InteractableObjects.IInteractable>();
+
             _playerTransform = GameObject.FindGameObjectWithTag(playerTag).transform;
 
             var idleState = new EnemyIdleState();
             idleState.transform = transform;
             idleState.rigidbody = _rigidbody;
-            idleState.agent = agent;
+            idleState.agent = _agent;
             idleState.attackDelay = delayBeforeAttack;
             idleState.playerTransform = _playerTransform;
             idleState.path = initialPath;
             
 
             var attackState = new EnemyAttackingState();
-            attackState.agent = agent;
+            attackState.agent = _agent;
             attackState.transform = transform;
             attackState.rigidbody = _rigidbody;
             attackState.playerTransform = _playerTransform;
             attackState.weapon = weapon;
 
             var chasingState = new EnemyChasingState();
-            chasingState.agent = agent;
+            chasingState.agent = _agent;
             chasingState.transform = transform;
             chasingState.rigidbody = _rigidbody;
             chasingState.playerTransform = _playerTransform;
@@ -260,7 +264,7 @@ namespace Character
             searchingState.rigidbody = _rigidbody;
             searchingState.searchingRotationSpeed = searchingRotationSpeed;
             searchingState.transform = transform;
-            searchingState.agent = agent;
+            searchingState.agent = _agent;
 
             _statesLogic = new Dictionary<AIState, IAIStateLogic>();
             _statesLogic[AIState.Idle] = idleState;
@@ -289,15 +293,28 @@ namespace Character
                 _isDetectingPlayer = DetectPlayer();
                 _timeTillPlayerDetection = playerDetectionInterval;
             }
+
+            CheckForDoors();
         }
 
         private void OnTriggerEnter2D(Collider2D collider)
         {
             var interactable = collider.GetComponent<InteractableObjects.IInteractable>();
-            if (interactable != null)
+            if (interactable == null)
             {
-                interactable.Interact(gameObject);
+                return;
             }
+            _activeInteracts.Add(interactable);
+        }
+
+        private void OnTriggerExit2D(Collider2D collider)
+        {
+            var interactable = collider.GetComponent<InteractableObjects.IInteractable>();
+            if (interactable == null)
+            {
+                return;
+            }
+            _activeInteracts.Remove(interactable);
         }
 
         private bool DetectPlayer()
@@ -316,6 +333,26 @@ namespace Character
                 return false;
             }
             return !Physics2D.Linecast(transform.position, _playerTransform.position, wallMask);
+        }
+
+        private void CheckForDoors()
+        {
+            foreach (InteractableObjects.IInteractable interactable in _activeInteracts)
+            {
+                var door = interactable as InteractableObjects.Door;
+                if (door == null)
+                {
+                    continue;
+                }
+                Vector3 directionToDoor = (door.transform.position - transform.position).normalized;
+                float dotProduct = directionToDoor.x * _agent.velocity.x + directionToDoor.y * _agent.velocity.y;
+                if(dotProduct > 0)
+                {
+                    door.Interact(gameObject);
+                }
+                Debug.Log(dotProduct);
+                
+            }
         }
 
     }
