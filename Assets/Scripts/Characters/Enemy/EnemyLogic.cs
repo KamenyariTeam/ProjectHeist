@@ -349,6 +349,31 @@ namespace Character
             _activeInteracts.Remove(interactable);
         }
 
+        private void OnDrawGizmosSelected()
+        {
+            Rigidbody2D rigidbody = GetComponent<Rigidbody2D>();
+
+            Gizmos.color = new Color(0, 1, 0, 0.3f);
+            Gizmos.DrawSphere(transform.position, guaranteedDetectDistance);
+
+            float originalAngle = rigidbody.rotation;
+            int iterations = 10;
+            float stepAngles = viewAngle / iterations;
+            float angle = originalAngle - 0.5f * viewAngle;
+
+            Vector3 pos = transform.position;
+            for (int i = 0; i <= iterations; i++)
+            {
+                float rad = Mathf.Deg2Rad * angle;
+                Vector3 secondPos = transform.position + new Vector3(viewDistance * Mathf.Cos(rad), viewDistance * Mathf.Sin(rad), 0);
+                Gizmos.DrawLine(pos, secondPos);
+
+                angle += stepAngles;
+                pos = secondPos;
+            }
+            Gizmos.DrawLine(pos, transform.position);
+        }
+
         private bool DetectPlayer()
         {
             float distanceToPlayer = (transform.position - _playerTransform.position).magnitude;
