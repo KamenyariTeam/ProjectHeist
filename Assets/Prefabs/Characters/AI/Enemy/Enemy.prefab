@@ -218,8 +218,8 @@ MonoBehaviour:
   viewAngle: 180
   guaranteedDetectDistance: 0.35
   delayBeforeAttack: 5
-  searchingRotationSpeed: 150
-  searchingTotalRotation: 200
+  searchingRotationSpeed: 180
+  searchingTotalRotation: 90
   weapon: {fileID: 2490446724334395613}
   shootingDistance: 0.7
   chasingSpeed: 0.5

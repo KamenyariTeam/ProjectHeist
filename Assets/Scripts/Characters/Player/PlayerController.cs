@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 
 namespace Character
 {
-    public class PlayerController : MonoBehaviour, ICharacter
+    public class PlayerController : MonoBehaviour
     {
         private static readonly int IsMoving = Animator.StringToHash("isMoving");
 
@@ -25,11 +25,6 @@ namespace Character
 
         // Animation
         private Animator _animator;
-
-        public CharacterType GetCharacterType()
-        {
-            return CharacterType.Player;
-        }
 
         private void Start()
         {
