@@ -74,7 +74,6 @@ namespace Character
                 _timeTillAttack = Mathf.Max(_timeTillAttack - timeDelta, -1);
                 if (_timeTillAttack < 0.0f)
                 {
-                    _attackDelay = 0.0f;
                     return AIState.Attacking;
                 }
                 return AIState.Patrolling;
@@ -93,9 +92,12 @@ namespace Character
                 _rigidBody.rotation = angle;
             }
 
-            _agent.SetDestination(_path[_pathIndex].position);
-
             return AIState.Patrolling;
+        }
+
+        public override void OnStop()
+        {
+            _attackDelay = 0.0f;
         }
     }
 
@@ -103,16 +105,19 @@ namespace Character
     {
         private WeaponComponent _weapon;
         private float _speed;
+        private float _shootingDistance;
 
-        public EnemyAttackingState(WeaponComponent weapon, float speed)
+        public EnemyAttackingState(WeaponComponent weapon, float speed, float shootingDistance)
         {
             _weapon = weapon;
             _speed = speed;
+            _shootingDistance = shootingDistance;
         }
 
         public override void OnStart()
         {
             _agent.speed = _speed;
+            _agent.SetDestination(_playerTransform.position);
         }
 
         public override AIState OnUpdate(float timeDelta, bool isDetectingPlayer)
@@ -124,7 +129,7 @@ namespace Character
             if (isDetectingPlayer)
             {
                 float distanceToPlayer = (_transform.position - _playerTransform.position).magnitude;
-                if (distanceToPlayer < 0.8)
+                if (distanceToPlayer < _shootingDistance)
                 {
                     _agent.isStopped = true;
                     if (_weapon.CurrentAmmo == 0)
@@ -137,7 +142,7 @@ namespace Character
                         _weapon.Shoot();
                     }
                 }
-                else
+                else if (!_agent.pathPending)
                 {
                     _agent.isStopped = false;
                     _agent.SetDestination(_playerTransform.position);
@@ -286,7 +291,7 @@ namespace Character
             _playerTransform = GameObject.FindGameObjectWithTag(playerTag).transform;
 
             var idleState = new EnemyPatrollingState(initialPath, delayBeforeAttack, idleSpeed);
-            var attackState = new EnemyAttackingState(weapon, chasingSpeed);
+            var attackState = new EnemyAttackingState(weapon, chasingSpeed, shootingDistance);
             var chasingState = new EnemyChasingState(chasingSpeed);
             var searchingState = new EnemySearchingForPlayerState(searchingRotationSpeed, searchingTotalRotation);
 
