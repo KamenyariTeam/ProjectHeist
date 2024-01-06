@@ -16,13 +16,8 @@ namespace InteractableObjects
 
         public void Interact(GameObject interacter)
         {
-            var character = interacter.GetComponent<Character.ICharacter>();
-            if (character == null)
-            {
-                return;
-            }
-
-            if (character.GetCharacterType() == Character.CharacterType.Player || !_isOpened)
+            bool isAI = interacter.GetComponent<Character.IAILogic>() != null;
+            if (!isAI || !_isOpened)
             {
                 ChangeState();
             }
