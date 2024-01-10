@@ -1,3 +1,4 @@
+using Character;
 using UnityEngine;
 
 namespace GameControllers
@@ -7,11 +8,23 @@ namespace GameControllers
         [SerializeField] private Texture2D crosshairCursor;
         [SerializeField] private Texture2D menuCursor;
 
+        private InputReader _input;
         private bool _isPaused;
 
         private void Start()
         {
             OnApplicationFocus(true);
+            
+            _input = ScriptableObject.CreateInstance<InputReader>();
+            
+            // Setup inputs
+            _input.PauseEvent += HandlePause;
+            _input.ResumeEvent += HandlePause;
+        }
+
+        private void HandlePause()
+        {
+            OnApplicationPause(!_isPaused);
         }
 
         private void OnApplicationPause(bool pauseStatus)
@@ -31,8 +44,7 @@ namespace GameControllers
 
         private void OnApplicationFocus(bool hasFocus)
         {
-            _isPaused = !hasFocus;
-            OnApplicationPause(_isPaused);
+            OnApplicationPause(!hasFocus);
         }
 
         private void SetCrosshairCursor()

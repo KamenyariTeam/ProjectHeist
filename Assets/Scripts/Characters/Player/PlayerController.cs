@@ -18,36 +18,39 @@ namespace Character
         public WeaponComponent currentWeapon;
 
         private Rigidbody2D _rigidbody;
-        private PlayerInput _playerInput;
-        private Vector2 _movementInput;
-        private Vector2 _lookInput;
+        private UnityEngine.Camera _camera;
+        private InputReader _input;
+        private Vector2 _movementDirection;
         private readonly List<IInteractable> _activeInteracts = new();
 
         // Animation
         private Animator _animator;
+        
+        public Vector2 LookPosition { get; private set; }
 
         private void Start()
         {
             _rigidbody = GetComponent<Rigidbody2D>();
             _animator = GetComponent<Animator>();
-            _playerInput = GetComponent<PlayerInput>();
-
-            if (_playerInput.camera == null)
-                Debug.LogWarning("Set reference for camera in PlayerInput on the current scene");
-        }
-
-        private void Update()
-        {
-            if (_playerInput.camera)
-                _lookInput = _playerInput.camera.ScreenToWorldPoint(Input.mousePosition);
+            _camera = UnityEngine.Camera.main;
+            
+            _input = ScriptableObject.CreateInstance<InputReader>();
+            
+            // Setup inputs
+            _input.MoveEvent += HandleMove;
+            _input.LookMouseEvent += HandleLookMouse;
+            _input.LookGamepadEvent += HandleLookGamepad;
+            _input.FireEvent += HandleFire;
+            _input.ReloadEvent += HandleReload;
+            _input.InteractEvent += HandleInteract;
         }
 
         private void FixedUpdate()
         {
-            _rigidbody.velocity = _movementInput * moveSpeed;
-            _animator.SetBool(IsMoving, _movementInput != Vector2.zero);
+            _rigidbody.velocity = _movementDirection * moveSpeed;
+            _animator.SetBool(IsMoving, _movementDirection != Vector2.zero);
 
-            var lookDirection = _lookInput - _rigidbody.position;
+            var lookDirection = LookPosition - _rigidbody.position;
             var angle = Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg;
             _rigidbody.rotation = angle;
         }
@@ -72,12 +75,23 @@ namespace Character
             _activeInteracts.Remove(interactable);
         }
 
-        private void OnMove(InputValue movementValue)
+        private void HandleMove(Vector2 direction)
         {
-            _movementInput = movementValue.Get<Vector2>();
+            _movementDirection = direction;
         }
 
-        private void OnInteract()
+        private void HandleLookMouse(Vector2 mousePosition)
+        {
+            LookPosition = _camera.ScreenToWorldPoint(mousePosition);
+        }
+
+        private void HandleLookGamepad(Vector2 stickDirection)
+        {
+            var playerPosition = transform.position;
+            LookPosition = playerPosition + new Vector3(stickDirection.x * 10f, stickDirection.y * 10f, playerPosition.z);
+        }
+
+        private void HandleInteract()
         {
             foreach (IInteractable interactable in _activeInteracts)
             {
@@ -85,7 +99,7 @@ namespace Character
             }
         }
 
-        private void OnReload()
+        private void HandleReload()
         {
             currentWeapon.Reload();
 
@@ -97,7 +111,7 @@ namespace Character
             currentWeapon.ReloadEnded();
         }
 
-        private void OnFire()
+        private void HandleFire()
         {
             if (currentWeapon.CanShoot)
             {
