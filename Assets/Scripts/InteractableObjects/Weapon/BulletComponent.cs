@@ -13,9 +13,12 @@ namespace InteractableObjects.Weapon
             rigidBody.velocity = direction * speed;
         }
 
-        private void OnTriggerEnter2D(Collider2D triggeredCollider)
+        private void OnCollisionEnter2D(Collision2D collision)
         {
-            if (triggeredCollider != null) Destroy(gameObject);
+            if (collision != null)
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }
