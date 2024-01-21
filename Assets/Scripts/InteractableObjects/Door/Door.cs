@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace InteractableObjects
 {
-    public class Door : MonoBehaviour, IInteractable
+    public class Door : OutlinedInteractable
     {
         private static readonly int IsOpen = Animator.StringToHash("IsOpen");
 
@@ -14,7 +14,7 @@ namespace InteractableObjects
         private bool _isOpened;
         private float _timeOpened;
 
-        public void Interact(GameObject interacter)
+        public override void Interact(GameObject interacter)
         {
             bool isAI = interacter.GetComponent<Character.IAILogic>() != null;
             if (!isAI || !_isOpened)
@@ -23,8 +23,9 @@ namespace InteractableObjects
             }
         }
 
-        private void Start()
+        protected override void Start()
         {
+            base.Start();
             _isOpened = false;
             _timeOpened = 0.0f;
         }

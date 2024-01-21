@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5144831218820212294}
   - component: {fileID: 7001365983015351665}
   - component: {fileID: 4877283705345596378}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: OnePartDoor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -66,7 +66,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.05}
+  m_Offset: {x: 0, y: -0.054579638}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -77,7 +77,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.16, y: 0.32}
+  m_Size: {x: 0.16, y: 0.033772334}
   m_EdgeRadius: 0
 --- !u!114 &4877283705345596378
 MonoBehaviour:
@@ -91,6 +91,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05a27259e929e10438175711077f2436, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  renderers:
+  - {fileID: 1555453161721737458}
+  outlineMaterial: {fileID: -876546973899608171, guid: 99d021e5d279640b99d7e15991a5b850, type: 3}
   maxTimeOpened: 5
   doorAnimators:
   - {fileID: 1564941452888199730}
@@ -104,7 +107,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2032646956416690735, guid: 4724730f3d370e240a3a50b2a4f8a075, type: 3}
       propertyPath: m_InstanceId
-      value: -38782
+      value: -5816
       objectReference: {fileID: 0}
     - target: {fileID: 5926853170494856753, guid: 4724730f3d370e240a3a50b2a4f8a075, type: 3}
       propertyPath: m_Name
@@ -158,6 +161,11 @@ PrefabInstance:
 --- !u!4 &322344632879735109 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7581742546797900607, guid: 4724730f3d370e240a3a50b2a4f8a075, type: 3}
+  m_PrefabInstance: {fileID: 7876496755906728570}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &1555453161721737458 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 8707961091008291464, guid: 4724730f3d370e240a3a50b2a4f8a075, type: 3}
   m_PrefabInstance: {fileID: 7876496755906728570}
   m_PrefabAsset: {fileID: 0}
 --- !u!95 &1564941452888199730 stripped

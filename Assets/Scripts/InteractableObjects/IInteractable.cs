@@ -6,5 +6,7 @@ namespace InteractableObjects
     {
         // TODO: replace GameObject with some Inventory class
         public void Interact(GameObject character);
+
+        public bool IsSelected { get; set; }
     }
 }

@@ -39,6 +39,18 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Floor
+    uniqueID: 1525480575
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Pickup
+    uniqueID: 1640436939
+    locked: 0
+  - name: Character
+    uniqueID: 1152869165
+    locked: 0
+  - name: Wall
+    uniqueID: 1468494539
     locked: 0
