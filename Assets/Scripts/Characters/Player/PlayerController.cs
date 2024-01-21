@@ -17,6 +17,8 @@ namespace Character
         // Shooting
         public WeaponComponent currentWeapon;
 
+        [SerializeField] LayerMask _wallLayer;
+
         private Rigidbody2D _rigidbody;
         private UnityEngine.Camera _camera;
         private InputReader _input;
@@ -53,6 +55,8 @@ namespace Character
             var lookDirection = LookPosition - _rigidbody.position;
             var angle = Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg;
             _rigidbody.rotation = angle;
+
+            UpdateSelectedInteractable();
         }
 
         private void OnTriggerEnter2D(Collider2D triggeredCollider)
@@ -73,6 +77,8 @@ namespace Character
                 return;
             }
             _activeInteracts.Remove(interactable);
+            interactable.IsSelected = false;
+            UpdateSelectedInteractable();
         }
 
         private void HandleMove(Vector2 direction)
@@ -93,10 +99,8 @@ namespace Character
 
         private void HandleInteract()
         {
-            foreach (IInteractable interactable in _activeInteracts)
-            {
-                interactable.Interact(gameObject);
-            }
+            IInteractable selected = _activeInteracts.Find(interactable => interactable.IsSelected);
+            selected?.Interact(gameObject);
         }
 
         private void HandleReload()
@@ -117,6 +121,49 @@ namespace Character
             {
                 currentWeapon.Shoot();
             }
+        }
+
+        private void UpdateSelectedInteractable()
+        {
+            foreach (IInteractable interactable in _activeInteracts)
+            {
+                interactable.IsSelected = false;
+            }
+            IInteractable selected = GetCurrentInteractable();
+            if (selected != null)
+            {
+                selected.IsSelected = true;
+            }
+        }
+
+        private IInteractable GetCurrentInteractable()
+        {
+            IInteractable selected = null;
+            float closestDist = float.MaxValue;
+
+            foreach (IInteractable interactable in _activeInteracts)
+            {
+                var component = interactable as MonoBehaviour;
+                if (component == null)
+                {
+                    continue;
+                }
+                RaycastHit2D hit = Physics2D.Linecast(transform.position, component.transform.position, _wallLayer);
+                if (hit && hit.collider.gameObject.GetInstanceID() != component.gameObject.GetInstanceID())
+                {
+                    continue;
+                }
+                Vector2 pos = new Vector2(component.transform.position.x, component.transform.position.y);
+                float dist = (LookPosition - pos).magnitude;
+                if (dist < closestDist)
+                {
+                    closestDist = dist;
+                    selected = interactable;
+                }
+
+            }
+
+            return selected;
         }
 
     }
