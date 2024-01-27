@@ -1,7 +1,8 @@
 using System.Collections.Generic;
+using Character;
 using UnityEngine;
 
-namespace Character
+namespace Characters.AI
 {
     public class AIManager : MonoBehaviour
     {
@@ -15,8 +16,7 @@ namespace Character
             _characters = new List<IAILogic>();
             foreach (var script in FindObjectsOfType<MonoBehaviour>())
             {
-                IAILogic character = script as IAILogic;
-                if (character != null)
+                if (script is IAILogic character)
                 {
                     _characters.Add(character);
                 }
@@ -37,8 +37,8 @@ namespace Character
 
         private void UpdateAttackingCharacters()
         {
-            List<IAILogic> attackingCharacters = _characters.FindAll((character) => character.State == AIState.Attacking);
-            List<IAILogic> nonAttackingCharacters = _characters.FindAll((character) => character.State != AIState.Attacking &&
+            List<IAILogic> attackingCharacters = _characters.FindAll(character => character.State == AIState.Attacking);
+            List<IAILogic> nonAttackingCharacters = _characters.FindAll(character => character.State != AIState.Attacking &&
                                                                                        character.HasState(AIState.Attacking));
 
             foreach (IAILogic nonAttacking in nonAttackingCharacters)

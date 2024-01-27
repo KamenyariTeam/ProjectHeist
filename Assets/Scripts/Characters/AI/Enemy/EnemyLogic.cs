@@ -1,12 +1,14 @@
 using System.Collections.Generic;
+using Character;
+using InteractableObjects.Door;
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace Character
+namespace Characters.AI.Enemy
 {
     public class EnemyLogic : MonoBehaviour, IAILogic
     {
-        public static readonly int ReloadAnimaton = Animator.StringToHash("PlayerPlaceholder_HandGun_Reload");
+        public static readonly int ReloadAnimation = Animator.StringToHash("PlayerPlaceholder_HandGun_Reload");
         private static readonly int IsMoving = Animator.StringToHash("isMoving");
 
         [SerializeField] private string playerTag;
@@ -37,10 +39,7 @@ namespace Character
 
         public AIState State
         {
-            get
-            {
-                return _state;
-            }
+            get => _state;
             set
             {
                 if (_state == value)
@@ -79,7 +78,7 @@ namespace Character
             _agent.updateRotation = false;
 
 
-            // enemies check player at different time => should help to avoid freezes when all enemis
+            // enemies check player at different time => should help to avoid freezes when all enemies
             // try to find the player
             _timeTillPlayerDetection = Random.Range(0, playerDetectionInterval);
 
@@ -92,11 +91,13 @@ namespace Character
             var chasingState = new EnemyChasingState(chasingSpeed);
             var searchingState = new EnemySearchingForPlayerState(searchingRotationSpeed, searchingTotalRotation);
 
-            _statesLogic = new Dictionary<AIState, BaseEnemyState>();
-            _statesLogic[AIState.Patrolling] = idleState;
-            _statesLogic[AIState.Attacking] = attackState;
-            _statesLogic[AIState.ChasingPlayer] = chasingState;
-            _statesLogic[AIState.SearchingForPlayer] = searchingState;
+            _statesLogic = new Dictionary<AIState, BaseEnemyState>
+            {
+                [AIState.Patrolling] = idleState,
+                [AIState.Attacking] = attackState,
+                [AIState.ChasingPlayer] = chasingState,
+                [AIState.SearchingForPlayer] = searchingState
+            };
 
             foreach (BaseEnemyState state in _statesLogic.Values)
             {
@@ -130,9 +131,9 @@ namespace Character
             _animator.SetBool(IsMoving, _agent.velocity != Vector3.zero);
         }
 
-        private void OnTriggerEnter2D(Collider2D collider)
+        private void OnTriggerEnter2D(Collider2D triggeredCollider)
         {
-            var interactable = collider.GetComponent<InteractableObjects.IInteractable>();
+            var interactable = triggeredCollider.GetComponent<InteractableObjects.IInteractable>();
             if (interactable == null)
             {
                 return;
@@ -140,9 +141,9 @@ namespace Character
             _activeInteracts.Add(interactable);
         }
 
-        private void OnTriggerExit2D(Collider2D collider)
+        private void OnTriggerExit2D(Collider2D triggeredCollider)
         {
-            var interactable = collider.GetComponent<InteractableObjects.IInteractable>();
+            var interactable = triggeredCollider.GetComponent<InteractableObjects.IInteractable>();
             if (interactable == null)
             {
                 return;
@@ -172,35 +173,36 @@ namespace Character
         {
             foreach (InteractableObjects.IInteractable interactable in _activeInteracts)
             {
-                var door = interactable as InteractableObjects.Door;
-                if (door == null)
+                var door = interactable as Door;
+
+                if (door)
                 {
-                    continue;
+                    Vector3 directionToDoor = (door.transform.position - transform.position).normalized;
+                    var velocity = _agent.velocity;
+                    float dotProduct = directionToDoor.x * velocity.x + directionToDoor.y * velocity.y;
+                    if (dotProduct > 0)
+                    {
+                        door.Interact(gameObject);
+                    }
+                    Debug.Log(dotProduct);
                 }
-                Vector3 directionToDoor = (door.transform.position - transform.position).normalized;
-                float dotProduct = directionToDoor.x * _agent.velocity.x + directionToDoor.y * _agent.velocity.y;
-                if(dotProduct > 0)
-                {
-                    door.Interact(gameObject);
-                }
-                Debug.Log(dotProduct);
-                
             }
         }
 
         private void OnDrawGizmosSelected()
         {
-            Rigidbody2D rigidbody = GetComponent<Rigidbody2D>();
+            var rigidbody = GetComponent<Rigidbody2D>();
+            var position = transform.position;
 
             Gizmos.color = new Color(0, 1, 0, 0.3f);
-            Gizmos.DrawSphere(transform.position, guaranteedDetectDistance);
+            Gizmos.DrawSphere(position, guaranteedDetectDistance);
 
             float originalAngle = rigidbody.rotation;
             int iterations = 10;
             float stepAngles = viewAngle / iterations;
             float angle = originalAngle - 0.5f * viewAngle;
 
-            Vector3 pos = transform.position;
+            Vector3 pos = position;
             for (int i = 0; i <= iterations; i++)
             {
                 float rad = Mathf.Deg2Rad * angle;
@@ -298,7 +300,8 @@ namespace Character
             }
             else
             {
-                float angle = Mathf.Atan2(_agent.velocity.y, _agent.velocity.x) * Mathf.Rad2Deg;
+                var velocity = _agent.velocity;
+                float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
                 _rigidBody.rotation = angle;
             }
 
@@ -345,7 +348,7 @@ namespace Character
                     if (_weapon.CurrentAmmo == 0)
                     {
                         _weapon.Reload();
-                        _animator.Play(EnemyLogic.ReloadAnimaton);
+                        _animator.Play(EnemyLogic.ReloadAnimation);
                     }
                     else if (_weapon.CanShoot)
                     {
@@ -366,7 +369,7 @@ namespace Character
 
     class EnemyChasingState : BaseEnemyState
     {
-        private static float MaxTimeInState = 10.0f;
+        private const float MaxTimeInState = 10.0f;
 
         private float _speed;
 

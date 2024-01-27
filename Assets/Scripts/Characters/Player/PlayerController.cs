@@ -1,10 +1,12 @@
+using System;
 using System.Collections.Generic;
+using Character;
 using InteractableObjects;
 using SaveSystem;
 using UnityEngine;
-using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
-namespace Character
+namespace Characters.Player
 {
     public class PlayerController : MonoBehaviour, ISavableComponent
     {
@@ -16,18 +18,19 @@ namespace Character
         public WeaponComponent currentWeapon;
         public GameObject currentTool;
 
-        [SerializeField] LayerMask _wallLayer;
+        [FormerlySerializedAs("_wallLayer")] [SerializeField] private LayerMask wallLayer;
 
         private Rigidbody2D _rigidbody;
         private UnityEngine.Camera _camera;
         private InputReader _input;
         private Vector2 _movementDirection;
+        private Vector2 _lookPosition;
         private readonly List<IInteractable> _activeInteracts = new();
 
         // Animation
         private Animator _animator;
-        
-        public Vector2 LookPosition { get; private set; }
+
+        public Vector2 LookPosition => _lookPosition;
 
         [SerializeField] private int _uniqueID;
         [SerializeField] private int _executionOrder;
@@ -58,12 +61,16 @@ namespace Character
             
             // Setup inputs
             _input.MoveEvent += HandleMove;
-            _input.LookMouseEvent += HandleLookMouse;
-            _input.LookGamepadEvent += HandleLookGamepad;
             _input.FireEvent += HandleFire;
             _input.ReloadEvent += HandleReload;
             _input.InteractEvent += HandleInteract;
             _input.UseEvent += HandleUse;
+        }
+
+        private void Update()
+        {
+            if (_camera)
+                _lookPosition = _camera.ScreenToWorldPoint(Input.mousePosition);
         }
 
         private void FixedUpdate()
@@ -71,7 +78,7 @@ namespace Character
             _rigidbody.velocity = _movementDirection * moveSpeed;
             _animator.SetBool(IsMoving, _movementDirection != Vector2.zero);
 
-            var lookDirection = LookPosition - _rigidbody.position;
+            var lookDirection = _lookPosition - _rigidbody.position;
             var angle = Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg;
             _rigidbody.rotation = angle;
 
@@ -103,17 +110,6 @@ namespace Character
         private void HandleMove(Vector2 direction)
         {
             _movementDirection = direction;
-        }
-
-        private void HandleLookMouse(Vector2 mousePosition)
-        {
-            LookPosition = _camera.ScreenToWorldPoint(mousePosition);
-        }
-
-        private void HandleLookGamepad(Vector2 stickDirection)
-        {
-            var playerPosition = transform.position;
-            LookPosition = playerPosition + new Vector3(stickDirection.x * 10f, stickDirection.y * 10f, playerPosition.z);
         }
 
         private void HandleInteract()
@@ -173,13 +169,15 @@ namespace Character
                 {
                     continue;
                 }
-                RaycastHit2D hit = Physics2D.Linecast(transform.position, component.transform.position, _wallLayer);
+                RaycastHit2D hit = Physics2D.Linecast(transform.position, component.transform.position, wallLayer);
                 if (hit && hit.collider.gameObject.GetInstanceID() != component.gameObject.GetInstanceID())
                 {
                     continue;
                 }
-                Vector2 pos = new Vector2(component.transform.position.x, component.transform.position.y);
-                float dist = (LookPosition - pos).magnitude;
+
+                var componentPosition3d = component.transform.position;
+                Vector2 componentPosition2d = new Vector2(componentPosition3d.x, componentPosition3d.y);
+                float dist = (_lookPosition - componentPosition2d).magnitude;
                 if (dist < closestDist)
                 {
                     closestDist = dist;

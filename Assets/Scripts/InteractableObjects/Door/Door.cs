@@ -1,7 +1,8 @@
 using System.Collections.Generic;
+using Characters.AI;
 using UnityEngine;
 
-namespace InteractableObjects
+namespace InteractableObjects.Door
 {
     public class Door : OutlinedInteractable
     {
@@ -16,7 +17,7 @@ namespace InteractableObjects
 
         public override void Interact(GameObject interacter)
         {
-            bool isAI = interacter.GetComponent<Character.IAILogic>() != null;
+            bool isAI = interacter.GetComponent<IAILogic>() != null;
             if (!isAI || !_isOpened)
             {
                 ChangeState();

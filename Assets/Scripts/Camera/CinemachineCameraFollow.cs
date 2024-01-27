@@ -1,5 +1,6 @@
 using System;
 using Character;
+using Characters.Player;
 using Cinemachine;
 using UnityEngine;
 

@@ -2,7 +2,7 @@ using SaveSystem;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Character
+namespace Characters.Player
 {
     public class HealthComponent : MonoBehaviour, ISavableComponent
     {

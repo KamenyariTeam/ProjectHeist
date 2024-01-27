@@ -1,4 +1,4 @@
-using Character;
+using Characters.Player;
 using UnityEngine;
 
 namespace GameControllers
