@@ -42,6 +42,7 @@ namespace Character
         public event Action ReloadEvent;
 
         public event Action InteractEvent;
+        public event Action UseEvent;
         
         public event Action PauseEvent;
 
@@ -75,6 +76,12 @@ namespace Character
         {
             if (context.performed)
                 InteractEvent?.Invoke();
+        }
+
+        public void OnUse(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+                UseEvent?.Invoke();
         }
 
         public void OnReload(InputAction.CallbackContext context)
