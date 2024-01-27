@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5144831218820212294}
   - component: {fileID: 7001365983015351665}
   - component: {fileID: 4877283705345596378}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: OnePartDoor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -107,7 +107,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2032646956416690735, guid: 4724730f3d370e240a3a50b2a4f8a075, type: 3}
       propertyPath: m_InstanceId
-      value: -5816
+      value: -35166
       objectReference: {fileID: 0}
     - target: {fileID: 5926853170494856753, guid: 4724730f3d370e240a3a50b2a4f8a075, type: 3}
       propertyPath: m_Name

@@ -42,6 +42,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Use",
+                    "type": "Button",
+                    "id": "d1f3a515-123e-4a1a-8314-1151118dcb40",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Reload",
                     "type": "Button",
                     "id": "162c6a65-7b6d-4bda-b77d-8986043f7bda",
@@ -296,6 +305,17 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "LoadGame",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d1e8836c-1c68-454a-9c1d-2649f9ff8c02",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Use",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

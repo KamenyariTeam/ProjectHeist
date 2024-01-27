@@ -33,9 +33,12 @@ half4 CombinedShapeLightShared(half4 color, half4 mask, half2 lightingUV, half2 
         float4 processedMask = (1 - _ShapeLightInvertedFilter1) * mask + _ShapeLightInvertedFilter1 * (1 - mask);
         visionMask *= dot(processedMask, _ShapeLightMaskFilter1);
     }
-    visionMask = 1 - min(visionMask, 1);
+    if (any(visionMask.rgb))
+    {
+        visionMask = 1;
+    }
 #else
-    half4 visionMask = 1;
+    half4 visionMask = 0;
 #endif
 
 #if USE_SHAPE_LIGHT_TYPE_3
@@ -62,7 +65,7 @@ half4 CombinedShapeLightShared(half4 color, half4 mask, half2 lightingUV, half2 
     half4 finalAdditve = shapeLight0Additive + shapeLight3Additive;
     finalOutput = _HDREmulationScale * (color * finalModulate + finalAdditve);
 #endif
-    finalOutput.a = color.a * visionMask;
+    finalOutput.a = color.a * (1 - visionMask);
     
     finalOutput = finalOutput * _UseSceneLighting + (1 - _UseSceneLighting) * color;
     

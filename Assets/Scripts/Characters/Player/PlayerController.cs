@@ -14,6 +14,7 @@ namespace Character
 
         // Shooting
         public WeaponComponent currentWeapon;
+        public GameObject currentTool;
 
         [SerializeField] LayerMask _wallLayer;
 
@@ -62,6 +63,7 @@ namespace Character
             _input.FireEvent += HandleFire;
             _input.ReloadEvent += HandleReload;
             _input.InteractEvent += HandleInteract;
+            _input.UseEvent += HandleUse;
         }
 
         private void FixedUpdate()
@@ -118,6 +120,12 @@ namespace Character
         {
             IInteractable selected = _activeInteracts.Find(interactable => interactable.IsSelected);
             selected?.Interact(gameObject);
+        }
+
+        private void HandleUse()
+        {
+            var tool = currentTool?.GetComponent<Tools.ITool>();
+            tool?.UseTool(gameObject);
         }
 
         private void HandleReload()
