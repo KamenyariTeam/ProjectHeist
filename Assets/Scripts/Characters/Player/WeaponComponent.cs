@@ -1,10 +1,12 @@
 using InteractableObjects.Weapon;
+using SaveSystem;
+using System.Xml;
 using UnityEngine;
 using UnityEngine.Serialization;
 
 namespace Character
 {
-    public class WeaponComponent : MonoBehaviour
+    public class WeaponComponent : MonoBehaviour, ISavableComponent
     {
         public float damage = 1f;
         public float maxAmmo = 7f;
@@ -15,7 +17,10 @@ namespace Character
         public GameObject bulletPrefab;
         public GameObject flashPrefab;
 
-        private float _currentAmmo = 7f;
+        [SerializeField] private int _uniqueID;
+        [SerializeField] private int _executionOrder;
+
+        [SerializeField] private float _currentAmmo = 7f;
         private float _timeSinceLastShot;
 
         private void Start()
@@ -48,6 +53,21 @@ namespace Character
 
         public bool CanShoot { get; private set; }
 
+        public int uniqueID
+        {
+            get
+            {
+                return _uniqueID;
+            }
+        }
+        public int executionOrder
+        {
+            get
+            {
+                return _executionOrder;
+            }
+        }
+
         public void Shoot()
         {
             if (CanShoot && _currentAmmo > 0)
@@ -77,6 +97,22 @@ namespace Character
         public void ReloadEnded()
         {
             CanShoot = true;
+        }
+
+        public ComponentData Serialize()
+        {
+            ExtendedComponentData data = new ExtendedComponentData();
+
+            data.SetFloat("currentAmmo", _currentAmmo);
+
+            return data;
+        }
+
+        public void Deserialize(ComponentData data)
+        {
+            ExtendedComponentData unpacked = (ExtendedComponentData)data;
+
+            _currentAmmo = unpacked.GetFloat("currentAmmo");
         }
     }
 }

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4278207396454064746}
   - component: {fileID: 1594219292782294120}
   - component: {fileID: 6936516215869096738}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: TwoPartsDoor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -110,7 +110,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2032646956416690735, guid: 4724730f3d370e240a3a50b2a4f8a075, type: 3}
       propertyPath: m_InstanceId
-      value: -14330
+      value: -35700
       objectReference: {fileID: 0}
     - target: {fileID: 5926853170494856753, guid: 4724730f3d370e240a3a50b2a4f8a075, type: 3}
       propertyPath: m_Name
@@ -194,7 +194,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1639283175383695764, guid: 9f282b39c846a3048bdbd973f50d29dd, type: 3}
       propertyPath: m_InstanceId
-      value: -14312
+      value: -35682
       objectReference: {fileID: 0}
     - target: {fileID: 5832836676530816454, guid: 9f282b39c846a3048bdbd973f50d29dd, type: 3}
       propertyPath: m_LocalPosition.x

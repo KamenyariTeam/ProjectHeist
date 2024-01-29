@@ -42,9 +42,13 @@ namespace Character
         public event Action ReloadEvent;
 
         public event Action InteractEvent;
+        public event Action UseEvent;
         
         public event Action PauseEvent;
-        
+
+        public event Action SaveGameEvent;
+        public event Action LoadGameEvent;
+
         // UI events
         public event Action ResumeEvent;
         public event Action AcceptEvent;
@@ -74,6 +78,12 @@ namespace Character
                 InteractEvent?.Invoke();
         }
 
+        public void OnUse(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+                UseEvent?.Invoke();
+        }
+
         public void OnReload(InputAction.CallbackContext context)
         {
             if (context.performed)
@@ -86,6 +96,22 @@ namespace Character
             {
                 PauseEvent?.Invoke();
                 SetUI();
+            }
+        }
+
+        public void OnSaveGame(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                SaveGameEvent?.Invoke();
+            }
+        }
+
+        public void OnLoadGame(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                LoadGameEvent?.Invoke();
             }
         }
 

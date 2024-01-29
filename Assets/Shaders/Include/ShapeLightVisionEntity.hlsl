@@ -33,7 +33,10 @@ half4 CombinedShapeLightShared(half4 color, half4 mask, half2 lightingUV, half2 
         float4 processedMask = (1 - _ShapeLightInvertedFilter1) * mask + _ShapeLightInvertedFilter1 * (1 - mask);
         visionMask *= dot(processedMask, _ShapeLightMaskFilter1);
     }
-    visionMask = min(visionMask, 1);
+    if (any(visionMask.rgb))
+    {
+        visionMask = 1;
+    }
 #else
     half4 visionMask = 0;
 #endif

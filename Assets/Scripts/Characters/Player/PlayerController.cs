@@ -1,21 +1,20 @@
 using System.Collections.Generic;
 using InteractableObjects;
+using SaveSystem;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Character
 {
-    public class PlayerController : MonoBehaviour
+    public class PlayerController : MonoBehaviour, ISavableComponent
     {
         private static readonly int IsMoving = Animator.StringToHash("isMoving");
 
         public float moveSpeed = 1f;
 
-        // Pick up subsystem
-        public BoxCollider2D interactBoxCollider;
-
         // Shooting
         public WeaponComponent currentWeapon;
+        public GameObject currentTool;
 
         [SerializeField] LayerMask _wallLayer;
 
@@ -29,6 +28,25 @@ namespace Character
         private Animator _animator;
         
         public Vector2 LookPosition { get; private set; }
+
+        [SerializeField] private int _uniqueID;
+        [SerializeField] private int _executionOrder;
+
+        public int uniqueID
+        {
+            get
+            {
+                return _uniqueID;
+            }
+        }
+
+        public int executionOrder
+        {
+            get
+            {
+                return _executionOrder;
+            }
+        }
 
         private void Start()
         {
@@ -45,6 +63,7 @@ namespace Character
             _input.FireEvent += HandleFire;
             _input.ReloadEvent += HandleReload;
             _input.InteractEvent += HandleInteract;
+            _input.UseEvent += HandleUse;
         }
 
         private void FixedUpdate()
@@ -101,6 +120,12 @@ namespace Character
         {
             IInteractable selected = _activeInteracts.Find(interactable => interactable.IsSelected);
             selected?.Interact(gameObject);
+        }
+
+        private void HandleUse()
+        {
+            var tool = currentTool?.GetComponent<Tools.ITool>();
+            tool?.UseTool(gameObject);
         }
 
         private void HandleReload()
@@ -166,5 +191,20 @@ namespace Character
             return selected;
         }
 
+        public ComponentData Serialize()
+        {
+            ExtendedComponentData data = new ExtendedComponentData();
+
+            data.SetTransform("transform", transform);
+
+            return data;
+        }
+
+        public void Deserialize(ComponentData data)
+        {
+            ExtendedComponentData unpacked = (ExtendedComponentData)data;
+
+            unpacked.GetTransform("transform", transform);
+        }
     }
 }

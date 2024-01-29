@@ -16,6 +16,8 @@ GameObject:
   - component: {fileID: 2831404639852634170}
   - component: {fileID: 4713633352631910244}
   - component: {fileID: 8530682321320993503}
+  - component: {fileID: 1741643135376574860}
+  - component: {fileID: 1032356728065387743}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -103,11 +105,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 1
-  interactBoxCollider: {fileID: 0}
-  currentWeapon: {fileID: 0}
+  currentWeapon: {fileID: 1741643135376574860}
+  currentTool: {fileID: 6685619728529087177, guid: e24ee1ba5b32a43d7aa467dda042e29e, type: 3}
   _wallLayer:
     serializedVersion: 2
     m_Bits: 64
+  _uniqueID: 0
+  _executionOrder: 0
 --- !u!50 &879737215763683402
 Rigidbody2D:
   serializedVersion: 4
@@ -184,7 +188,7 @@ CapsuleCollider2D:
     m_Bits: 4294967295
   m_CallbackLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 119
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -276,3 +280,45 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 3
+--- !u!114 &1741643135376574860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1189712299164168322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de7a1c7a424036f4e8f58327b9edca14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 1
+  maxAmmo: 7
+  angleInaccuracy: 5
+  shotCooldown: 1
+  firePoint: {fileID: 0}
+  bulletPrefab: {fileID: 1291077028596044639, guid: efa31b17a0ede034fb6b34c9707e9e42, type: 3}
+  flashPrefab: {fileID: 6387391009917682901, guid: 5555927b07d7c714fbaf022bf34f7c4a, type: 3}
+  _uniqueID: 1
+  _executionOrder: 0
+  _currentAmmo: 7
+--- !u!114 &1032356728065387743
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1189712299164168322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 058b132acf0eaa144801397fbf590051, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  maxArmor: 100
+  regenerationSpeed: 1
+  regenerationRate: 1
+  _currentHealth: 100
+  _currentArmor: 0
+  _uniqueID: 2
+  _executionOrder: 0
