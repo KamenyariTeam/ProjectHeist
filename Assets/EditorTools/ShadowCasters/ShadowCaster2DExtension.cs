@@ -13,6 +13,7 @@
 
 using System.Collections.Generic;
 using System.Reflection;
+using UnityEditor;
 using UnityEngine;
 
 
@@ -64,27 +65,33 @@ public class ShadowCaster2DGenerator
 {
 
 #if UNITY_EDITOR
- 
-    [UnityEditor.MenuItem("Generate Shadow Casters", menuItem = "Tools/Generate Shadow Casters")]
-    public static void GenerateShadowCasters()
-    {
-        PolygonCollider2D[] colliders = GameObject.FindObjectsOfType<PolygonCollider2D>();
- 
-        for(int i = 0; i < colliders.Length; ++i)
-        {
-            GenerateTilemapShadowCastersInEditor(colliders[i], false);
-        }
-    }
- 
-    [UnityEditor.MenuItem("Generate Shadow Casters (Self Shadows)", menuItem = "Tools/Generate Shadow Casters (Self Shadows)")]
+
+    // Add menu item
+    [UnityEditor.MenuItem("GenerateShadowCastersSelf", menuItem = "Tools/Generate Shadow Caster/Self Shadows")]
     public static void GenerateShadowCastersSelfShadows()
     {
-        PolygonCollider2D[] colliders = GameObject.FindObjectsOfType<PolygonCollider2D>();
- 
-        for (int i = 0; i < colliders.Length; ++i)
+        GenerateShadowCasters(Selection.gameObjects, true);
+    }
+
+    [UnityEditor.MenuItem("GenerateShadowCasters", menuItem = "Tools/Generate Shadow Caster/Regular")]
+    public static void GenerateShadowCasters()
+    {
+        GenerateShadowCasters(Selection.gameObjects, false);
+    }
+
+    public static void GenerateShadowCasters(GameObject[] objects, bool selfShadows)
+    {
+        int totalGenerated = 0;
+        foreach (GameObject obj in objects)
         {
-            GenerateTilemapShadowCastersInEditor(colliders[i], true);
+            var colliders = obj.GetComponentsInChildren<PolygonCollider2D>();
+            foreach (PolygonCollider2D collider in colliders)
+            {
+                GenerateTilemapShadowCastersInEditor(collider, selfShadows);
+                totalGenerated++;
+            }
         }
+        Debug.Log($"Generated shadow casters for {totalGenerated} objects");
     }
  
     /// <summary>
