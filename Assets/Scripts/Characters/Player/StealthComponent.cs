@@ -1,42 +1,81 @@
+using Map;
 using UnityEngine;
 
 namespace Characters.Player
 {
     public class StealthComponent : MonoBehaviour
     {
-        [SerializeField]
-        private const int AcceptableNoticeability = 20;
-        
-        public bool IsNoticeable => IsInRestrictedArea || Noticeability > AcceptableNoticeability;
-        public bool IsInRestrictedArea { get; private set; }
-        public int Noticeability { get; set; }
-        
-        private Rigidbody2D _rigidbody;
+        [SerializeField] private int acceptableNoticeability = 20;
+        public int noticeability;
 
-        // Start is called before the first frame update
-        void Start()
+        private MapArea _currentMapArea;
+        private MapArea _nextMapArea;
+
+        public bool IsNoticeable => IsInRestrictedArea() || noticeability > acceptableNoticeability;
+
+        private bool IsInRestrictedArea()
         {
-            _rigidbody = GetComponent<Rigidbody2D>();
+           return _currentMapArea != null && _currentMapArea.IsRestricted;
         }
 
-        void OnTriggerEnter2D(Collider2D other)
+        private void OnTriggerEnter2D(Collider2D other)
         {
-            if (other.gameObject.CompareTag("RestrictedArea"))
+            if (other.CompareTag("MapArea"))
             {
-                IsInRestrictedArea = true;
-                Debug.Log("Entered restricted area");
-                // Display notification about entering a restricted area
+                MapArea newMapArea = other.GetComponent<MapArea>();
+
+                if(_currentMapArea == null)
+                {
+                    EnterArea(newMapArea);
+                }
+                else
+                {
+                    _nextMapArea = newMapArea;
+                }
             }
         }
 
-        void OnTriggerExit2D(Collider2D other)
+        private void OnTriggerExit2D(Collider2D other)
         {
-            if (other.gameObject.CompareTag("RestrictedArea"))
+            if (other.CompareTag("MapArea"))
             {
-                IsInRestrictedArea = false;
-                Debug.Log("Left restricted area");
-                // Remove the notification
+                MapArea exitingMapArea = other.GetComponent<MapArea>();
+
+                if(exitingMapArea == _currentMapArea)
+                {
+                    HandleCurrentAreaExit();
+                }
+                else if (exitingMapArea == _nextMapArea)
+                {
+                    HandleNextAreaExit();
+                }
             }
+        }
+
+        private void EnterArea(MapArea mapArea)
+        {
+            Debug.Log($"Enter {mapArea.AreaName}. Area restricted: {mapArea.IsRestricted}");
+            _currentMapArea = mapArea;
+            _nextMapArea = null;
+        }
+
+        private void HandleCurrentAreaExit()
+        {
+            if (_nextMapArea != null)
+            {
+                EnterArea(_nextMapArea);
+            }
+            else
+            {
+                Debug.Log($"You left {_currentMapArea.AreaName}");
+                _currentMapArea = null;
+            }
+        }
+        
+        private void HandleNextAreaExit()
+        {
+            Debug.Log($"You didn't entered {_nextMapArea.AreaName}");
+            _nextMapArea = null;
         }
     }
 }

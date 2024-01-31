@@ -13,50 +13,50 @@ namespace GameControllers
 
         private void Start()
         {
-            OnApplicationFocus(true);
-            
+            InitializeInput();
+            UpdatePauseState(false);
+        }
+
+        private void InitializeInput()
+        {
             _input = ScriptableObject.CreateInstance<InputReader>();
-            
-            // Setup inputs
             _input.PauseEvent += HandlePause;
             _input.ResumeEvent += HandlePause;
         }
 
         private void HandlePause()
         {
-            OnApplicationPause(!_isPaused);
+            UpdatePauseState(!_isPaused);
         }
 
-        private void OnApplicationPause(bool pauseStatus)
+        private void UpdatePauseState(bool pauseStatus)
         {
             _isPaused = pauseStatus;
-            if (pauseStatus)
+            Time.timeScale = pauseStatus ? 0f : 1f;
+            UpdateCursor(pauseStatus);
+        }
+
+        private void UpdateCursor(bool isPaused)
+        {
+            if (isPaused)
             {
-                Time.timeScale = 0f;
-                SetMenuCursor();
+                SetCursor(menuCursor, CursorLockMode.None);
             }
             else
             {
-                Time.timeScale = 1f;
-                SetCrosshairCursor();
+                SetCursor(crosshairCursor, CursorLockMode.Confined);
             }
+        }
+
+        private void SetCursor(Texture2D cursorTexture, CursorLockMode lockMode)
+        {
+            Cursor.SetCursor(cursorTexture, Vector2.zero, CursorMode.Auto);
+            Cursor.lockState = lockMode;
         }
 
         private void OnApplicationFocus(bool hasFocus)
         {
-            OnApplicationPause(!hasFocus);
-        }
-
-        private void SetCrosshairCursor()
-        {
-            Cursor.SetCursor(crosshairCursor, Vector2.zero, CursorMode.Auto);
-            Cursor.lockState = CursorLockMode.Confined;
-        }
-
-        private void SetMenuCursor()
-        {
-            Cursor.SetCursor(menuCursor, Vector2.zero, CursorMode.Auto);
-            Cursor.lockState = CursorLockMode.None;
+            UpdatePauseState(!hasFocus);
         }
     }
 }

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Tools
+namespace Tools.Scanner
 {
     public class ScannerTool : MonoBehaviour, ITool
     {
@@ -12,14 +12,16 @@ namespace Tools
 
         public bool UseTool(GameObject player)
         {
-            var playerController = player.GetComponent<Character.PlayerController>();
+            var playerController = player.GetComponent<Characters.Player.PlayerController>();
             if (playerController == null)
             {
                 return false;
             }
-            Vector2 position = new Vector2(player.transform.position.x, player.transform.position.y);
-            Vector2 direction = (playerController.LookPosition - position).normalized;
-            RaycastHit2D hit = Physics2D.Raycast(position, direction, maxUsageDistance, wallMask);
+
+            var playerPosition3d = player.transform.position;
+            Vector2 playerPosition2d = new Vector2(playerPosition3d.x, playerPosition3d.y);
+            Vector2 direction = (playerController.LookPosition - playerPosition2d).normalized;
+            RaycastHit2D hit = Physics2D.Raycast(playerPosition2d, direction, maxUsageDistance, wallMask);
             if (!hit)
             {
                 return false;

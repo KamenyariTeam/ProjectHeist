@@ -18,7 +18,7 @@ namespace Characters.Player
 
         private float _currentHealthRegenerationTime;
 
-        public int uniqueID
+        public int UniqueID
         {
             get
             {
@@ -26,7 +26,7 @@ namespace Characters.Player
             }
         }
 
-        public int executionOrder
+        public int ExecutionOrder
         {
             get
             {

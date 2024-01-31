@@ -1,10 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace InteractableObjects
 {
-
     public abstract class OutlinedInteractable : MonoBehaviour, IInteractable
     {
         [SerializeField] private SpriteRenderer[] renderers;
@@ -15,31 +12,13 @@ namespace InteractableObjects
 
         public bool IsSelected
         {
-            get
-            {
-                return _isSelected;
-            }
+            get => _isSelected;
             set
             {
-                if (value == _isSelected)
+                if (value != _isSelected)
                 {
-                    return;
-                }
-
-                _isSelected = value;
-                if (_isSelected)
-                {
-                    foreach (SpriteRenderer renderer in renderers)
-                    {
-                        renderer.material = outlineMaterial;
-                    }
-                }
-                else
-                {
-                    for (int i = 0; i < renderers.Length; i++)
-                    {
-                        renderers[i].material = _originalMaterials[i];
-                    }
+                    _isSelected = value;
+                    UpdateMaterials();
                 }
             }
         }
@@ -48,13 +27,44 @@ namespace InteractableObjects
 
         protected virtual void Start()
         {
+            CacheOriginalMaterials();
+        }
+
+        private void CacheOriginalMaterials()
+        {
             _originalMaterials = new Material[renderers.Length];
-            for (int i = 0; i < renderers.Length; i++)
+            for (var i = 0; i < renderers.Length; i++)
             {
                 _originalMaterials[i] = renderers[i].material;
             }
-            _isSelected = false;
         }
 
+        private void UpdateMaterials()
+        {
+            if (_isSelected)
+            {
+                ApplyOutlineMaterial();
+            }
+            else
+            {
+                RestoreOriginalMaterials();
+            }
+        }
+
+        private void ApplyOutlineMaterial()
+        {
+            foreach (var spriteRender in renderers)
+            {
+                spriteRender.material = outlineMaterial;
+            }
+        }
+
+        private void RestoreOriginalMaterials()
+        {
+            for (var i = 0; i < renderers.Length; i++)
+            {
+                renderers[i].material = _originalMaterials[i];
+            }
+        }
     }
 }

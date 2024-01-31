@@ -1,65 +1,60 @@
-using System;
 using System.Collections.Generic;
-using Character;
 using InteractableObjects;
 using SaveSystem;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Characters.Player
 {
     public class PlayerController : MonoBehaviour, ISavableComponent
     {
+        // Animation
         private static readonly int IsMoving = Animator.StringToHash("isMoving");
+        private static readonly string ReloadAnimationName = "PlayerPlaceholder_HandGun_Reload";
+        private Animator _animator;
 
+        // Movement
         public float moveSpeed = 1f;
+        private Rigidbody2D _rigidbody;
+        private Vector2 _movementDirection;
 
-        // Shooting
+        // Look and Aim
+        private UnityEngine.Camera _camera;
+        private Vector2 _lookPosition;
+        public Vector2 LookPosition => _lookPosition;
+
+        // Interactable Handling
+        [SerializeField] private LayerMask wallLayer;
+        private readonly List<IInteractable> _activeInteracts = new();
+
+        // Weapon and Tool Handling
         public WeaponComponent currentWeapon;
         public GameObject currentTool;
 
-        [FormerlySerializedAs("_wallLayer")] [SerializeField] private LayerMask wallLayer;
-
-        private Rigidbody2D _rigidbody;
-        private UnityEngine.Camera _camera;
+        // Input Handling
         private InputReader _input;
-        private Vector2 _movementDirection;
-        private Vector2 _lookPosition;
-        private readonly List<IInteractable> _activeInteracts = new();
 
-        // Animation
-        private Animator _animator;
-
-        public Vector2 LookPosition => _lookPosition;
-
-        [SerializeField] private int _uniqueID;
-        [SerializeField] private int _executionOrder;
-
-        public int uniqueID
-        {
-            get
-            {
-                return _uniqueID;
-            }
-        }
-
-        public int executionOrder
-        {
-            get
-            {
-                return _executionOrder;
-            }
-        }
+        // Save System
+        [SerializeField] private int uniqueID;
+        [SerializeField] private int executionOrder;
+        public int UniqueID => uniqueID;
+        public int ExecutionOrder => executionOrder;
 
         private void Start()
+        {
+            InitializeComponents();
+            SetupInputHandlers();
+        }
+
+        private void InitializeComponents()
         {
             _rigidbody = GetComponent<Rigidbody2D>();
             _animator = GetComponent<Animator>();
             _camera = UnityEngine.Camera.main;
-            
+        }
+
+        private void SetupInputHandlers()
+        {
             _input = ScriptableObject.CreateInstance<InputReader>();
-            
-            // Setup inputs
             _input.MoveEvent += HandleMove;
             _input.FireEvent += HandleFire;
             _input.ReloadEvent += HandleReload;
@@ -70,19 +65,34 @@ namespace Characters.Player
         private void Update()
         {
             if (_camera)
-                _lookPosition = _camera.ScreenToWorldPoint(Input.mousePosition);
+            {
+                UpdateLookPosition();
+            }
         }
 
         private void FixedUpdate()
         {
+            UpdateMovement();
+            UpdateRotation();
+            UpdateSelectedInteractable();
+        }
+
+        private void UpdateLookPosition()
+        {
+            _lookPosition = _camera.ScreenToWorldPoint(Input.mousePosition);
+        }
+
+        private void UpdateMovement()
+        {
             _rigidbody.velocity = _movementDirection * moveSpeed;
             _animator.SetBool(IsMoving, _movementDirection != Vector2.zero);
+        }
 
+        private void UpdateRotation()
+        {
             var lookDirection = _lookPosition - _rigidbody.position;
             var angle = Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg;
             _rigidbody.rotation = angle;
-
-            UpdateSelectedInteractable();
         }
 
         private void OnTriggerEnter2D(Collider2D triggeredCollider)
@@ -120,15 +130,18 @@ namespace Characters.Player
 
         private void HandleUse()
         {
-            var tool = currentTool?.GetComponent<Tools.ITool>();
-            tool?.UseTool(gameObject);
+            if (currentTool)
+            {
+                var tool = currentTool.GetComponent<Tools.ITool>();
+                tool?.UseTool(gameObject);
+            }
         }
 
         private void HandleReload()
         {
             currentWeapon.Reload();
 
-            _animator.Play("PlayerPlaceholder_HandGun_Reload");
+            _animator.Play(ReloadAnimationName);
         }
 
         private void OnReloadEnd()
@@ -150,59 +163,57 @@ namespace Characters.Player
             {
                 interactable.IsSelected = false;
             }
-            IInteractable selected = GetCurrentInteractable();
-            if (selected != null)
+
+            var selectedInteractable = GetCurrentInteractable();
+            if (selectedInteractable != null)
             {
-                selected.IsSelected = true;
+                selectedInteractable.IsSelected = true;
             }
         }
 
         private IInteractable GetCurrentInteractable()
         {
-            IInteractable selected = null;
+            IInteractable closestInteractable = null;
             float closestDist = float.MaxValue;
 
             foreach (IInteractable interactable in _activeInteracts)
             {
-                var component = interactable as MonoBehaviour;
-                if (component == null)
+                if (interactable is MonoBehaviour component)
                 {
-                    continue;
+                    if (IsComponentVisible(component))
+                    {
+                        float dist = Vector2.Distance(_lookPosition, component.transform.position);
+                        if (dist < closestDist)
+                        {
+                            closestDist = dist;
+                            closestInteractable = interactable;
+                        }
+                    }
                 }
-                RaycastHit2D hit = Physics2D.Linecast(transform.position, component.transform.position, wallLayer);
-                if (hit && hit.collider.gameObject.GetInstanceID() != component.gameObject.GetInstanceID())
-                {
-                    continue;
-                }
-
-                var componentPosition3d = component.transform.position;
-                Vector2 componentPosition2d = new Vector2(componentPosition3d.x, componentPosition3d.y);
-                float dist = (_lookPosition - componentPosition2d).magnitude;
-                if (dist < closestDist)
-                {
-                    closestDist = dist;
-                    selected = interactable;
-                }
-
             }
 
-            return selected;
+            return closestInteractable;
+        }
+
+        private bool IsComponentVisible(MonoBehaviour component)
+        {
+            RaycastHit2D hit = Physics2D.Linecast(transform.position, component.transform.position, wallLayer);
+            return !hit || hit.collider.gameObject.GetInstanceID() == component.gameObject.GetInstanceID();
         }
 
         public ComponentData Serialize()
         {
-            ExtendedComponentData data = new ExtendedComponentData();
-
+            var data = new ExtendedComponentData();
             data.SetTransform("transform", transform);
-
             return data;
         }
 
         public void Deserialize(ComponentData data)
         {
-            ExtendedComponentData unpacked = (ExtendedComponentData)data;
-
-            unpacked.GetTransform("transform", transform);
+            if (data is ExtendedComponentData unpacked)
+            {
+                unpacked.GetTransform("transform", transform);
+            }
         }
     }
 }

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace InteractableObjects
+namespace InteractableObjects.Pickups
 {
     public class Pickup : OutlinedInteractable
     {

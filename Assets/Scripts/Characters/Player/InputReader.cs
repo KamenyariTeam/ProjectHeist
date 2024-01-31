@@ -21,13 +21,13 @@ namespace Characters.Player
             }
         }
 
-        public void SetGameplay()
+        private void SetGameplay()
         {
             _gameInput.Gameplay.Enable();
             _gameInput.UI.Disable();
         }
 
-        public void SetUI()
+        private void SetUI()
         {
             _gameInput.Gameplay.Disable();
             _gameInput.UI.Enable();

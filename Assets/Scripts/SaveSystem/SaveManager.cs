@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Characters.Player;
 using UnityEngine;
-using Character;
-using UnityEngine.Windows;
-using static UnityEditor.Progress;
-using InteractableObjects;
 
 namespace SaveSystem
 {
@@ -14,102 +11,104 @@ namespace SaveSystem
     {
         private InputReader _input;
 
-        protected ISavableComponent[] GetOrderedSavableComponents()
-        {
-            MonoBehaviour[] Components = GameObject.FindObjectsOfType<MonoBehaviour>();
-
-            return Components
-                .Where(c => c is ISavableComponent)
-                .Select(c => (ISavableComponent)c)
-                .OrderBy(c => c.executionOrder)
-                .ToArray(); 
-        }
-
         private void Start()
         {
-            _input = ScriptableObject.CreateInstance<InputReader>();
+            InitializeInput();
+        }
 
-            // Setup inputs
+        private void InitializeInput()
+        {
+            _input = ScriptableObject.CreateInstance<InputReader>();
             _input.SaveGameEvent += SaveGame;
             _input.LoadGameEvent += LoadGame;
         }
 
+        private ISavableComponent[] GetOrderedSavableComponents()
+        {
+            return FindObjectsOfType<MonoBehaviour>()
+                .OfType<ISavableComponent>()
+                .OrderBy(c => c.ExecutionOrder)
+                .ToArray(); 
+        }
+
         public void SaveGame()
         {
-            Save("Assets/Saves/", "save", ".dat");
+            string folderPath = "Assets/Saves/";
+            string fileName = "save";
+            string fileFormat = ".dat";
+
+            Save(folderPath, fileName, fileFormat);
             Debug.Log("Game saved");
         }
 
         public void LoadGame()
         {
-            Load("Assets/Saves/", "save", ".dat");
+            string folderPath = "Assets/Saves/";
+            string fileName = "save";
+            string fileFormat = ".dat";
+
+            Load(folderPath, fileName, fileFormat);
             Debug.Log("Game loaded");
         }
 
-        public virtual void Save(string folderPath, string fileName, string fileFormat)
+        public void Save(string folderPath, string fileName, string fileFormat)
         {
-            if (!folderPath.EndsWith("/"))
-            {
-                folderPath += "/";
-            }
+            string fullPath = PrepareFilePath(folderPath, fileName, fileFormat);
+            EnsureDirectoryExists(folderPath);
 
-            if (!fileFormat.StartsWith("."))
-            {
-                fileFormat = "." + fileFormat;
-            }
-
-            if (!System.IO.Directory.Exists(folderPath))
-            {
-                System.IO.Directory.CreateDirectory(folderPath);
-            }
-
-            Dictionary<int, ComponentData> componentsData = new Dictionary<int, ComponentData>();
-            
-            ISavableComponent[] SavableArray = GetOrderedSavableComponents();
-            
-            foreach (var savableComponent in SavableArray)
-            {
-                componentsData.Add(savableComponent.uniqueID, savableComponent.Serialize());
-            }
+            var componentsData = GetOrderedSavableComponents()
+                .ToDictionary(savableComponent => savableComponent.UniqueID, savableComponent => savableComponent.Serialize());
 
             BinaryFormatter formatter = new BinaryFormatter();
-
-            using (FileStream stream = new FileStream(folderPath + fileName + fileFormat, FileMode.Create))
+            using (FileStream stream = new FileStream(fullPath, FileMode.Create))
             {
                 formatter.Serialize(stream, componentsData);
             }
         }
 
-        public virtual void Load(string folderPath, string fileName, string fileFormat)
+        public void Load(string folderPath, string fileName, string fileFormat)
         {
-            if (!folderPath.EndsWith("/"))
+            string fullPath = PrepareFilePath(folderPath, fileName, fileFormat);
+            if (!File.Exists(fullPath))
             {
-                folderPath += "/";
+                throw new FileNotFoundException("SaveManager::File '" + fullPath + "' not found");
             }
-
-            if (!fileFormat.StartsWith("."))
-            {
-                fileFormat = "." + fileFormat;
-            }
-
-            if (!System.IO.Directory.Exists(folderPath))
-            {
-                throw new DirectoryNotFoundException("SaveManager::Directory '" + folderPath + "' not found");
-            }    
-
-            Dictionary<int, ComponentData> componentsData = null;
 
             BinaryFormatter formatter = new BinaryFormatter();
-            using (FileStream stream = new FileStream(folderPath + fileName + fileFormat, FileMode.Open))
+            Dictionary<int, ComponentData> componentsData;
+            using (FileStream stream = new FileStream(fullPath, FileMode.Open))
             {
-                componentsData = (Dictionary<int, ComponentData>) formatter.Deserialize(stream);
+                componentsData = (Dictionary<int, ComponentData>)formatter.Deserialize(stream);
             }
 
+            ApplyLoadedData(componentsData);
+        }
+
+        private string PrepareFilePath(string folderPath, string fileName, string fileFormat)
+        {
+            return Path.Combine(folderPath, fileName + EnsureFileFormatPrefix(fileFormat));
+        }
+
+        private string EnsureFileFormatPrefix(string fileFormat)
+        {
+            return fileFormat.StartsWith(".") ? fileFormat : "." + fileFormat;
+        }
+
+        private void EnsureDirectoryExists(string folderPath)
+        {
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+        }
+
+        private void ApplyLoadedData(Dictionary<int, ComponentData> componentsData)
+        {
             foreach (var savableComponent in GetOrderedSavableComponents())
             {
-                if (componentsData.ContainsKey(savableComponent.uniqueID))
+                if (componentsData.TryGetValue(savableComponent.UniqueID, out var data))
                 {
-                   savableComponent.Deserialize(componentsData[savableComponent.uniqueID]);
+                    savableComponent.Deserialize(data);
                 }
             }
         }

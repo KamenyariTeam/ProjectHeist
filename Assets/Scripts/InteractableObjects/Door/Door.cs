@@ -17,7 +17,7 @@ namespace InteractableObjects.Door
 
         public override void Interact(GameObject interacter)
         {
-            bool isAI = interacter.GetComponent<IAILogic>() != null;
+            var isAI = interacter.GetComponent<IAILogic>() != null;
             if (!isAI || !_isOpened)
             {
                 ChangeState();
@@ -42,7 +42,6 @@ namespace InteractableObjects.Door
                 }
             }
         }
-
 
         private void ChangeState()
         {

@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Character;
+using Characters.Player;
 using InteractableObjects.Door;
 using UnityEngine;
 using UnityEngine.AI;
@@ -8,22 +8,31 @@ namespace Characters.AI.Enemy
 {
     public class EnemyLogic : MonoBehaviour, IAILogic
     {
-        public static readonly int ReloadAnimation = Animator.StringToHash("PlayerPlaceholder_HandGun_Reload");
         private static readonly int IsMoving = Animator.StringToHash("isMoving");
 
+        // Serialized fields grouped for clarity
+        [Header("Detection Settings")]
         [SerializeField] private string playerTag;
         [SerializeField] private LayerMask wallMask;
         [SerializeField] private float playerDetectionInterval;
-        [SerializeField] private float idleSpeed;
         [SerializeField] private float viewDistance;
         [SerializeField] private float viewAngle;
         [SerializeField] private float guaranteedDetectDistance;
-        [SerializeField] private float delayBeforeAttack;
-        [SerializeField] private float searchingRotationSpeed;
-        [SerializeField] private float searchingTotalRotation;
+
+        [Header("Movement Settings")]
+        [SerializeField] private float idleSpeed;
+        [SerializeField] private float chasingSpeed;
+
+        [Header("Combat Settings")]
         [SerializeField] private WeaponComponent weapon;
         [SerializeField] private float shootingDistance;
-        [SerializeField] private float chasingSpeed;
+        [SerializeField] private float delayBeforeAttack;
+
+        [Header("Search Settings")]
+        [SerializeField] private float searchingRotationSpeed;
+        [SerializeField] private float searchingTotalRotation;
+
+        [Header("Patrolling Settings")]
         [SerializeField] private Transform[] initialPath;
 
         private Rigidbody2D _rigidbody;
@@ -33,7 +42,6 @@ namespace Characters.AI.Enemy
         private bool _isDetectingPlayer;
         private float _timeTillPlayerDetection;
         private List<InteractableObjects.IInteractable> _activeInteracts;
-
         private AIState _state;
         private Dictionary<AIState, BaseEnemyState> _statesLogic;
 
@@ -68,35 +76,32 @@ namespace Characters.AI.Enemy
             return (transform.position - enemy.transform.position).magnitude < viewDistance;
         }
 
-        private void Start()
+        private void Awake()
+        {
+            InitializeComponents();
+            InitializeStates();
+        }
+
+        private void InitializeComponents()
         {
             _rigidbody = GetComponent<Rigidbody2D>();
             _animator = GetComponent<Animator>();
-
             _agent = GetComponent<NavMeshAgent>();
             _agent.updateUpAxis = false;
             _agent.updateRotation = false;
 
-
-            // enemies check player at different time => should help to avoid freezes when all enemies
-            // try to find the player
-            _timeTillPlayerDetection = Random.Range(0, playerDetectionInterval);
-
-            _activeInteracts = new List<InteractableObjects.IInteractable>();
-
             _playerTransform = GameObject.FindGameObjectWithTag(playerTag).transform;
+            _activeInteracts = new List<InteractableObjects.IInteractable>();
+        }
 
-            var idleState = new EnemyPatrollingState(initialPath, delayBeforeAttack, idleSpeed);
-            var attackState = new EnemyAttackingState(weapon, chasingSpeed, shootingDistance);
-            var chasingState = new EnemyChasingState(chasingSpeed);
-            var searchingState = new EnemySearchingForPlayerState(searchingRotationSpeed, searchingTotalRotation);
-
+        private void InitializeStates()
+        {
             _statesLogic = new Dictionary<AIState, BaseEnemyState>
             {
-                [AIState.Patrolling] = idleState,
-                [AIState.Attacking] = attackState,
-                [AIState.ChasingPlayer] = chasingState,
-                [AIState.SearchingForPlayer] = searchingState
+                [AIState.Patrolling] = new EnemyPatrollingState(initialPath, delayBeforeAttack, idleSpeed),
+                [AIState.Attacking] = new EnemyAttackingState(weapon, chasingSpeed, shootingDistance),
+                [AIState.ChasingPlayer] = new EnemyChasingState(chasingSpeed),
+                [AIState.SearchingForPlayer] = new EnemySearchingForPlayerState(searchingRotationSpeed, searchingTotalRotation)
             };
 
             foreach (BaseEnemyState state in _statesLogic.Values)
@@ -104,21 +109,11 @@ namespace Characters.AI.Enemy
                 state.Init(transform, _rigidbody, _agent, _animator, _playerTransform);
             }
 
-            _state = AIState.Patrolling;
-            _statesLogic[_state].OnStart();
+            State = AIState.Patrolling;
         }
 
         private void Update()
         {
-            Debug.Log(_state);
-            AIState newState = _statesLogic[_state].OnUpdate(Time.deltaTime, _isDetectingPlayer);
-            if (newState != _state)
-            {
-                _statesLogic[_state].OnStop();
-                _state = newState;
-                _statesLogic[_state].OnStart();
-            }
-
             _timeTillPlayerDetection -= Time.deltaTime;
             if (_timeTillPlayerDetection <= 0.0f)
             {
@@ -127,7 +122,21 @@ namespace Characters.AI.Enemy
             }
 
             CheckForDoors();
+            UpdateState();
+            UpdateAnimator();
+        }
 
+        private void UpdateState()
+        {
+            AIState newState = _statesLogic[_state].OnUpdate(Time.deltaTime, _isDetectingPlayer);
+            if (newState != _state)
+            {
+                State = newState;
+            }
+        }
+
+        private void UpdateAnimator()
+        {
             _animator.SetBool(IsMoving, _agent.velocity != Vector3.zero);
         }
 
@@ -191,13 +200,13 @@ namespace Characters.AI.Enemy
 
         private void OnDrawGizmosSelected()
         {
-            var rigidbody = GetComponent<Rigidbody2D>();
+            var rb = GetComponent<Rigidbody2D>();
             var position = transform.position;
 
             Gizmos.color = new Color(0, 1, 0, 0.3f);
             Gizmos.DrawSphere(position, guaranteedDetectDistance);
 
-            float originalAngle = rigidbody.rotation;
+            float originalAngle = rb.rotation;
             int iterations = 10;
             float stepAngles = viewAngle / iterations;
             float angle = originalAngle - 0.5f * viewAngle;
@@ -218,20 +227,20 @@ namespace Characters.AI.Enemy
 
     abstract class BaseEnemyState : IAIStateLogic
     {
-        protected Transform _transform;
-        protected Rigidbody2D _rigidBody;
-        protected NavMeshAgent _agent;
-        protected Transform _playerTransform;
-        protected Animator _animator;
+        protected Transform Transform;
+        protected Rigidbody2D RigidBody;
+        protected NavMeshAgent Agent;
+        protected Transform PlayerTransform;
+        protected Animator Animator;
 
         public void Init(Transform transform, Rigidbody2D rigidbody, NavMeshAgent agent,
             Animator animator, Transform playerTransform)
         {
-            _transform = transform;
-            _rigidBody = rigidbody;
-            _agent = agent;
-            _playerTransform = playerTransform;
-            _animator = animator;
+            Transform = transform;
+            RigidBody = rigidbody;
+            Agent = agent;
+            PlayerTransform = playerTransform;
+            Animator = animator;
         }
 
         public virtual void OnStart()
@@ -268,21 +277,21 @@ namespace Characters.AI.Enemy
         public override void OnStart()
         {
             _timeTillAttack = _attackDelay;
-            _agent.SetDestination(_path[_pathIndex].position);
-            _agent.speed = _speed;
+            Agent.SetDestination(_path[_pathIndex].position);
+            Agent.speed = _speed;
         }
 
         public override AIState OnUpdate(float timeDelta, bool isDetectingPlayer)
         {
-            _agent.isStopped = isDetectingPlayer;
+            Agent.isStopped = isDetectingPlayer;
 
             Debug.Log(_path.Length);
 
             if (isDetectingPlayer)
             {
-                Vector3 directionToPlayer = (_playerTransform.position - _transform.position).normalized;
+                Vector3 directionToPlayer = (PlayerTransform.position - Transform.position).normalized;
                 float angle = Mathf.Atan2(directionToPlayer.y, directionToPlayer.x) * Mathf.Rad2Deg;
-                _rigidBody.rotation = angle;
+                RigidBody.rotation = angle;
                 _timeTillAttack = Mathf.Max(_timeTillAttack - timeDelta, -1);
                 if (_timeTillAttack < 0.0f)
                 {
@@ -293,16 +302,16 @@ namespace Characters.AI.Enemy
 
             _timeTillAttack = _attackDelay;
 
-            if (!_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance)
+            if (!Agent.pathPending && Agent.remainingDistance <= Agent.stoppingDistance)
             {
                 _pathIndex = (_pathIndex + 1) % _path.Length;
-                _agent.SetDestination(_path[_pathIndex].position);
+                Agent.SetDestination(_path[_pathIndex].position);
             }
             else
             {
-                var velocity = _agent.velocity;
+                var velocity = Agent.velocity;
                 float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
-                _rigidBody.rotation = angle;
+                RigidBody.rotation = angle;
             }
 
             return AIState.Patrolling;
@@ -316,6 +325,9 @@ namespace Characters.AI.Enemy
 
     class EnemyAttackingState : BaseEnemyState
     {
+        // Hashes for animator parameters
+        private static readonly int ReloadAnimation = Animator.StringToHash("PlayerPlaceholder_HandGun_Reload");
+        
         private WeaponComponent _weapon;
         private float _speed;
         private float _shootingDistance;
@@ -329,36 +341,36 @@ namespace Characters.AI.Enemy
 
         public override void OnStart()
         {
-            _agent.speed = _speed;
-            _agent.SetDestination(_playerTransform.position);
+            Agent.speed = _speed;
+            Agent.SetDestination(PlayerTransform.position);
         }
 
         public override AIState OnUpdate(float timeDelta, bool isDetectingPlayer)
         {
-            Vector3 directionToPlayer = (_playerTransform.position - _transform.position).normalized;
+            Vector3 directionToPlayer = (PlayerTransform.position - Transform.position).normalized;
             float angle = Mathf.Atan2(directionToPlayer.y, directionToPlayer.x) * Mathf.Rad2Deg;
-            _rigidBody.rotation = angle;
+            RigidBody.rotation = angle;
 
             if (isDetectingPlayer)
             {
-                float distanceToPlayer = (_transform.position - _playerTransform.position).magnitude;
+                float distanceToPlayer = (Transform.position - PlayerTransform.position).magnitude;
                 if (distanceToPlayer < _shootingDistance)
                 {
-                    _agent.isStopped = true;
+                    Agent.isStopped = true;
                     if (_weapon.CurrentAmmo == 0)
                     {
                         _weapon.Reload();
-                        _animator.Play(EnemyLogic.ReloadAnimation);
+                        Animator.Play(ReloadAnimation);
                     }
                     else if (_weapon.CanShoot)
                     {
                         _weapon.Shoot();
                     }
                 }
-                else if (!_agent.pathPending)
+                else if (!Agent.pathPending)
                 {
-                    _agent.isStopped = false;
-                    _agent.SetDestination(_playerTransform.position);
+                    Agent.isStopped = false;
+                    Agent.SetDestination(PlayerTransform.position);
                 }
                 return AIState.Attacking;
             }
@@ -382,9 +394,9 @@ namespace Characters.AI.Enemy
 
         public override void OnStart()
         {
-            _agent.SetDestination(_playerTransform.position);
-            _agent.isStopped = false;
-            _agent.speed = _speed;
+            Agent.SetDestination(PlayerTransform.position);
+            Agent.isStopped = false;
+            Agent.speed = _speed;
             _timeInState = 0;
         }
 
@@ -396,7 +408,7 @@ namespace Characters.AI.Enemy
             }
             _timeInState += timeDelta;
             if ((_timeInState >= MaxTimeInState) ||
-                (!_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance))
+                (!Agent.pathPending && Agent.remainingDistance <= Agent.stoppingDistance))
             {
                 return AIState.SearchingForPlayer;
             }
@@ -420,7 +432,7 @@ namespace Characters.AI.Enemy
         public override void OnStart()
         {
             _totalRotation = 0;
-            _agent.isStopped = true;
+            Agent.isStopped = true;
         }
 
         public override AIState OnUpdate(float timeDelta, bool isDetectingPlayer)
@@ -432,18 +444,18 @@ namespace Characters.AI.Enemy
             float angleDelta = _searchingRotationSpeed * timeDelta;
             if (_totalRotation < _totalRotationAngle)
             {
-                _rigidBody.rotation += angleDelta;
-                if (_rigidBody.rotation > 180.0f)
+                RigidBody.rotation += angleDelta;
+                if (RigidBody.rotation > 180.0f)
                 {
-                    _rigidBody.rotation -= 360.0f;
+                    RigidBody.rotation -= 360.0f;
                 }
             }
             else
             {
-                _rigidBody.rotation -= angleDelta;
-                if (_rigidBody.rotation < -180.0f)
+                RigidBody.rotation -= angleDelta;
+                if (RigidBody.rotation < -180.0f)
                 {
-                    _rigidBody.rotation += 360.0f;
+                    RigidBody.rotation += 360.0f;
                 }
             }
 

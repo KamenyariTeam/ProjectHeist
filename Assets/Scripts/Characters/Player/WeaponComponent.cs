@@ -1,10 +1,8 @@
 using InteractableObjects.Weapon;
 using SaveSystem;
-using System.Xml;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace Character
+namespace Characters.Player
 {
     public class WeaponComponent : MonoBehaviour, ISavableComponent
     {
@@ -53,14 +51,14 @@ namespace Character
 
         public bool CanShoot { get; private set; }
 
-        public int uniqueID
+        public int UniqueID
         {
             get
             {
                 return _uniqueID;
             }
         }
-        public int executionOrder
+        public int ExecutionOrder
         {
             get
             {

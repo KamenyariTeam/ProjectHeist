@@ -60,7 +60,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 908d79952cc41704c835cb1ecc1527fc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -79,7 +79,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1152869165
-  m_SortingLayer: 3
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 0fc9e8862917c73468d1872d9c77934e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -214,16 +214,16 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   playerDetectionInterval: 0.1
-  idleSpeed: 0.4
   viewDistance: 2
   viewAngle: 180
   guaranteedDetectDistance: 0.35
+  idleSpeed: 0.4
+  chasingSpeed: 0.5
+  weapon: {fileID: 2490446724334395613}
+  shootingDistance: 0.7
   delayBeforeAttack: 5
   searchingRotationSpeed: 180
   searchingTotalRotation: 90
-  weapon: {fileID: 2490446724334395613}
-  shootingDistance: 0.7
-  chasingSpeed: 0.5
   initialPath: []
 --- !u!114 &2490446724334395613
 MonoBehaviour:
@@ -244,6 +244,9 @@ MonoBehaviour:
   firePoint: {fileID: 5190977686472949946}
   bulletPrefab: {fileID: 1291077028596044639, guid: efa31b17a0ede034fb6b34c9707e9e42, type: 3}
   flashPrefab: {fileID: 6387391009917682901, guid: 5555927b07d7c714fbaf022bf34f7c4a, type: 3}
+  _uniqueID: 0
+  _executionOrder: 0
+  _currentAmmo: 7
 --- !u!58 &3920292067767012545
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -269,11 +272,11 @@ CircleCollider2D:
     m_Bits: 4294967295
   m_ContactCaptureLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 384
   m_CallbackLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
+    m_Bits: 384
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
