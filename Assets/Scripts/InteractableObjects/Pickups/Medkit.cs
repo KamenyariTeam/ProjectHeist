@@ -1,12 +1,11 @@
-using Character;
-using SuperTiled2Unity.Editor.ClipperLib;
+using Characters.Player;
 using UnityEngine;
 
-namespace InteractableObjects
+namespace InteractableObjects.Pickups
 {
     public class MedKit : Pickup
     {
-        public float HealthRegeneration = 25f;
+        public float healthRegeneration = 25f;
 
         public override void Interact(GameObject character)
         {
@@ -16,7 +15,7 @@ namespace InteractableObjects
 
             if (healthComponent != null)
             {
-                healthComponent.TakeMedicine(HealthRegeneration);
+                healthComponent.TakeMedicine(healthRegeneration);
             }
         }
     }

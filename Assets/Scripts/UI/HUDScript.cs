@@ -1,7 +1,6 @@
-using Character;
+using Characters.Player;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace UI
 {

@@ -1,7 +1,4 @@
-using Character;
-using InteractableObjects;
-using System.Collections;
-using System.Collections.Generic;
+using Characters.Player;
 using UnityEngine;
 
 public class DamageDealerObjectComponent : MonoBehaviour
@@ -13,8 +10,8 @@ public class DamageDealerObjectComponent : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D triggeredCollider)
     {
-        HealthComponent healthComponent = triggeredCollider.GetComponent<HealthComponent>();
-        
+        var healthComponent = triggeredCollider.GetComponent<HealthComponent>();
+
         if (healthComponent != null && healthComponent != _lastHealthComponent)
         {
             healthComponent.TakeDamage(damage);

@@ -2,7 +2,7 @@ using SaveSystem;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Character
+namespace Characters.Player
 {
     public class HealthComponent : MonoBehaviour, ISavableComponent
     {
@@ -18,7 +18,7 @@ namespace Character
 
         private float _currentHealthRegenerationTime;
 
-        public int uniqueID
+        public int UniqueID
         {
             get
             {
@@ -26,7 +26,7 @@ namespace Character
             }
         }
 
-        public int executionOrder
+        public int ExecutionOrder
         {
             get
             {

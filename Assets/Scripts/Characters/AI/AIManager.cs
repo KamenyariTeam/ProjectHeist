@@ -1,7 +1,8 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-namespace Character
+namespace Characters.AI
 {
     public class AIManager : MonoBehaviour
     {
@@ -12,46 +13,59 @@ namespace Character
 
         private void Start()
         {
-            _characters = new List<IAILogic>();
-            foreach (var script in FindObjectsOfType<MonoBehaviour>())
-            {
-                IAILogic character = script as IAILogic;
-                if (character != null)
-                {
-                    _characters.Add(character);
-                }
-            }
-            _attackContactTimer = attackContactDelay;
+            InitializeCharacters();
+            ResetTimer();
+        }
+
+        private void InitializeCharacters()
+        {
+            _characters = new List<IAILogic>(FindObjectsOfType<MonoBehaviour>().OfType<IAILogic>());
         }
 
         private void Update()
         {
-            _attackContactTimer -= Time.deltaTime;
-            if (_attackContactTimer < 0.0f)
+            if (IsTimerElapsed())
             {
                 UpdateAttackingCharacters();
-                _attackContactTimer = attackContactDelay;
+                ResetTimer();
             }
+        }
 
+        private bool IsTimerElapsed()
+        {
+            _attackContactTimer -= Time.deltaTime;
+            return _attackContactTimer < 0.0f;
+        }
+
+        private void ResetTimer()
+        {
+            _attackContactTimer = attackContactDelay;
         }
 
         private void UpdateAttackingCharacters()
         {
-            List<IAILogic> attackingCharacters = _characters.FindAll((character) => character.State == AIState.Attacking);
-            List<IAILogic> nonAttackingCharacters = _characters.FindAll((character) => character.State != AIState.Attacking &&
-                                                                                       character.HasState(AIState.Attacking));
-
-            foreach (IAILogic nonAttacking in nonAttackingCharacters)
+            foreach (IAILogic character in _characters)
             {
-                foreach (IAILogic attacking in attackingCharacters)
+                if (character.State != AIState.Attacking && character.HasState(AIState.Attacking))
                 {
-                    if (attacking.CanContact(nonAttacking))
+                    if (IsAnyAttackingCharacterInContact(character))
                     {
-                        nonAttacking.State = AIState.Attacking;
-                        break;
+                        character.State = AIState.Attacking;
                     }
                 }
             }
+        }
+
+        private bool IsAnyAttackingCharacterInContact(IAILogic character)
+        {
+            foreach (IAILogic attackingCharacter in _characters)
+            {
+                if (attackingCharacter.State == AIState.Attacking && attackingCharacter.CanContact(character))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

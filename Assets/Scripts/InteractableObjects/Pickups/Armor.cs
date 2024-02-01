@@ -1,12 +1,12 @@
-using Character;
-using SuperTiled2Unity.Editor.ClipperLib;
+using Characters.Player;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-namespace InteractableObjects
+namespace InteractableObjects.Pickups
 {
     public class Armor : Pickup
     {
-        public float ArmorRegeneration = 25f;
+        [FormerlySerializedAs("ArmorRegeneration")] public float armorRegeneration = 25f;
 
         public override void Interact(GameObject character)
         {
@@ -16,7 +16,7 @@ namespace InteractableObjects
 
             if (healthComponent != null)
             {
-                healthComponent.TakeArmor(ArmorRegeneration);
+                healthComponent.TakeArmor(armorRegeneration);
             }
         }
     }

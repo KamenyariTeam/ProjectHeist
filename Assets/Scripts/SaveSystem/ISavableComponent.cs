@@ -1,11 +1,9 @@
-﻿using System;
-
-namespace SaveSystem
+﻿namespace SaveSystem
 {
     public interface ISavableComponent
     {
-        int uniqueID { get; }
-        int executionOrder { get; }
+        int UniqueID { get; }
+        int ExecutionOrder { get; }
 
         ComponentData Serialize();
 
