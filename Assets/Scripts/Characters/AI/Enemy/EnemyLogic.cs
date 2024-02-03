@@ -19,6 +19,8 @@ namespace Characters.AI.Enemy
         [SerializeField] private float viewDistance;
         [SerializeField] private float viewAngle;
         [SerializeField] private float guaranteedDetectDistance;
+        [SerializeField] private float suspicionIncreaseRate = 0.1f; // Rate at which suspicion increases
+
 
         [Header("Movement Settings")]
         [SerializeField] private float idleSpeed;
@@ -46,6 +48,7 @@ namespace Characters.AI.Enemy
         private List<InteractableObjects.IInteractable> _activeInteracts;
         private AIState _state;
         private Dictionary<AIState, BaseEnemyState> _statesLogic;
+        private float _suspicionLevel;
 
         public AIState State
         {
@@ -129,6 +132,19 @@ namespace Characters.AI.Enemy
             CheckForDoors();
             UpdateState();
             UpdateAnimator();
+            
+            // Check if the player is detectable and noticeable
+            if (_isDetectingPlayer && PlayerIsNoticeable())
+            {
+                IncreaseSuspicion();
+            }
+
+            // Transition to attack state if suspicion reaches 1
+            if (_suspicionLevel >= 1.0f)
+            {
+                State = AIState.Attacking;
+                _suspicionLevel = 0; // Reset suspicion level
+            }
         }
 
         private void UpdateState()
@@ -181,6 +197,25 @@ namespace Characters.AI.Enemy
                 return false;
             }
             return !Physics2D.Linecast(transform.position, _playerTransform.position, wallMask);
+        }
+        
+        // Method to increase suspicion based on the player's noticeability
+        private void IncreaseSuspicion()
+        {
+            StealthComponent playerStealth = _playerTransform.GetComponent<StealthComponent>();
+            if (playerStealth)
+            {
+                // Increase suspicion more quickly if the player is more noticeable
+                _suspicionLevel += Time.deltaTime * suspicionIncreaseRate * (playerStealth.noticeability / 20.0f);
+                _suspicionLevel = Mathf.Clamp(_suspicionLevel, 0.0f, 1.0f); // Ensure suspicion stays within bounds
+            }
+        }
+
+        // Checks if the player is in a detectable state
+        private bool PlayerIsNoticeable()
+        {
+            StealthComponent playerStealth = _playerTransform.GetComponent<StealthComponent>();
+            return playerStealth.IsNoticeable;
         }
 
         private void CheckForDoors()
