@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Enemy
   - MapArea
+  - ManagersOwner
   layers:
   - Default
   - TransparentFX

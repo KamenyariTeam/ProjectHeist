@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 namespace UI
 {
-    public class MenuGameMode : MonoBehaviour
+    public class MainMenuScript : BaseUIWindow
     {
         public void OnPressNewGame()
         {
@@ -12,12 +12,13 @@ namespace UI
 
         public void OnPressSettings()
         {
-            // SceneManager.LoadScene("SettingsScene");
+            _uiManager.PushUI(EUIType.SettingsMenu);
         }
 
         public void OnPressQuit()
         {
             Application.Quit();
         }
+
     }
 }
