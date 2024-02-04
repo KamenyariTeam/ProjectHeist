@@ -104,11 +104,14 @@ namespace UI
         private void OnTopWindowHidden(IUIWindow previousWindow)
         {
             var windowScript = previousWindow as MonoBehaviour;
-            if (windowScript == null)
+            if (windowScript != null)
+            {
+                Destroy(windowScript.gameObject);
+            }
+            else
             {
                 Debug.LogWarning($"The hidden UI window was not a {nameof(MonoBehaviour)} script");
             }
-            Destroy(windowScript.gameObject);
 
             if (!_openedWindows.TryPeek(out IUIWindow newWindow))
             {
