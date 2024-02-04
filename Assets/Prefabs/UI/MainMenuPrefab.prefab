@@ -91,8 +91,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MenuGameMode, Assembly-CSharp
+      - m_Target: {fileID: 8636084365970230346}
+        m_TargetAssemblyTypeName: UI.MainMenuScript, Assembly-CSharp
         m_MethodName: OnPressNewGame
         m_Mode: 1
         m_Arguments:
@@ -208,8 +208,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MenuGameMode, Assembly-CSharp
+      - m_Target: {fileID: 8636084365970230346}
+        m_TargetAssemblyTypeName: UI.MainMenuScript, Assembly-CSharp
         m_MethodName: OnPressSettings
         m_Mode: 1
         m_Arguments:
@@ -474,8 +474,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MenuGameMode, Assembly-CSharp
+      - m_Target: {fileID: 8636084365970230346}
+        m_TargetAssemblyTypeName: UI.MainMenuScript, Assembly-CSharp
         m_MethodName: OnPressQuit
         m_Mode: 1
         m_Arguments:
@@ -914,6 +914,7 @@ GameObject:
   - component: {fileID: 4678683817143937941}
   - component: {fileID: 1432071473924756072}
   - component: {fileID: 4048360457164937713}
+  - component: {fileID: 8636084365970230346}
   m_Layer: 5
   m_Name: MainMenuPrefab
   m_TagString: Untagged
@@ -1005,3 +1006,16 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &8636084365970230346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7756306433821413781}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e9bbf64f7d9f4214a8927d050ce41a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  managersOwnerTag: ManagersOwner

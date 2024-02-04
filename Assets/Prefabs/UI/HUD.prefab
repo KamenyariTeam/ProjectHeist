@@ -388,7 +388,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60f72f07b7de80247abec09c3a876cba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  managersOwnerTag: ManagersOwner
+  playerTag: Player
   ammoCount: {fileID: 7672994017008955205}
   healthCount: {fileID: 8827440490771930504}
   armorCount: {fileID: 2643041771412142916}
