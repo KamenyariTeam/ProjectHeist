@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 2576232730662105070}
   - component: {fileID: 2490446724334395613}
   - component: {fileID: 3920292067767012545}
+  - component: {fileID: 6798373167926086282}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Enemy
@@ -244,8 +245,6 @@ MonoBehaviour:
   firePoint: {fileID: 5190977686472949946}
   bulletPrefab: {fileID: 1291077028596044639, guid: efa31b17a0ede034fb6b34c9707e9e42, type: 3}
   flashPrefab: {fileID: 6387391009917682901, guid: 5555927b07d7c714fbaf022bf34f7c4a, type: 3}
-  _uniqueID: 0
-  _executionOrder: 0
   _currentAmmo: 7
 --- !u!58 &3920292067767012545
 CircleCollider2D:
@@ -282,6 +281,24 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 3
+--- !u!114 &6798373167926086282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1189712299164168322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 058b132acf0eaa144801397fbf590051, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  maxArmor: 0
+  regenerationSpeed: 1
+  regenerationRate: 1
+  _currentHealth: 100
+  _currentArmor: 0
 --- !u!1 &1932342893775930150
 GameObject:
   m_ObjectHideFlags: 0
@@ -307,7 +324,7 @@ Transform:
   m_GameObject: {fileID: 1932342893775930150}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.98, y: -0.5, z: 0}
+  m_LocalPosition: {x: 1.72, y: -0.54, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

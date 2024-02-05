@@ -15,9 +15,6 @@ namespace Characters.Player
         public GameObject bulletPrefab;
         public GameObject flashPrefab;
 
-        [SerializeField] private int _uniqueID;
-        [SerializeField] private int _executionOrder;
-
         [SerializeField] private float _currentAmmo = 7f;
         private float _timeSinceLastShot;
 
@@ -50,21 +47,6 @@ namespace Characters.Player
         }
 
         public bool CanShoot { get; private set; }
-
-        public int UniqueID
-        {
-            get
-            {
-                return _uniqueID;
-            }
-        }
-        public int ExecutionOrder
-        {
-            get
-            {
-                return _executionOrder;
-            }
-        }
 
         public void Shoot()
         {

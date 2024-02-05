@@ -3,6 +3,7 @@ using Characters.Player;
 using InteractableObjects.Door;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 
 namespace Characters.AI.Enemy
 {
@@ -39,6 +40,7 @@ namespace Characters.AI.Enemy
         private NavMeshAgent _agent;
         private Transform _playerTransform;
         private Animator _animator;
+        private HealthComponent _healthComponent;
         private bool _isDetectingPlayer;
         private float _timeTillPlayerDetection;
         private List<InteractableObjects.IInteractable> _activeInteracts;
@@ -92,6 +94,9 @@ namespace Characters.AI.Enemy
 
             _playerTransform = GameObject.FindGameObjectWithTag(playerTag).transform;
             _activeInteracts = new List<InteractableObjects.IInteractable>();
+
+            _healthComponent = GetComponent<HealthComponent>();
+            _healthComponent.OnDeath += OnDeathHendler;
         }
 
         private void InitializeStates()
@@ -223,6 +228,11 @@ namespace Characters.AI.Enemy
             }
             Gizmos.DrawLine(pos, transform.position);
         }
+
+        private void OnDeathHendler()
+        {
+            Destroy(gameObject);
+        }
     }
 
     abstract class BaseEnemyState : IAIStateLogic
@@ -285,7 +295,7 @@ namespace Characters.AI.Enemy
         {
             Agent.isStopped = isDetectingPlayer;
 
-            Debug.Log(_path.Length);
+            //Debug.Log(_path.Length);
 
             if (isDetectingPlayer)
             {
