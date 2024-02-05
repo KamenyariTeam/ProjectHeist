@@ -1,24 +1,30 @@
+using Characters.Player;
 using UnityEngine;
 
-namespace InteractableObjects.Weapon
+public class BulletComponent : MonoBehaviour
 {
-    public class BulletComponent : MonoBehaviour
-    {
-        public float speed = 20f;
-        public Vector2 direction;
-        public Rigidbody2D rigidBody;
+    public float speed = 20f;
+    public float damage = 20f;
+    public Vector2 direction;
+    public Rigidbody2D rigidBody;
 
-        private void Start()
+    private void Start()
+    {
+        rigidBody.velocity = direction * speed;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        var healthComponent = collision.collider.GetComponent<HealthComponent>();
+
+        if (healthComponent != null)
         {
-            rigidBody.velocity = direction * speed;
+            healthComponent.TakeDamage(damage);
         }
 
-        private void OnCollisionEnter2D(Collision2D collision)
+        if (collision != null)
         {
-            if (collision != null)
-            {
-                Destroy(gameObject);
-            }
+            Destroy(gameObject);
         }
     }
 }

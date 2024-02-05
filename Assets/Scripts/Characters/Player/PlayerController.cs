@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using InteractableObjects;
 using SaveSystem;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Characters.Player
 {
@@ -11,6 +12,7 @@ namespace Characters.Player
         private static readonly int IsMoving = Animator.StringToHash("isMoving");
         private static readonly string ReloadAnimationName = "PlayerPlaceholder_HandGun_Reload";
         private Animator _animator;
+        private HealthComponent _healthComponent;
 
         // Movement
         public float moveSpeed = 1f;
@@ -33,12 +35,6 @@ namespace Characters.Player
         // Input Handling
         private InputReader _input;
 
-        // Save System
-        [SerializeField] private int uniqueID;
-        [SerializeField] private int executionOrder;
-        public int UniqueID => uniqueID;
-        public int ExecutionOrder => executionOrder;
-
         private void Start()
         {
             InitializeComponents();
@@ -50,6 +46,8 @@ namespace Characters.Player
             _rigidbody = GetComponent<Rigidbody2D>();
             _animator = GetComponent<Animator>();
             _camera = UnityEngine.Camera.main;
+            _healthComponent = GetComponent<HealthComponent>();
+            _healthComponent.OnDeath += OnDeathHendler;
         }
 
         private void SetupInputHandlers()
@@ -199,6 +197,12 @@ namespace Characters.Player
         {
             RaycastHit2D hit = Physics2D.Linecast(transform.position, component.transform.position, wallLayer);
             return !hit || hit.collider.gameObject.GetInstanceID() == component.gameObject.GetInstanceID();
+        }
+
+        private void OnDeathHendler()
+        {
+            // TODO Idea move this logic to some kind of game mode where we could handle all necessary logic, like cursor switch etc.
+            SceneManager.LoadScene("MainMenuScene");
         }
 
         public ComponentData Serialize()

@@ -1,19 +1,12 @@
-﻿using UnityEngine;
+﻿using UnityEditor;
+using UnityEngine;
 
 namespace SaveSystem
 {
     public class SaveExample : MonoBehaviour, ISavableComponent
     {
-        [SerializeField] private int uniqueID;
-        [SerializeField] private int executionOrder;
-
-        public int UniqueID => uniqueID;
-        public int ExecutionOrder => executionOrder;
-
-
         private void Reset()
         {
-            uniqueID = GetHashCode();
         }
 
         public ComponentData Serialize()

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Characters.Player;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace SaveSystem
 {
@@ -14,6 +15,8 @@ namespace SaveSystem
         private void Start()
         {
             InitializeInput();
+            
+            LoadGame();
         }
 
         private void InitializeInput()
@@ -25,16 +28,17 @@ namespace SaveSystem
 
         private ISavableComponent[] GetOrderedSavableComponents()
         {
-            return FindObjectsOfType<MonoBehaviour>()
+            ISavableComponent[] savableComponents = FindObjectsOfType<MonoBehaviour>()
                 .OfType<ISavableComponent>()
-                .OrderBy(c => c.ExecutionOrder)
-                .ToArray(); 
+                .ToArray();
+
+            return savableComponents;
         }
 
         public void SaveGame()
         {
             string folderPath = "Assets/Saves/";
-            string fileName = "save";
+            string fileName = SceneManager.GetActiveScene().name + "_save";
             string fileFormat = ".dat";
 
             Save(folderPath, fileName, fileFormat);
@@ -44,7 +48,7 @@ namespace SaveSystem
         public void LoadGame()
         {
             string folderPath = "Assets/Saves/";
-            string fileName = "save";
+            string fileName = SceneManager.GetActiveScene().name + "_save";
             string fileFormat = ".dat";
 
             Load(folderPath, fileName, fileFormat);
@@ -57,7 +61,7 @@ namespace SaveSystem
             EnsureDirectoryExists(folderPath);
 
             var componentsData = GetOrderedSavableComponents()
-                .ToDictionary(savableComponent => savableComponent.UniqueID, savableComponent => savableComponent.Serialize());
+                .ToDictionary(savableComponent => savableComponent.GetHashCode(), savableComponent => savableComponent.Serialize());
 
             BinaryFormatter formatter = new BinaryFormatter();
             using (FileStream stream = new FileStream(fullPath, FileMode.Create))
@@ -69,19 +73,22 @@ namespace SaveSystem
         public void Load(string folderPath, string fileName, string fileFormat)
         {
             string fullPath = PrepareFilePath(folderPath, fileName, fileFormat);
-            if (!File.Exists(fullPath))
+            if (File.Exists(fullPath))
             {
-                throw new FileNotFoundException("SaveManager::File '" + fullPath + "' not found");
-            }
+                BinaryFormatter formatter = new BinaryFormatter();
+                Dictionary<int, ComponentData> componentsData;
+                using (FileStream stream = new FileStream(fullPath, FileMode.Open))
+                {
+                    componentsData = (Dictionary<int, ComponentData>)formatter.Deserialize(stream);
+                }
 
-            BinaryFormatter formatter = new BinaryFormatter();
-            Dictionary<int, ComponentData> componentsData;
-            using (FileStream stream = new FileStream(fullPath, FileMode.Open))
+                ApplyLoadedData(componentsData);
+            }
+            else
             {
-                componentsData = (Dictionary<int, ComponentData>)formatter.Deserialize(stream);
+                //On first scene launch creates save file
+                Save(folderPath, fileName, fileFormat);
             }
-
-            ApplyLoadedData(componentsData);
         }
 
         private string PrepareFilePath(string folderPath, string fileName, string fileFormat)
@@ -106,7 +113,7 @@ namespace SaveSystem
         {
             foreach (var savableComponent in GetOrderedSavableComponents())
             {
-                if (componentsData.TryGetValue(savableComponent.UniqueID, out var data))
+                if (componentsData.TryGetValue(savableComponent.GetHashCode(), out var data))
                 {
                     savableComponent.Deserialize(data);
                 }
