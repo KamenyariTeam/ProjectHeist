@@ -19,8 +19,7 @@ namespace Characters.AI.Enemy
         [SerializeField] private float viewDistance;
         [SerializeField] private float viewAngle;
         [SerializeField] private float guaranteedDetectDistance;
-        [SerializeField] private float suspicionIncreaseRate = 0.1f; // Rate at which suspicion increases
-
+        [SerializeField] private float suspicionIncreaseRate = 0.1f;
 
         [Header("Movement Settings")]
         [SerializeField] private float idleSpeed;
@@ -41,14 +40,17 @@ namespace Characters.AI.Enemy
         private Rigidbody2D _rigidbody;
         private NavMeshAgent _agent;
         private Transform _playerTransform;
+        private StealthComponent _playerStealthComponent;
         private Animator _animator;
+        private bool _isPlayerInSight;
+        private float _cooldownPlayerDetection;
         private HealthComponent _healthComponent;
         private bool _isDetectingPlayer;
         private float _timeTillPlayerDetection;
+        
         private List<InteractableObjects.IInteractable> _activeInteracts;
         private AIState _state;
         private Dictionary<AIState, BaseEnemyState> _statesLogic;
-        private float _suspicionLevel;
 
         public AIState State
         {
@@ -95,7 +97,9 @@ namespace Characters.AI.Enemy
             _agent.updateUpAxis = false;
             _agent.updateRotation = false;
 
-            _playerTransform = GameObject.FindGameObjectWithTag(playerTag).transform;
+            var player = GameObject.FindGameObjectWithTag(playerTag);
+            _playerTransform = player.transform;
+            _playerStealthComponent = player.GetComponent<StealthComponent>();
             _activeInteracts = new List<InteractableObjects.IInteractable>();
 
             _healthComponent = GetComponent<HealthComponent>();
@@ -106,7 +110,7 @@ namespace Characters.AI.Enemy
         {
             _statesLogic = new Dictionary<AIState, BaseEnemyState>
             {
-                [AIState.Patrolling] = new EnemyPatrollingState(initialPath, delayBeforeAttack, idleSpeed),
+                [AIState.Patrolling] = new EnemyPatrollingState(initialPath, delayBeforeAttack, idleSpeed, suspicionIncreaseRate),
                 [AIState.Attacking] = new EnemyAttackingState(weapon, chasingSpeed, shootingDistance),
                 [AIState.ChasingPlayer] = new EnemyChasingState(chasingSpeed),
                 [AIState.SearchingForPlayer] = new EnemySearchingForPlayerState(searchingRotationSpeed, searchingTotalRotation)
@@ -114,7 +118,7 @@ namespace Characters.AI.Enemy
 
             foreach (BaseEnemyState state in _statesLogic.Values)
             {
-                state.Init(transform, _rigidbody, _agent, _animator, _playerTransform);
+                state.Init(transform, _rigidbody, _agent, _animator, _playerTransform, _playerStealthComponent);
             }
 
             State = AIState.Patrolling;
@@ -122,34 +126,21 @@ namespace Characters.AI.Enemy
 
         private void Update()
         {
-            _timeTillPlayerDetection -= Time.deltaTime;
-            if (_timeTillPlayerDetection <= 0.0f)
+            _cooldownPlayerDetection -= Time.deltaTime;
+            if (_cooldownPlayerDetection <= 0.0f)
             {
-                _isDetectingPlayer = DetectPlayer();
-                _timeTillPlayerDetection = playerDetectionInterval;
+                _isPlayerInSight = CheckIfPlayerInSight();
+                _cooldownPlayerDetection = playerDetectionInterval;
             }
 
             CheckForDoors();
             UpdateState();
             UpdateAnimator();
-            
-            // Check if the player is detectable and noticeable
-            if (_isDetectingPlayer && PlayerIsNoticeable())
-            {
-                IncreaseSuspicion();
-            }
-
-            // Transition to attack state if suspicion reaches 1
-            if (_suspicionLevel >= 1.0f)
-            {
-                State = AIState.Attacking;
-                _suspicionLevel = 0; // Reset suspicion level
-            }
         }
 
         private void UpdateState()
         {
-            AIState newState = _statesLogic[_state].OnUpdate(Time.deltaTime, _isDetectingPlayer);
+            AIState newState = _statesLogic[_state].OnUpdate(Time.deltaTime, _isPlayerInSight);
             if (newState != _state)
             {
                 State = newState;
@@ -181,7 +172,7 @@ namespace Characters.AI.Enemy
             _activeInteracts.Remove(interactable);
         }
 
-        private bool DetectPlayer()
+        private bool CheckIfPlayerInSight()
         {
             float distanceToPlayer = (transform.position - _playerTransform.position).magnitude;
             if (distanceToPlayer > viewDistance)
@@ -197,25 +188,6 @@ namespace Characters.AI.Enemy
                 return false;
             }
             return !Physics2D.Linecast(transform.position, _playerTransform.position, wallMask);
-        }
-        
-        // Method to increase suspicion based on the player's noticeability
-        private void IncreaseSuspicion()
-        {
-            StealthComponent playerStealth = _playerTransform.GetComponent<StealthComponent>();
-            if (playerStealth)
-            {
-                // Increase suspicion more quickly if the player is more noticeable
-                _suspicionLevel += Time.deltaTime * suspicionIncreaseRate * (playerStealth.noticeability / 20.0f);
-                _suspicionLevel = Mathf.Clamp(_suspicionLevel, 0.0f, 1.0f); // Ensure suspicion stays within bounds
-            }
-        }
-
-        // Checks if the player is in a detectable state
-        private bool PlayerIsNoticeable()
-        {
-            StealthComponent playerStealth = _playerTransform.GetComponent<StealthComponent>();
-            return playerStealth.IsNoticeable;
         }
 
         private void CheckForDoors()
@@ -233,7 +205,6 @@ namespace Characters.AI.Enemy
                     {
                         door.Interact(gameObject);
                     }
-                    Debug.Log(dotProduct);
                 }
             }
         }
@@ -276,16 +247,18 @@ namespace Characters.AI.Enemy
         protected Rigidbody2D RigidBody;
         protected NavMeshAgent Agent;
         protected Transform PlayerTransform;
+        protected StealthComponent PlayerStealthComponent;
         protected Animator Animator;
 
         public void Init(Transform transform, Rigidbody2D rigidbody, NavMeshAgent agent,
-            Animator animator, Transform playerTransform)
+            Animator animator, Transform playerTransform, StealthComponent playerStealthComponent)
         {
             Transform = transform;
             RigidBody = rigidbody;
             Agent = agent;
             PlayerTransform = playerTransform;
             Animator = animator;
+            PlayerStealthComponent = playerStealthComponent;
         }
 
         public virtual void OnStart()
@@ -296,7 +269,7 @@ namespace Characters.AI.Enemy
         {
         }
 
-        public virtual AIState OnUpdate(float timeDelta, bool isDetectingPlayer)
+        public virtual AIState OnUpdate(float timeDelta, bool isPlayerInSight)
         {
             return AIState.Patrolling;
         }
@@ -307,16 +280,19 @@ namespace Characters.AI.Enemy
         private Transform[] _path;
         private float _attackDelay;
         private float _speed;
+        private float _suspicionIncreaseRate;
 
         private int _pathIndex;
         private float _timeTillAttack;
+        private float _suspicionLevel;
 
-        public EnemyPatrollingState(Transform[] path, float attackDelay, float speed)
+        public EnemyPatrollingState(Transform[] path, float attackDelay, float speed, float suspicionIncreaseRate)
         {
             _pathIndex = 0;
             _path = path;
             _attackDelay = attackDelay;
             _speed = speed;
+            _suspicionIncreaseRate = suspicionIncreaseRate;
         }
 
         public override void OnStart()
@@ -326,21 +302,25 @@ namespace Characters.AI.Enemy
             Agent.speed = _speed;
         }
 
-        public override AIState OnUpdate(float timeDelta, bool isDetectingPlayer)
+        public override AIState OnUpdate(float timeDelta, bool isPlayerInSight)
         {
-            Agent.isStopped = isDetectingPlayer;
+            Agent.isStopped = PlayerStealthComponent.IsNoticeable;
 
-            //Debug.Log(_path.Length);
-
-            if (isDetectingPlayer)
+            if (isPlayerInSight)
             {
-                Vector3 directionToPlayer = (PlayerTransform.position - Transform.position).normalized;
-                float angle = Mathf.Atan2(directionToPlayer.y, directionToPlayer.x) * Mathf.Rad2Deg;
-                RigidBody.rotation = angle;
-                _timeTillAttack = Mathf.Max(_timeTillAttack - timeDelta, -1);
-                if (_timeTillAttack < 0.0f)
+                if (PlayerStealthComponent.IsNoticeable)
                 {
-                    return AIState.Attacking;
+                    var directionToPlayer = (PlayerTransform.position - Transform.position).normalized;
+                    var angle = Mathf.Atan2(directionToPlayer.y, directionToPlayer.x) * Mathf.Rad2Deg;
+                    RigidBody.rotation = angle;
+
+                    IncreaseSuspicion();
+                    // Transition to attack state if suspicion reaches 1
+                    if (_suspicionLevel >= 1.0f)
+                    {
+                        _timeTillAttack = Mathf.Max(_timeTillAttack - timeDelta, -1);
+                        if (_timeTillAttack < 0.0f) return AIState.Attacking;
+                    }
                 }
                 return AIState.Patrolling;
             }
@@ -366,6 +346,14 @@ namespace Characters.AI.Enemy
         {
             _attackDelay = 0.0f;
         }
+        
+        private void IncreaseSuspicion()
+        {
+            // Increase suspicion more quickly if the player is more noticeable
+            _suspicionLevel += Time.deltaTime * _suspicionIncreaseRate * PlayerStealthComponent.Noticeability;
+            _suspicionLevel = Mathf.Clamp(_suspicionLevel, 0.0f, 1.0f);
+            Debug.Log($"Increase suspicion {_suspicionLevel}");
+        }
     }
 
     class EnemyAttackingState : BaseEnemyState
@@ -390,13 +378,13 @@ namespace Characters.AI.Enemy
             Agent.SetDestination(PlayerTransform.position);
         }
 
-        public override AIState OnUpdate(float timeDelta, bool isDetectingPlayer)
+        public override AIState OnUpdate(float timeDelta, bool isPlayerInSight)
         {
             Vector3 directionToPlayer = (PlayerTransform.position - Transform.position).normalized;
             float angle = Mathf.Atan2(directionToPlayer.y, directionToPlayer.x) * Mathf.Rad2Deg;
             RigidBody.rotation = angle;
 
-            if (isDetectingPlayer)
+            if (isPlayerInSight)
             {
                 float distanceToPlayer = (Transform.position - PlayerTransform.position).magnitude;
                 if (distanceToPlayer < _shootingDistance)
@@ -445,9 +433,9 @@ namespace Characters.AI.Enemy
             _timeInState = 0;
         }
 
-        public override AIState OnUpdate(float timeDelta, bool isDetectingPlayer)
+        public override AIState OnUpdate(float timeDelta, bool isPlayerInSight)
         {
-            if (isDetectingPlayer)
+            if (isPlayerInSight)
             {
                 return AIState.Attacking;
             }
@@ -480,9 +468,9 @@ namespace Characters.AI.Enemy
             Agent.isStopped = true;
         }
 
-        public override AIState OnUpdate(float timeDelta, bool isDetectingPlayer)
+        public override AIState OnUpdate(float timeDelta, bool isPlayerInSight)
         {
-            if (isDetectingPlayer)
+            if (isPlayerInSight)
             {
                 return AIState.Attacking;
             }

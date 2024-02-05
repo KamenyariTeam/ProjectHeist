@@ -6,12 +6,13 @@ namespace Characters.Player
     public class StealthComponent : MonoBehaviour
     {
         [SerializeField] private int acceptableNoticeability = 20;
-        public int noticeability;
 
         private MapArea _currentMapArea;
         private MapArea _nextMapArea;
+        private int _noticeability;
 
-        public bool IsNoticeable => IsInRestrictedArea() || noticeability > acceptableNoticeability;
+        public int Noticeability => Mathf.Clamp(_noticeability, 5, 100);
+        public bool IsNoticeable => IsInRestrictedArea() || _noticeability > acceptableNoticeability;
 
         private bool IsInRestrictedArea()
         {
