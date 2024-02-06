@@ -4,7 +4,6 @@ using InteractableObjects.Door;
 using UI;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.SceneManagement;
 
 namespace Characters.AI.Enemy
 {
@@ -120,7 +119,7 @@ namespace Characters.AI.Enemy
             _activeInteracts = new List<InteractableObjects.IInteractable>();
 
             _healthComponent = GetComponent<HealthComponent>();
-            _healthComponent.OnDeath += OnDeathHendler;
+            _healthComponent.OnDeath += OnDeathHandler;
         }
 
         private void InitializeStates()
@@ -252,7 +251,7 @@ namespace Characters.AI.Enemy
             Gizmos.DrawLine(pos, transform.position);
         }
 
-        private void OnDeathHendler()
+        private void OnDeathHandler()
         {
             Destroy(gameObject);
         }
@@ -281,17 +280,18 @@ namespace Characters.AI.Enemy
         }
     }
 
-    class EnemyPatrollingState : BaseEnemyState
+    internal class EnemyPatrollingState : BaseEnemyState
     {
-        private Transform[] _path;
-        private float _attackDelay;
-        private float _speed;
-        private float _suspicionIncreaseRate;
-        private bool _isOnAlert;
+        private readonly Transform[] _path;
+        private readonly float _speed;
+        private readonly float _suspicionIncreaseRate;
 
         private int _pathIndex;
-        private float _timeTillAttack;
+        
         private float _suspicionLevel;
+        private bool _isOnAlert;
+        private float _attackDelay;
+        private float _timeTillAttack;
 
         public EnemyPatrollingState(Transform[] path, float attackDelay, float speed, float suspicionIncreaseRate)
         {
@@ -326,19 +326,19 @@ namespace Characters.AI.Enemy
         private bool HandleVisibilityAndSuspicion(out AIState onUpdate)
         {
             EnemyLogic.Agent.isStopped = false;
-            
+
             if (EnemyLogic.IsPlayerInSight)
             {
                 if (!_isOnAlert)
                 {
                     EnemyLogic.Agent.isStopped = EnemyLogic.PlayerStealthComponent.IsNoticeable;
-                    
+
                     if (EnemyLogic.PlayerStealthComponent.IsNoticeable)
                     {
                         EnemyLogic.RotateToObject(EnemyLogic.PlayerTransform);
 
                         IncreaseSuspicion();
-                        
+
                         // Transition to attack state if suspicion reaches 1
                         if (_suspicionLevel >= 1.0f)
                         {
@@ -347,7 +347,7 @@ namespace Characters.AI.Enemy
                             {
                                 _isOnAlert = true;
                                 EnemyLogic.EnemySuspicionMeter.SetVisibility(false);
-                                
+
                                 onUpdate = AIState.Attacking;
                                 return true;
                             }
@@ -391,17 +391,17 @@ namespace Characters.AI.Enemy
                 EnemyLogic.Rigidbody.rotation = angle;
             }
         }
-        
+
         private void IncreaseSuspicion()
         {
             EnemyLogic.EnemySuspicionMeter.SetVisibility(true);
-            
+
             // Increase suspicion more quickly if the player is more noticeable
             _suspicionLevel += Time.deltaTime * _suspicionIncreaseRate * EnemyLogic.PlayerStealthComponent.Noticeability;
             _suspicionLevel = Mathf.Clamp(_suspicionLevel, 0.0f, 1.0f);
             EnemyLogic.EnemySuspicionMeter.SetBarFillAmount(_suspicionLevel);
         }
-        
+
         private void DecreaseSuspicion()
         {
             if (_suspicionLevel > 0.0f)
@@ -417,7 +417,7 @@ namespace Characters.AI.Enemy
         }
     }
 
-    class EnemyAttackingState : BaseEnemyState
+    internal class EnemyAttackingState : BaseEnemyState
     {
         // Hashes for animator parameters
         private static readonly int ReloadAnimation = Animator.StringToHash("PlayerPlaceholder_HandGun_Reload");
@@ -471,7 +471,7 @@ namespace Characters.AI.Enemy
         }
     }
 
-    class EnemyChasingState : BaseEnemyState
+    internal class EnemyChasingState : BaseEnemyState
     {
         private const float MaxTimeInState = 10.0f;
         private float _speed;
@@ -508,7 +508,7 @@ namespace Characters.AI.Enemy
         }
     }
 
-    class EnemySearchingForPlayerState : BaseEnemyState
+    internal class EnemySearchingForPlayerState : BaseEnemyState
     {
         private float _searchingRotationSpeed;
         private float _totalRotationAngle;
@@ -538,25 +538,19 @@ namespace Characters.AI.Enemy
             {
                 EnemyLogic.Rigidbody.rotation += angleDelta;
                 if (EnemyLogic.Rigidbody.rotation > 180.0f)
-                {
                     EnemyLogic.Rigidbody.rotation -= 360.0f;
-                }
             }
             else
             {
                 EnemyLogic.Rigidbody.rotation -= angleDelta;
-                if (EnemyLogic.Rigidbody.rotation < -180.0f)
-                {
+                if (EnemyLogic.Rigidbody.rotation < -180.0f) 
                     EnemyLogic.Rigidbody.rotation += 360.0f;
-                }
             }
 
 
             _totalRotation += angleDelta;
-            if (_totalRotation > 3.0f * _totalRotationAngle)
-            {
+            if (_totalRotation > 3.0f * _totalRotationAngle) 
                 return AIState.Patrolling;
-            }
 
             return AIState.SearchingForPlayer;
         }
