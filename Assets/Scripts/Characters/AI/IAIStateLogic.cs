@@ -1,3 +1,5 @@
+using Characters.AI.Enemy;
+
 namespace Characters.AI
 {
     public enum AIState
@@ -10,9 +12,10 @@ namespace Characters.AI
 
     public interface IAIStateLogic
     {
-        public void OnStart();
-        public AIState OnUpdate(float timeDelta, bool isDetectingPlayer);
-        public void OnStop();
+        public void Init(EnemyLogic enemyLogic);
+        public void OnEnter();
+        public void OnExit();
+        public AIState OnUpdate();
     }
 
     public interface IAILogic

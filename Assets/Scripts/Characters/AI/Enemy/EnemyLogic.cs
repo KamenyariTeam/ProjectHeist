@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Characters.Player;
 using InteractableObjects.Door;
+using UI;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
@@ -20,6 +21,7 @@ namespace Characters.AI.Enemy
         [SerializeField] private float viewAngle;
         [SerializeField] private float guaranteedDetectDistance;
         [SerializeField] private float suspicionIncreaseRate = 0.1f;
+        [SerializeField] private SuspicionMeter suspicionMeter;
 
         [Header("Movement Settings")]
         [SerializeField] private float idleSpeed;
@@ -51,6 +53,14 @@ namespace Characters.AI.Enemy
         private List<InteractableObjects.IInteractable> _activeInteracts;
         private AIState _state;
         private Dictionary<AIState, BaseEnemyState> _statesLogic;
+        
+        public Rigidbody2D Rigidbody => _rigidbody;
+        public NavMeshAgent Agent => _agent;
+        public Transform PlayerTransform => _playerTransform;
+        public StealthComponent PlayerStealthComponent => _playerStealthComponent;
+        public Animator Animator => _animator;
+        public SuspicionMeter EnemySuspicionMeter => suspicionMeter;
+        public bool IsPlayerInSight => _isPlayerInSight;
 
         public AIState State
         {
@@ -61,9 +71,9 @@ namespace Characters.AI.Enemy
                 {
                     return;
                 }
-                _statesLogic[_state].OnStop();
+                _statesLogic[_state].OnExit();
                 _state = value;
-                _statesLogic[_state].OnStart();
+                _statesLogic[_state].OnEnter();
             }
         }
 
@@ -81,6 +91,13 @@ namespace Characters.AI.Enemy
             }
 
             return (transform.position - enemy.transform.position).magnitude < viewDistance;
+        }
+        
+        public void RotateToObject(Transform objectTransform)
+        {
+            Vector3 direction = (objectTransform.position - transform.position).normalized;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            _rigidbody.rotation = angle;
         }
 
         private void Awake()
@@ -118,7 +135,7 @@ namespace Characters.AI.Enemy
 
             foreach (BaseEnemyState state in _statesLogic.Values)
             {
-                state.Init(transform, _rigidbody, _agent, _animator, _playerTransform, _playerStealthComponent);
+                state.Init(this);
             }
 
             State = AIState.Patrolling;
@@ -140,7 +157,7 @@ namespace Characters.AI.Enemy
 
         private void UpdateState()
         {
-            AIState newState = _statesLogic[_state].OnUpdate(Time.deltaTime, _isPlayerInSight);
+            AIState newState = _statesLogic[_state].OnUpdate();
             if (newState != _state)
             {
                 State = newState;
@@ -241,35 +258,24 @@ namespace Characters.AI.Enemy
         }
     }
 
-    abstract class BaseEnemyState : IAIStateLogic
+    internal abstract class BaseEnemyState : IAIStateLogic
     {
-        protected Transform Transform;
-        protected Rigidbody2D RigidBody;
-        protected NavMeshAgent Agent;
-        protected Transform PlayerTransform;
-        protected StealthComponent PlayerStealthComponent;
-        protected Animator Animator;
+        protected EnemyLogic EnemyLogic;
 
-        public void Init(Transform transform, Rigidbody2D rigidbody, NavMeshAgent agent,
-            Animator animator, Transform playerTransform, StealthComponent playerStealthComponent)
+        public virtual void Init(EnemyLogic enemyLogic)
         {
-            Transform = transform;
-            RigidBody = rigidbody;
-            Agent = agent;
-            PlayerTransform = playerTransform;
-            Animator = animator;
-            PlayerStealthComponent = playerStealthComponent;
+            EnemyLogic = enemyLogic;
         }
 
-        public virtual void OnStart()
+        public virtual void OnEnter()
         {
         }
 
-        public virtual void OnStop()
+        public virtual void OnExit()
         {
         }
 
-        public virtual AIState OnUpdate(float timeDelta, bool isPlayerInSight)
+        public virtual AIState OnUpdate()
         {
             return AIState.Patrolling;
         }
@@ -281,6 +287,7 @@ namespace Characters.AI.Enemy
         private float _attackDelay;
         private float _speed;
         private float _suspicionIncreaseRate;
+        private bool _isOnAlert;
 
         private int _pathIndex;
         private float _timeTillAttack;
@@ -295,64 +302,118 @@ namespace Characters.AI.Enemy
             _suspicionIncreaseRate = suspicionIncreaseRate;
         }
 
-        public override void OnStart()
+        public override void OnEnter()
         {
             _timeTillAttack = _attackDelay;
-            Agent.SetDestination(_path[_pathIndex].position);
-            Agent.speed = _speed;
+            EnemyLogic.Agent.SetDestination(_path[_pathIndex].position);
+            EnemyLogic.Agent.speed = _speed;
         }
 
-        public override AIState OnUpdate(float timeDelta, bool isPlayerInSight)
+        public override AIState OnUpdate()
         {
-            Agent.isStopped = PlayerStealthComponent.IsNoticeable;
-
-            if (isPlayerInSight)
+            if (HandleVisibilityAndSuspicion(out var onUpdate))
             {
-                if (PlayerStealthComponent.IsNoticeable)
-                {
-                    var directionToPlayer = (PlayerTransform.position - Transform.position).normalized;
-                    var angle = Mathf.Atan2(directionToPlayer.y, directionToPlayer.x) * Mathf.Rad2Deg;
-                    RigidBody.rotation = angle;
-
-                    IncreaseSuspicion();
-                    // Transition to attack state if suspicion reaches 1
-                    if (_suspicionLevel >= 1.0f)
-                    {
-                        _timeTillAttack = Mathf.Max(_timeTillAttack - timeDelta, -1);
-                        if (_timeTillAttack < 0.0f) return AIState.Attacking;
-                    }
-                }
-                return AIState.Patrolling;
+                return onUpdate;
             }
 
             _timeTillAttack = _attackDelay;
 
-            if (!Agent.pathPending && Agent.remainingDistance <= Agent.stoppingDistance)
-            {
-                _pathIndex = (_pathIndex + 1) % _path.Length;
-                Agent.SetDestination(_path[_pathIndex].position);
-            }
-            else
-            {
-                var velocity = Agent.velocity;
-                float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
-                RigidBody.rotation = angle;
-            }
+            MoveAlongPath();
 
             return AIState.Patrolling;
         }
 
-        public override void OnStop()
+        private bool HandleVisibilityAndSuspicion(out AIState onUpdate)
+        {
+            EnemyLogic.Agent.isStopped = false;
+            
+            if (EnemyLogic.IsPlayerInSight)
+            {
+                if (!_isOnAlert)
+                {
+                    EnemyLogic.Agent.isStopped = EnemyLogic.PlayerStealthComponent.IsNoticeable;
+                    
+                    if (EnemyLogic.PlayerStealthComponent.IsNoticeable)
+                    {
+                        EnemyLogic.RotateToObject(EnemyLogic.PlayerTransform);
+
+                        IncreaseSuspicion();
+                        
+                        // Transition to attack state if suspicion reaches 1
+                        if (_suspicionLevel >= 1.0f)
+                        {
+                            _timeTillAttack = Mathf.Max(_timeTillAttack - Time.deltaTime, -1);
+                            if (_timeTillAttack < 0.0f)
+                            {
+                                _isOnAlert = true;
+                                EnemyLogic.EnemySuspicionMeter.SetVisibility(false);
+                                
+                                onUpdate = AIState.Attacking;
+                                return true;
+                            }
+                        }
+
+                        onUpdate = AIState.Patrolling;
+                        return true;
+                    }
+
+                    DecreaseSuspicion();
+                }
+                else
+                {
+                    onUpdate = AIState.Attacking;
+                    return true;
+                }
+            }
+
+            DecreaseSuspicion();
+
+            onUpdate = AIState.Patrolling;
+            return false;
+        }
+
+        public override void OnExit()
         {
             _attackDelay = 0.0f;
+        }
+
+        private void MoveAlongPath()
+        {
+            if (!EnemyLogic.Agent.pathPending && EnemyLogic.Agent.remainingDistance <= EnemyLogic.Agent.stoppingDistance)
+            {
+                _pathIndex = (_pathIndex + 1) % _path.Length;
+                EnemyLogic.Agent.SetDestination(_path[_pathIndex].position);
+            }
+            else
+            {
+                var velocity = EnemyLogic.Agent.velocity;
+                var angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
+                EnemyLogic.Rigidbody.rotation = angle;
+            }
         }
         
         private void IncreaseSuspicion()
         {
+            EnemyLogic.EnemySuspicionMeter.SetVisibility(true);
+            
             // Increase suspicion more quickly if the player is more noticeable
-            _suspicionLevel += Time.deltaTime * _suspicionIncreaseRate * PlayerStealthComponent.Noticeability;
+            _suspicionLevel += Time.deltaTime * _suspicionIncreaseRate * EnemyLogic.PlayerStealthComponent.Noticeability;
             _suspicionLevel = Mathf.Clamp(_suspicionLevel, 0.0f, 1.0f);
-            Debug.Log($"Increase suspicion {_suspicionLevel}");
+            EnemyLogic.EnemySuspicionMeter.SetBarFillAmount(_suspicionLevel);
+        }
+        
+        private void DecreaseSuspicion()
+        {
+            if (_suspicionLevel > 0.0f)
+            {
+                _suspicionLevel -= Time.deltaTime * _suspicionIncreaseRate;
+                _suspicionLevel = Mathf.Clamp(_suspicionLevel, 0.0f, 1.0f);
+                EnemyLogic.EnemySuspicionMeter.SetBarFillAmount(_suspicionLevel);
+            }
+            else
+            {
+                EnemyLogic.EnemySuspicionMeter.SetVisibility(false);
+            }
         }
     }
 
@@ -372,38 +433,36 @@ namespace Characters.AI.Enemy
             _shootingDistance = shootingDistance;
         }
 
-        public override void OnStart()
+        public override void OnEnter()
         {
-            Agent.speed = _speed;
-            Agent.SetDestination(PlayerTransform.position);
+            EnemyLogic.Agent.speed = _speed;
+            EnemyLogic.Agent.SetDestination(EnemyLogic.PlayerTransform.position);
         }
 
-        public override AIState OnUpdate(float timeDelta, bool isPlayerInSight)
+        public override AIState OnUpdate()
         {
-            Vector3 directionToPlayer = (PlayerTransform.position - Transform.position).normalized;
-            float angle = Mathf.Atan2(directionToPlayer.y, directionToPlayer.x) * Mathf.Rad2Deg;
-            RigidBody.rotation = angle;
+            EnemyLogic.RotateToObject(EnemyLogic.PlayerTransform);
 
-            if (isPlayerInSight)
+            if (EnemyLogic.IsPlayerInSight)
             {
-                float distanceToPlayer = (Transform.position - PlayerTransform.position).magnitude;
+                float distanceToPlayer = (EnemyLogic.transform.position - EnemyLogic.PlayerTransform.position).magnitude;
                 if (distanceToPlayer < _shootingDistance)
                 {
-                    Agent.isStopped = true;
+                    EnemyLogic.Agent.isStopped = true;
                     if (_weapon.CurrentAmmo == 0)
                     {
                         _weapon.Reload();
-                        Animator.Play(ReloadAnimation);
+                        EnemyLogic.Animator.Play(ReloadAnimation);
                     }
                     else if (_weapon.CanShoot)
                     {
                         _weapon.Shoot();
                     }
                 }
-                else if (!Agent.pathPending)
+                else if (!EnemyLogic.Agent.pathPending)
                 {
-                    Agent.isStopped = false;
-                    Agent.SetDestination(PlayerTransform.position);
+                    EnemyLogic.Agent.isStopped = false;
+                    EnemyLogic.Agent.SetDestination(EnemyLogic.PlayerTransform.position);
                 }
                 return AIState.Attacking;
             }
@@ -415,9 +474,7 @@ namespace Characters.AI.Enemy
     class EnemyChasingState : BaseEnemyState
     {
         private const float MaxTimeInState = 10.0f;
-
         private float _speed;
-
         private float _timeInState;
 
         public EnemyChasingState(float speed)
@@ -425,26 +482,28 @@ namespace Characters.AI.Enemy
             _speed = speed;
         }
 
-        public override void OnStart()
+        public override void OnEnter()
         {
-            Agent.SetDestination(PlayerTransform.position);
-            Agent.isStopped = false;
-            Agent.speed = _speed;
+            EnemyLogic.Agent.SetDestination(EnemyLogic.PlayerTransform.position);
+            EnemyLogic.Agent.isStopped = false;
+            EnemyLogic.Agent.speed = _speed;
             _timeInState = 0;
         }
 
-        public override AIState OnUpdate(float timeDelta, bool isPlayerInSight)
+        public override AIState OnUpdate()
         {
-            if (isPlayerInSight)
+            if (EnemyLogic.IsPlayerInSight)
             {
                 return AIState.Attacking;
             }
-            _timeInState += timeDelta;
-            if ((_timeInState >= MaxTimeInState) ||
-                (!Agent.pathPending && Agent.remainingDistance <= Agent.stoppingDistance))
+
+            _timeInState += Time.deltaTime;
+            if (_timeInState >= MaxTimeInState ||
+                (!EnemyLogic.Agent.pathPending && EnemyLogic.Agent.remainingDistance <= EnemyLogic.Agent.stoppingDistance))
             {
                 return AIState.SearchingForPlayer;
             }
+
             return AIState.ChasingPlayer;
         }
     }
@@ -462,33 +521,33 @@ namespace Characters.AI.Enemy
             _totalRotationAngle = totalRotationAngle;
         }
 
-        public override void OnStart()
+        public override void OnEnter()
         {
             _totalRotation = 0;
-            Agent.isStopped = true;
+            EnemyLogic.Agent.isStopped = true;
         }
 
-        public override AIState OnUpdate(float timeDelta, bool isPlayerInSight)
+        public override AIState OnUpdate()
         {
-            if (isPlayerInSight)
+            if (EnemyLogic.IsPlayerInSight)
             {
                 return AIState.Attacking;
             }
-            float angleDelta = _searchingRotationSpeed * timeDelta;
+            float angleDelta = _searchingRotationSpeed * Time.deltaTime;
             if (_totalRotation < _totalRotationAngle)
             {
-                RigidBody.rotation += angleDelta;
-                if (RigidBody.rotation > 180.0f)
+                EnemyLogic.Rigidbody.rotation += angleDelta;
+                if (EnemyLogic.Rigidbody.rotation > 180.0f)
                 {
-                    RigidBody.rotation -= 360.0f;
+                    EnemyLogic.Rigidbody.rotation -= 360.0f;
                 }
             }
             else
             {
-                RigidBody.rotation -= angleDelta;
-                if (RigidBody.rotation < -180.0f)
+                EnemyLogic.Rigidbody.rotation -= angleDelta;
+                if (EnemyLogic.Rigidbody.rotation < -180.0f)
                 {
-                    RigidBody.rotation += 360.0f;
+                    EnemyLogic.Rigidbody.rotation += 360.0f;
                 }
             }
 

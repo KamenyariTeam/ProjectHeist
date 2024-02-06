@@ -9,12 +9,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7286542278315617595}
+  - component: {fileID: 2576232730662105070}
+  - component: {fileID: -1750824310462091876}
   - component: {fileID: 3346710801103524113}
   - component: {fileID: 879737215763683402}
   - component: {fileID: -6619163746556755249}
   - component: {fileID: 2831404639852634170}
-  - component: {fileID: -1750824310462091876}
-  - component: {fileID: 2576232730662105070}
   - component: {fileID: 2490446724334395613}
   - component: {fileID: 3920292067767012545}
   - component: {fileID: 6798373167926086282}
@@ -42,6 +42,58 @@ Transform:
   - {fileID: 5455713137412331888}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2576232730662105070
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1189712299164168322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54cb7e0572c7841e494a50d2604369c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerTag: Player
+  wallMask:
+    serializedVersion: 2
+    m_Bits: 64
+  playerDetectionInterval: 0.1
+  viewDistance: 1.5
+  viewAngle: 160
+  guaranteedDetectDistance: 0.35
+  suspicionIncreaseRate: 0.05
+  suspicionMeter: {fileID: 2444621701975547721}
+  idleSpeed: 0.4
+  chasingSpeed: 0.5
+  weapon: {fileID: 2490446724334395613}
+  shootingDistance: 1.5
+  delayBeforeAttack: 0.3
+  searchingRotationSpeed: 180
+  searchingTotalRotation: 90
+  initialPath: []
+--- !u!195 &-1750824310462091876
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1189712299164168322}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 1
+  m_Speed: 0.4
+  m_Acceleration: 100
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2.16
+  m_BaseOffset: 1.08
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!212 &3346710801103524113
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -177,57 +229,6 @@ CapsuleCollider2D:
   m_Offset: {x: 0.08352734, y: -0.0894943}
   m_Size: {x: 2.1362517, y: 1.5754539}
   m_Direction: 1
---- !u!195 &-1750824310462091876
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1189712299164168322}
-  m_Enabled: 1
-  m_AgentTypeID: 0
-  m_Radius: 1
-  m_Speed: 0.4
-  m_Acceleration: 100
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 2.16
-  m_BaseOffset: 1.08
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
---- !u!114 &2576232730662105070
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1189712299164168322}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 54cb7e0572c7841e494a50d2604369c1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerTag: Player
-  wallMask:
-    serializedVersion: 2
-    m_Bits: 64
-  playerDetectionInterval: 0.1
-  viewDistance: 2
-  viewAngle: 180
-  guaranteedDetectDistance: 0.35
-  suspicionIncreaseRate: 0.1
-  idleSpeed: 0.4
-  chasingSpeed: 0.5
-  weapon: {fileID: 2490446724334395613}
-  shootingDistance: 0.7
-  delayBeforeAttack: 5
-  searchingRotationSpeed: 180
-  searchingTotalRotation: 90
-  initialPath: []
 --- !u!114 &2490446724334395613
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -453,6 +454,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 779d53695e420b247a964b05b314c5a7, type: 3}
+--- !u!114 &2444621701975547721 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3066343238933396029, guid: 779d53695e420b247a964b05b314c5a7, type: 3}
+  m_PrefabInstance: {fileID: 819897650202355060}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 225418f27ed13d64fb8aa68cbd21dbce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &5455713137412331888 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4672003718786972676, guid: 779d53695e420b247a964b05b314c5a7, type: 3}
