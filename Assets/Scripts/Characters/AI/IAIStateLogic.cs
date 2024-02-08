@@ -7,15 +7,16 @@ namespace Characters.AI
         Patrolling,
         Attacking,
         ChasingPlayer,
-        SearchingForPlayer
+        SearchingForPlayer,
+        Suspicion
     }
 
     public interface IAIStateLogic
     {
-        public void Init(EnemyLogic enemyLogic);
+        public void Init(IAILogic aiLogic);
         public void OnEnter();
         public void OnExit();
-        public AIState OnUpdate();
+        public AIState OnUpdate(float deltaTime);
     }
 
     public interface IAILogic

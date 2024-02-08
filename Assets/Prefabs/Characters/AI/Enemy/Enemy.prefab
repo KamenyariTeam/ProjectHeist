@@ -54,7 +54,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54cb7e0572c7841e494a50d2604369c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerTag: Player
   wallMask:
     serializedVersion: 2
     m_Bits: 64
@@ -64,14 +63,14 @@ MonoBehaviour:
   guaranteedDetectDistance: 0.35
   suspicionIncreaseRate: 0.05
   suspicionMeter: {fileID: 2444621701975547721}
-  idleSpeed: 0.4
+  patrollingSpeed: 0.3
   chasingSpeed: 0.5
   weapon: {fileID: 2490446724334395613}
   shootingDistance: 1.5
-  delayBeforeAttack: 0.3
   searchingRotationSpeed: 180
   searchingTotalRotation: 90
   initialPath: []
+  isOnAlert: 0
 --- !u!195 &-1750824310462091876
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -300,8 +299,8 @@ MonoBehaviour:
   maxArmor: 0
   regenerationSpeed: 1
   regenerationRate: 1
-  _currentHealth: 100
-  _currentArmor: 0
+  currentHealth: 100
+  currentArmor: 0
 --- !u!1 &1932342893775930150
 GameObject:
   m_ObjectHideFlags: 0

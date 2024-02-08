@@ -2,6 +2,7 @@ using SaveSystem;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 namespace Characters.Player
 {
@@ -13,20 +14,21 @@ namespace Characters.Player
         public float maxArmor = 100f;
         public float regenerationSpeed = 1f;
         public float regenerationRate = 1f;
-        public FOnDeath OnDeath;
 
-        [SerializeField] private float _currentHealth = 100f;
-        [SerializeField] private float _currentArmor = 0f;
+        [SerializeField] private float currentHealth = 100f;
+        [SerializeField] private float currentArmor;
+
+        public event FOnDeath OnDeath;
 
         private float _currentHealthRegenerationTime;
 
         public float CurrentHealth
         {
-            get => _currentHealth;
+            get => currentHealth;
             private set
             {
-                _currentHealth = math.clamp(value, 0f, maxHealth);
-                if (_currentHealth == 0f)
+                currentHealth = math.clamp(value, 0f, maxHealth);
+                if (currentHealth == 0f)
                 {
                     OnDeath?.Invoke();
                 }
@@ -35,16 +37,8 @@ namespace Characters.Player
 
         public float CurrentArmor
         {
-            get => _currentArmor;
-            private set
-            {
-                _currentArmor = math.clamp(value, 0f, maxArmor);
-            }
-        }
-
-        private void Start()
-        {
-
+            get => currentArmor;
+            private set => currentArmor = math.clamp(value, 0f, maxArmor);
         }
 
         private void Update()
@@ -60,44 +54,44 @@ namespace Characters.Player
             }
         }
 
-        public void TakeDamage(float Damage)
+        public void TakeDamage(float damage)
         {
-            if (CurrentArmor > Damage)
+            if (CurrentArmor > damage)
             {
-                CurrentArmor -= Damage;
+                CurrentArmor -= damage;
             }
             else
             {
-                Damage -= CurrentArmor;
+                damage -= CurrentArmor;
                 CurrentArmor = 0f;
-                CurrentHealth -= Damage;
+                CurrentHealth -= damage;
             }
         }
 
-        public void TakeMedicine(float MedicineValue)
+        public void TakeMedicine(float medicineValue)
         {
-            CurrentHealth += MedicineValue;
+            CurrentHealth += medicineValue;
         }
 
-        public void TakeArmor(float ArmorValue)
+        public void TakeArmor(float armorValue)
         {
-            CurrentArmor += ArmorValue;
+            CurrentArmor += armorValue;
         }
 
         public ComponentData Serialize()
         {
-            ComponentData data = new ComponentData();
+            var data = new ComponentData();
 
-            data.SetFloat("currentHealth", _currentHealth);
-            data.SetFloat("currentArmor", _currentArmor);
+            data.SetFloat("currentHealth", currentHealth);
+            data.SetFloat("currentArmor", currentArmor);
 
             return data;
         }
 
         public void Deserialize(ComponentData data)
         {
-            _currentHealth = data.GetFloat("currentHealth");
-            _currentArmor = data.GetFloat("currentArmor");
+            currentHealth = data.GetFloat("currentHealth");
+            currentArmor = data.GetFloat("currentArmor");
         }
     }
 }
