@@ -14,6 +14,7 @@ namespace Characters.AI.Enemy
 
         // Serialized fields grouped for clarity
         [Header("Detection Settings")]
+        [SerializeField] private string playerTag;
         [SerializeField] private LayerMask wallMask;
         [SerializeField] private float playerDetectionInterval;
         [SerializeField] private float viewDistance;
@@ -92,34 +93,13 @@ namespace Characters.AI.Enemy
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
             Rigidbody.rotation = angle;
         }
-
-        public void IncreaseSuspicion(float deltaTime)
+        
+        public void ChangeSuspicionLevel(float deltaValue)
         {
-            suspicionMeter.SetVisibility(true);
+            SuspicionLevel = Mathf.Clamp(SuspicionLevel + deltaValue, 0.0f, 1.0f);
 
-            // Increase suspicion more quickly if the player is more noticeable
-            SuspicionLevel += deltaTime * suspicionIncreaseRate * PlayerStealthComponent.Noticeability;
-            SuspicionLevel = Mathf.Clamp(SuspicionLevel, 0.0f, 1.0f);
+            suspicionMeter.SetVisibility(SuspicionLevel is < 1.0f and > 0.0f);
             suspicionMeter.SetBarFillAmount(SuspicionLevel);
-
-            if (SuspicionLevel >= 1.0f)
-            {
-                suspicionMeter.SetVisibility(false);
-            }
-        }
-
-        public void DecreaseSuspicion(float deltaTime)
-        {
-            if (SuspicionLevel > 0.0f)
-            {
-                SuspicionLevel -= deltaTime * suspicionIncreaseRate;
-                SuspicionLevel = Mathf.Clamp(SuspicionLevel, 0.0f, 1.0f);
-                suspicionMeter.SetBarFillAmount(SuspicionLevel);
-            }
-            else
-            {
-                suspicionMeter.SetVisibility(false);
-            }
         }
 
         private void Start()
@@ -137,7 +117,7 @@ namespace Characters.AI.Enemy
             Agent.updateUpAxis = false;
             Agent.updateRotation = false;
 
-            var player = GameObject.FindGameObjectWithTag("Player");
+            var player = GameObject.FindGameObjectWithTag(playerTag);
             PlayerTransform = player.transform;
             PlayerStealthComponent = player.GetComponent<StealthComponent>();
             _activeInteracts = new List<InteractableObjects.IInteractable>();
@@ -150,14 +130,14 @@ namespace Characters.AI.Enemy
         {
             _statesLogic = new Dictionary<AIState, BaseEnemyState>
             {
-                [AIState.Patrolling] = new EnemyPatrollingState(initialPath, patrollingSpeed),
+                [AIState.Patrolling] = new EnemyPatrollingState(initialPath, patrollingSpeed, suspicionIncreaseRate),
                 [AIState.Attacking] = new EnemyAttackingState(weapon, chasingSpeed, shootingDistance),
                 [AIState.ChasingPlayer] = new EnemyChasingState(chasingSpeed),
                 [AIState.SearchingForPlayer] = new EnemySearchingForPlayerState(searchingRotationSpeed, searchingTotalRotation),
-                [AIState.Suspicion] = new EnemySuspicionState()
+                [AIState.Suspicion] = new EnemySuspicionState(suspicionIncreaseRate)
             };
 
-            foreach (var state in _statesLogic.Values)
+            foreach (BaseEnemyState state in _statesLogic.Values)
             {
                 state.Init(this);
             }
@@ -174,7 +154,7 @@ namespace Characters.AI.Enemy
 
         private void UpdateState()
         {
-            var newState = _statesLogic[_state].OnUpdate(Time.deltaTime);
+            AIState newState = _statesLogic[_state].OnUpdate(Time.deltaTime);
             if (newState != _state)
             {
                 State = newState;
@@ -217,14 +197,14 @@ namespace Characters.AI.Enemy
 
         private bool CheckIfPlayerInSight()
         {
-            var distanceToPlayer = (transform.position - PlayerTransform.position).magnitude;
+            float distanceToPlayer = (transform.position - PlayerTransform.position).magnitude;
             if (distanceToPlayer > viewDistance)
             {
                 return false;
             }
 
-            var directionToPlayer = (PlayerTransform.position - transform.position).normalized;
-            var playerAngle = Mathf.Atan2(directionToPlayer.y, directionToPlayer.x) * Mathf.Rad2Deg;
+            Vector3 directionToPlayer = (PlayerTransform.position - transform.position).normalized;
+            float playerAngle = Mathf.Atan2(directionToPlayer.y, directionToPlayer.x) * Mathf.Rad2Deg;
 
             if (Mathf.Abs(Mathf.Abs(Rigidbody.rotation) - Mathf.Abs(playerAngle)) > 0.5f * viewAngle && viewDistance > guaranteedDetectDistance)
             {
@@ -241,9 +221,9 @@ namespace Characters.AI.Enemy
 
                 if (door)
                 {
-                    var directionToDoor = (door.transform.position - transform.position).normalized;
-                    var velocity = Agent.velocity;
-                    var dotProduct = directionToDoor.x * velocity.x + directionToDoor.y * velocity.y;
+                    Vector3 directionToDoor = (door.transform.position - transform.position).normalized;
+                    Vector3 velocity = Agent.velocity;
+                    float dotProduct = directionToDoor.x * velocity.x + directionToDoor.y * velocity.y;
                     if (dotProduct > 0)
                     {
                         door.Interact(gameObject);
@@ -261,9 +241,9 @@ namespace Characters.AI.Enemy
             Gizmos.DrawSphere(position, guaranteedDetectDistance);
 
             const int iterations = 10;
-            var originalAngle = rb.rotation;
-            var stepAngles = viewAngle / iterations;
-            var angle = originalAngle - 0.5f * viewAngle;
+            float originalAngle = rb.rotation;
+            float stepAngles = viewAngle / iterations;
+            float angle = originalAngle - 0.5f * viewAngle;
 
             Vector3 pos = position;
             for (var i = 0; i <= iterations; i++)

@@ -5,7 +5,7 @@ namespace Characters.AI.Enemy
     public class EnemyChasingState : BaseEnemyState
     {
         private const float MaxTimeInState = 10.0f;
-        private float _speed;
+        private readonly float _speed;
         private float _timeInState;
 
         public EnemyChasingState(float speed)

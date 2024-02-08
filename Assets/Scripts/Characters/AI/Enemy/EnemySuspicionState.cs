@@ -2,6 +2,13 @@
 {
     public class EnemySuspicionState : BaseEnemyState
     {
+        private readonly float _suspicionIncreaseRate;
+        
+        public EnemySuspicionState(float suspicionIncreaseRate)
+        {
+            _suspicionIncreaseRate = suspicionIncreaseRate;
+        }
+        
         public override void OnEnter()
         {
             EnemyLogic.Agent.isStopped = true;
@@ -17,7 +24,7 @@
                 }
                 
                 EnemyLogic.RotateToObject(EnemyLogic.PlayerTransform);
-                EnemyLogic.IncreaseSuspicion(deltaTime);
+                EnemyLogic.ChangeSuspicionLevel(deltaTime * _suspicionIncreaseRate * EnemyLogic.PlayerStealthComponent.Noticeability);
 
                 // Transition to attack state if suspicion reaches 1
                 if (EnemyLogic.SuspicionLevel >= 1.0f)

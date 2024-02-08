@@ -4,8 +4,8 @@ namespace Characters.AI.Enemy
 {
     public class EnemySearchingForPlayerState : BaseEnemyState
     {
-        private float _searchingRotationSpeed;
-        private float _totalRotationAngle;
+        private readonly float _searchingRotationSpeed;
+        private readonly float _totalRotationAngle;
 
         private float _totalRotation;
 
@@ -27,7 +27,7 @@ namespace Characters.AI.Enemy
             {
                 return AIState.Attacking;
             }
-            var angleDelta = _searchingRotationSpeed * deltaTime;
+            float angleDelta = _searchingRotationSpeed * deltaTime;
             if (_totalRotation < _totalRotationAngle)
             {
                 EnemyLogic.Rigidbody.rotation += angleDelta;

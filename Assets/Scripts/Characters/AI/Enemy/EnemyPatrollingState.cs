@@ -6,14 +6,16 @@ namespace Characters.AI.Enemy
     {
         private readonly Transform[] _path;
         private readonly float _speed;
+        private readonly float _suspicionIncreaseRate;
 
         private int _pathIndex;
         
-        public EnemyPatrollingState(Transform[] path, float speed)
+        public EnemyPatrollingState(Transform[] path, float speed, float suspicionIncreaseRate)
         {
             _pathIndex = 0;
             _path = path;
             _speed = speed;
+            _suspicionIncreaseRate = suspicionIncreaseRate;
         }
 
         public override void OnEnter()
@@ -30,7 +32,10 @@ namespace Characters.AI.Enemy
                 return EnemyLogic.isOnAlert ? AIState.Attacking : AIState.Suspicion;
             }
 
-            EnemyLogic.DecreaseSuspicion(deltaTime);
+            if (!EnemyLogic.isOnAlert)
+            {
+                EnemyLogic.ChangeSuspicionLevel(deltaTime * -_suspicionIncreaseRate);
+            }
             
             MoveAlongPath();
 
