@@ -1,4 +1,4 @@
-namespace Character
+namespace Characters.AI
 {
     public enum AIState
     {

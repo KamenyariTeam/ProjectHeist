@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Character
+namespace Characters.Player
 {
     public class InputReader : ScriptableObject, GameInput.IGameplayActions, GameInput.IUIActions
     {
@@ -21,13 +21,13 @@ namespace Character
             }
         }
 
-        public void SetGameplay()
+        private void SetGameplay()
         {
             _gameInput.Gameplay.Enable();
             _gameInput.UI.Disable();
         }
 
-        public void SetUI()
+        private void SetUI()
         {
             _gameInput.Gameplay.Disable();
             _gameInput.UI.Enable();
@@ -35,8 +35,6 @@ namespace Character
 
         // Gameplay events
         public event Action<Vector2> MoveEvent;
-        public event Action<Vector2> LookMouseEvent;
-        public event Action<Vector2> LookGamepadEvent;
 
         public event Action FireEvent;
         public event Action ReloadEvent;
@@ -56,14 +54,6 @@ namespace Character
         public void OnMove(InputAction.CallbackContext context)
         {
             MoveEvent?.Invoke(context.ReadValue<Vector2>());
-        }
-
-        public void OnLook(InputAction.CallbackContext context)
-        {
-            if (context.control.device == Mouse.current)
-                LookMouseEvent?.Invoke(context.ReadValue<Vector2>());
-            else
-                LookGamepadEvent?.Invoke(context.ReadValue<Vector2>());
         }
 
         public void OnFire(InputAction.CallbackContext context)

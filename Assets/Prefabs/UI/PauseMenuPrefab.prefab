@@ -208,9 +208,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MenuGameMode, Assembly-CSharp
-        m_MethodName: OnPressNewGame
+      - m_Target: {fileID: 5286276530555258795}
+        m_TargetAssemblyTypeName: UI.PauseMenuScript, Assembly-CSharp
+        m_MethodName: OnPressResume
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -325,9 +325,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MenuGameMode, Assembly-CSharp
-        m_MethodName: OnPressQuit
+      - m_Target: {fileID: 5286276530555258795}
+        m_TargetAssemblyTypeName: UI.PauseMenuScript, Assembly-CSharp
+        m_MethodName: OnPressMainMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1032,7 +1032,7 @@ GameObject:
   - component: {fileID: 5688459356522655060}
   - component: {fileID: 2143938732078486697}
   - component: {fileID: 3905144120010727216}
-  - component: {fileID: 3117310428893284083}
+  - component: {fileID: 5286276530555258795}
   m_Layer: 5
   m_Name: PauseMenuPrefab
   m_TagString: Untagged
@@ -1124,7 +1124,7 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &3117310428893284083
+--- !u!114 &5286276530555258795
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1133,11 +1133,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 7330908130726680404}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 060b2058c0abed64194b3485e1617d5c, type: 3}
+  m_Script: {fileID: 11500000, guid: 4f8c23a12aef94f15a0ac9f38c3c611a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pauseMenuUI: {fileID: 7330908130726680404}
-  gameHudUI: {fileID: 0}
+  managersOwnerTag: ManagersOwner
 --- !u!1 &9161317135733995100
 GameObject:
   m_ObjectHideFlags: 0

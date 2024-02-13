@@ -1,10 +1,8 @@
 using InteractableObjects.Weapon;
 using SaveSystem;
-using System.Xml;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace Character
+namespace Characters.Player
 {
     public class WeaponComponent : MonoBehaviour, ISavableComponent
     {
@@ -16,9 +14,6 @@ namespace Character
         public Transform firePoint;
         public GameObject bulletPrefab;
         public GameObject flashPrefab;
-
-        [SerializeField] private int _uniqueID;
-        [SerializeField] private int _executionOrder;
 
         [SerializeField] private float _currentAmmo = 7f;
         private float _timeSinceLastShot;
@@ -52,21 +47,6 @@ namespace Character
         }
 
         public bool CanShoot { get; private set; }
-
-        public int uniqueID
-        {
-            get
-            {
-                return _uniqueID;
-            }
-        }
-        public int executionOrder
-        {
-            get
-            {
-                return _executionOrder;
-            }
-        }
 
         public void Shoot()
         {
