@@ -1,0 +1,61 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "FirstLevel/FirstLevel.tmx",
+    "expandedProjectPaths": [
+        "Tilesets",
+        ".",
+        "FirstLevel",
+        "Tilesets/Rules"
+    ],
+    "fileStates": {
+        ":/automap-tiles.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "FirstLevel/FirstLevel.tmx": {
+            "scale": 3,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 385.83333333333337,
+                "y": 2.1666666666666856
+            }
+        },
+        "Tilesets/InnerWalls.tsx": {
+            "scaleInDock": 3,
+            "scaleInEditor": 3
+        },
+        "Tilesets/OutdoorWalls.tsx": {
+            "scaleInDock": 3,
+            "scaleInEditor": 3
+        },
+        "Tilesets/Rules/AutotileRules.tmx": {
+            "scale": 2,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 41.25,
+                "y": 786.75
+            }
+        }
+    },
+    "last.imagePath": "D:/GameDev/ProjectHeist/Assets/Sprites/Maps/Tilesets",
+    "map.fixedSize": false,
+    "map.lastUsedFormat": "tmx",
+    "openFiles": [
+        "FirstLevel/FirstLevel.tmx",
+        "Tilesets/OutdoorWalls.tsx",
+        "Tilesets/Rules/AutotileRules.tmx",
+        "Tilesets/InnerWalls.tsx"
+    ],
+    "project": "HeistTiledProject.tiled-project",
+    "recentFiles": [
+        "Tilesets/OutdoorWalls.tsx",
+        "Tilesets/InnerWalls.tsx",
+        "Tilesets/Rules/AutotileRules.tmx",
+        "FirstLevel/FirstLevel.tmx",
+        ":/automap-tiles.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx"
+}

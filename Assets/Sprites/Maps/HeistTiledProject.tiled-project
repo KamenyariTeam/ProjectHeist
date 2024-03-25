@@ -1,0 +1,13 @@
+{
+    "automappingRulesFile": "Tilesets/Rules.txt",
+    "commands": [
+    ],
+    "extensionsPath": "extensions",
+    "folders": [
+        "."
+    ],
+    "properties": [
+    ],
+    "propertyTypes": [
+    ]
+}
