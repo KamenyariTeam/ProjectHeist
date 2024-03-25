@@ -36,7 +36,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 5981334608794442887}
@@ -112,8 +112,6 @@ MonoBehaviour:
     m_Bits: 64
   currentWeapon: {fileID: 1741643135376574860}
   currentTool: {fileID: 6685619728529087177, guid: e24ee1ba5b32a43d7aa467dda042e29e, type: 3}
-  uniqueID: 0
-  executionOrder: 0
 --- !u!50 &879737215763683402
 Rigidbody2D:
   serializedVersion: 4
@@ -301,8 +299,6 @@ MonoBehaviour:
   firePoint: {fileID: 5981334608794442887}
   bulletPrefab: {fileID: 1291077028596044639, guid: efa31b17a0ede034fb6b34c9707e9e42, type: 3}
   flashPrefab: {fileID: 6387391009917682901, guid: 5555927b07d7c714fbaf022bf34f7c4a, type: 3}
-  _uniqueID: 1
-  _executionOrder: 0
   _currentAmmo: 7
 --- !u!114 &1032356728065387743
 MonoBehaviour:
@@ -320,10 +316,8 @@ MonoBehaviour:
   maxArmor: 100
   regenerationSpeed: 1
   regenerationRate: 1
-  _currentHealth: 100
-  _currentArmor: 0
-  _uniqueID: 2
-  _executionOrder: 0
+  currentHealth: 100
+  currentArmor: 0
 --- !u!114 &8617484324941117248
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -337,7 +331,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   acceptableNoticeability: 20
-  noticeability: 0
 --- !u!1001 &3223852948751945598
 PrefabInstance:
   m_ObjectHideFlags: 0
