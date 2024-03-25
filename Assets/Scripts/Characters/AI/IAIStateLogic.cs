@@ -1,3 +1,5 @@
+using Characters.AI.Enemy;
+
 namespace Characters.AI
 {
     public enum AIState
@@ -5,14 +7,16 @@ namespace Characters.AI
         Patrolling,
         Attacking,
         ChasingPlayer,
-        SearchingForPlayer
+        SearchingForPlayer,
+        Suspicion
     }
 
     public interface IAIStateLogic
     {
-        public void OnStart();
-        public AIState OnUpdate(float timeDelta, bool isDetectingPlayer);
-        public void OnStop();
+        public void Init(IAILogic aiLogic);
+        public void OnEnter();
+        public void OnExit();
+        public AIState OnUpdate(float deltaTime);
     }
 
     public interface IAILogic
