@@ -27,7 +27,7 @@ namespace InteractableObjects
         {
             if (MapUI)
             {
-                _pauseController.
+                //_pauseController.
                 MapUI.SetVisible(true);
             }
             
