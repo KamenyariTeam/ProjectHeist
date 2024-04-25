@@ -7,8 +7,10 @@
     "expandedProjectPaths": [
         "Tilesets",
         ".",
+        "Hideout",
+        "Tilesets/Rules",
         "FirstLevel",
-        "Tilesets/Rules"
+        "Placeholder"
     ],
     "fileStates": {
         ":/automap-tiles.tsx": {
@@ -16,11 +18,11 @@
             "scaleInEditor": 1
         },
         "FirstLevel/FirstLevel.tmx": {
-            "scale": 3,
-            "selectedLayer": 0,
+            "scale": 5.5,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 385.83333333333337,
-                "y": 2.1666666666666856
+                "x": 336.81818181818176,
+                "y": 360.4545454545455
             }
         },
         "Hideout/HideoutMap.tmx": {
@@ -34,6 +36,10 @@
         "Hideout/PlaceholderTilesetTiled.tsx": {
             "dynamicWrapping": true,
             "scaleInDock": 1
+        },
+        "Tilesets/Floor.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
         },
         "Tilesets/InnerWalls.tsx": {
             "scaleInDock": 3,
@@ -58,12 +64,16 @@
     "map.lastUsedFormat": "tmx",
     "openFiles": [
         "FirstLevel/FirstLevel.tmx",
-        "Tilesets/OutdoorWalls.tsx",
         "Tilesets/Rules/AutotileRules.tmx",
-        "Tilesets/InnerWalls.tsx"
+        "Tilesets/InnerWalls.tsx",
+        "Tilesets/OutdoorWalls.tsx",
+        "Tilesets/Floor.tsx",
+        "Hideout/HideoutMap.tmx"
     ],
     "project": "HeistTiledProject.tiled-project",
     "recentFiles": [
+        "Hideout/HideoutMap.tmx",
+        "Tilesets/Floor.tsx",
         "Tilesets/OutdoorWalls.tsx",
         "Tilesets/InnerWalls.tsx",
         "Tilesets/Rules/AutotileRules.tmx",

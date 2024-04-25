@@ -73,7 +73,7 @@ SpriteRenderer:
   m_SortingLayerID: 1468494539
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: -981895764, guid: 120edc52f888fa447b618e4bc3c548d7, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 63ee0030acadb8c4aa1a2ee9a851124c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -109,7 +109,7 @@ Transform:
   m_GameObject: {fileID: 5926853170494856753}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.24, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -129,8 +129,8 @@ GameObject:
   - component: {fileID: 8707961091008291464}
   - component: {fileID: 8717062208052854856}
   - component: {fileID: 1458535584395763407}
-  - component: {fileID: 6424996436264520730}
-  - component: {fileID: 1639283175383695764}
+  - component: {fileID: 6865626999832513441}
+  - component: {fileID: 5037650411524794919}
   m_Layer: 0
   m_Name: DoorSprite
   m_TagString: Untagged
@@ -194,7 +194,7 @@ SpriteRenderer:
   m_SortingLayerID: 1468494539
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: -981895764, guid: 120edc52f888fa447b618e4bc3c548d7, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 63ee0030acadb8c4aa1a2ee9a851124c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -253,7 +253,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!61 &6424996436264520730
+--- !u!61 &6865626999832513441
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -285,20 +285,20 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.05513924}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.16, y: 0.16}
+    oldSize: {x: 0.64, y: 0.04}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.16, y: 0.03223882}
+  m_Size: {x: 0.64, y: 0.04}
   m_EdgeRadius: 0
---- !u!114 &1639283175383695764
+--- !u!114 &5037650411524794919
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -318,13 +318,13 @@ MonoBehaviour:
   m_SelfShadows: 1
   m_ApplyToSortingLayers: 7ffcec5a00000000cb14c7612d63b744cb728757
   m_ShapePath:
-  - {x: -0.08431419, y: -0.07072475, z: 0}
-  - {x: -0.08401375, y: -0.03911767, z: 0}
-  - {x: 0.083150916, y: -0.03851679, z: 0}
-  - {x: 0.08345136, y: -0.07128713, z: 0}
-  m_ShapePathHash: -700732450
+  - {x: -0.32, y: -0.02, z: 0}
+  - {x: -0.32, y: 0.02, z: 0}
+  - {x: 0.31999996, y: 0.02, z: 0}
+  - {x: 0.31999996, y: -0.02, z: 0}
+  m_ShapePathHash: 0
   m_Mesh: {fileID: 0}
-  m_InstanceId: 40868
+  m_InstanceId: 40610
   m_LocalBounds:
-    m_Center: {x: -0.00043141097, y: -0.05490196, z: 0}
-    m_Extent: {x: 0.08388278, y: 0.016385172, z: 0}
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0.32, y: 0.02, z: 0}

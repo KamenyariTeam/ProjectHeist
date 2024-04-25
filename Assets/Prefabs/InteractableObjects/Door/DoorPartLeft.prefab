@@ -73,7 +73,7 @@ SpriteRenderer:
   m_SortingLayerID: 1468494539
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: -981895764, guid: 120edc52f888fa447b618e4bc3c548d7, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 63ee0030acadb8c4aa1a2ee9a851124c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -194,7 +194,7 @@ SpriteRenderer:
   m_SortingLayerID: 1468494539
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: -981895764, guid: 120edc52f888fa447b618e4bc3c548d7, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 63ee0030acadb8c4aa1a2ee9a851124c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -285,18 +285,18 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.055298038}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.16, y: 0.16}
+    oldSize: {x: 0.64, y: 0.04}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.16, y: 0.032299057}
+  m_Size: {x: 0.64, y: 0.04}
   m_EdgeRadius: 0
 --- !u!114 &2032646956416690735
 MonoBehaviour:
@@ -316,15 +316,15 @@ MonoBehaviour:
   m_UseRendererSilhouette: 0
   m_CastsShadows: 1
   m_SelfShadows: 1
-  m_ApplyToSortingLayers: 7ffcec5a00000000cb14c7612d63b744cb728757
+  m_ApplyToSortingLayers: 
   m_ShapePath:
-  - {x: -0.08345136, y: -0.07134738, z: 0}
-  - {x: -0.08345135, y: -0.039767385, z: 0}
-  - {x: 0.08431419, y: -0.039182898, z: 0}
-  - {x: 0.08400516, y: -0.07079356, z: 0}
-  m_ShapePathHash: -263960635
+  - {x: -0.32, y: -0.02, z: 0}
+  - {x: -0.32, y: 0.02, z: 0}
+  - {x: 0.32, y: 0.02, z: 0}
+  - {x: 0.32, y: -0.02, z: 0}
+  m_ShapePathHash: 0
   m_Mesh: {fileID: 0}
-  m_InstanceId: 40780
+  m_InstanceId: 39518
   m_LocalBounds:
-    m_Center: {x: 0.00043141842, y: -0.055265136, z: 0}
-    m_Extent: {x: 0.08388278, y: 0.01608224, z: 0}
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0.32, y: 0.02, z: 0}
