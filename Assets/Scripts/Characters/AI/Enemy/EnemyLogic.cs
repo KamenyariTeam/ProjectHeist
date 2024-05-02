@@ -217,7 +217,7 @@ namespace Characters.AI.Enemy
         {
             foreach (var interactable in _activeInteracts)
             {
-                var door = interactable as Door;
+                var door = interactable as SingleDoor;
 
                 if (door)
                 {
