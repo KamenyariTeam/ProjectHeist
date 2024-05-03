@@ -11,7 +11,7 @@ namespace InteractableObjects.Door
         protected override void Start()
         {
             base.Start();
-            float doorWidth = GetComponentInChildren<Renderer>().bounds.size.x;
+            float doorWidth = GetComponentInChildren<Renderer>().localBounds.size.x;
             _doorLeftTransform = transform.Find("LeftDoor");
             _doorRightTransform = transform.Find("RightDoor");
             _startPositionLeftSide = _doorLeftTransform.position;

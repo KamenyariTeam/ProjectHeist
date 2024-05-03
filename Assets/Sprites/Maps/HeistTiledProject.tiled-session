@@ -21,16 +21,16 @@
             "scale": 5.5,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 336.81818181818176,
-                "y": 360.4545454545455
+                "x": 511.9090909090909,
+                "y": -0.09090909090909349
             }
         },
         "Hideout/HideoutMap.tmx": {
             "scale": 90,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 66.4388888888889,
-                "y": 352.97222222222223
+                "x": 128,
+                "y": 175.99444444444444
             }
         },
         "Hideout/PlaceholderTilesetTiled.tsx": {
@@ -54,8 +54,8 @@
             "scale": 2,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 41.25,
-                "y": 786.75
+                "x": 229.5,
+                "y": 755.5
             }
         }
     },
