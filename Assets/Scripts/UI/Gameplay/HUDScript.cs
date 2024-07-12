@@ -16,9 +16,8 @@ namespace UI
         private WeaponComponent _weaponComponent;
         private HealthComponent _healthComponent;
 
-        protected override void Awake()
+        protected void Awake()
         {
-            base.Awake();
             _player = GameObject.FindGameObjectWithTag(playerTag);
             _weaponComponent = _player.GetComponent<WeaponComponent>();
             _healthComponent = _player.GetComponent<HealthComponent>();

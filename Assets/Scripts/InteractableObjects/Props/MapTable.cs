@@ -16,11 +16,7 @@ namespace InteractableObjects
         {
             base.Start();
 
-            GameObject Manager = GameObject.FindGameObjectWithTag("ManagersOwner");
-            if (Manager)
-            {
-                _pauseController = Manager.GetComponent<GamePauseController>();
-            }       
+            _pauseController = ManagersOwner.GetManager<GamePauseController>();
         }
 
         public override void Interact(GameObject character)

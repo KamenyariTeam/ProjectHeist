@@ -5,9 +5,7 @@ namespace UI
 {
     public class BaseUIWindow : MonoBehaviour, IUIWindow
     {
-        protected UIManager _uiManager;
-
-        [SerializeField] private string managersOwnerTag;
+        private UIManager _uiManager;
 
         public virtual void Init(object data)
         {
@@ -25,19 +23,19 @@ namespace UI
             gameObject.SetActive(false);
         }
 
-        protected virtual void Awake()
+        protected UIManager UserInterfaceManager
         {
-            GameObject managersOwner = GameObject.FindGameObjectWithTag(managersOwnerTag);
-            if (managersOwner == null)
+            get
             {
-                Debug.LogError($"Can't find owner of managers on the scene, tag: {managersOwnerTag}");
-                return;
-            }
-
-            _uiManager = managersOwner.GetComponent<UIManager>();
-            if (_uiManager == null)
-            {
-                Debug.LogError($"Managers owner doesn't contain {nameof(UIManager)}");
+                if (_uiManager == null)
+                {
+                    _uiManager = GameControllers.ManagersOwner.GetManager<UIManager>();
+                    if (_uiManager == null)
+                    {
+                        Debug.LogError($"Managers owner doesn't contain {nameof(UIManager)}");
+                    }
+                }
+                return _uiManager;
             }
         }
     }

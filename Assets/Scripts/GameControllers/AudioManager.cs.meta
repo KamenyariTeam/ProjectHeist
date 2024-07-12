@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: b1dd9be04bd5ed84b90bbcb9344fce75
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - crosshairCursor: {fileID: 2800000, guid: aeb76c1ba50b85b4a84dacd8dd421a56, type: 3}
+  - standardCursor: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
