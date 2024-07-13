@@ -1,6 +1,7 @@
 using InteractableObjects.Weapon;
 using SaveSystem;
 using UnityEngine;
+using GameControllers;
 
 namespace Characters.Player
 {
@@ -15,12 +16,19 @@ namespace Characters.Player
         public GameObject bulletPrefab;
         public GameObject flashPrefab;
 
+        [SerializeField] private AudioManager.SoundType _shotSound;
+        [SerializeField] private AudioManager.SoundType _emptyShotSound;
+        [SerializeField] private AudioManager.SoundType _reloadSound;
+
         [SerializeField] private float _currentAmmo = 7f;
         private float _timeSinceLastShot;
+
+        private AudioManager _audioManager;
 
         private void Start()
         {
             _currentAmmo = maxAmmo;
+            _audioManager = ManagersOwner.GetManager<AudioManager>();
             CanShoot = true;
         }
 
@@ -50,7 +58,12 @@ namespace Characters.Player
 
         public void Shoot()
         {
-            if (CanShoot && _currentAmmo > 0)
+            if (!CanShoot)
+            {
+                return;
+            }
+
+            if (_currentAmmo > 0)
             {
                 var firePointPosition = firePoint.position;
                 var firePointRotation = firePoint.rotation;
@@ -65,13 +78,20 @@ namespace Characters.Player
 
                 --_currentAmmo;
                 CanShoot = false;
+                _audioManager.PlaySound(_shotSound, transform.position, s => AudioManager.SoundType.COUNT);
             }
+            else
+            {
+                _audioManager.PlaySound(_emptyShotSound, transform.position, s => AudioManager.SoundType.COUNT);
+            }
+
         }
 
         public void Reload()
         {
             CanShoot = false;
             _currentAmmo = maxAmmo;
+            _audioManager.PlaySound(_reloadSound, transform, s => AudioManager.SoundType.COUNT);
         }
 
         public void ReloadEnded()
