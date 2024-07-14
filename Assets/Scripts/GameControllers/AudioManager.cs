@@ -1,10 +1,11 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 
 namespace GameControllers
 {
-    using AudioID = System.Int32;
+    using AudioID = System.Int64;
 
     public class AudioManager : MonoBehaviour
     {
@@ -34,6 +35,7 @@ namespace GameControllers
         public delegate SoundType OnAudioEndedDelegate(SoundType endedSound);
 
         private static readonly string VolumeParameterTemplate = "{0}_Volume";
+        private static readonly float AudioSourceDestroyingInterval = 30.0f;
 
         [SerializeField] private AudioMixer _audioMixer;
         [SerializeField] private GameObject _audioSourcePrefab;
@@ -42,6 +44,10 @@ namespace GameControllers
 
         private Dictionary<AudioID, ActiveSoundData> _activeSounds = new Dictionary<AudioID, ActiveSoundData>();
         private Queue<AudioSource> _audioSourcePool = new Queue<AudioSource>();
+        private AudioID _currentAudioId = 0;
+
+        private int _maxUsedAudioSources = 0;
+        private float _timeTillAudioSourcesDestroying = AudioSourceDestroyingInterval;
 
         public AudioID PlaySound(SoundType type, OnAudioEndedDelegate onAudioEnded)
         {
@@ -100,10 +106,31 @@ namespace GameControllers
             }
         }
 
+        protected void FixedUpdate()
+        {
+            if (_timeTillAudioSourcesDestroying >= 0)
+            {
+                _timeTillAudioSourcesDestroying -= Time.fixedDeltaTime;
+            }
+            else
+            {
+                _maxUsedAudioSources = Math.Max(_maxUsedAudioSources, _initialPoolSize);
+                int unusedSourcesCount = _activeSounds.Count + _audioSourcePool.Count - _maxUsedAudioSources;
+                for (int i = 0; i < unusedSourcesCount; i++)
+                {
+                    AudioSource source = _audioSourcePool.Dequeue();
+                    Destroy(source.gameObject);
+                }
+                _maxUsedAudioSources = 0;
+                _timeTillAudioSourcesDestroying = AudioSourceDestroyingInterval;
+            }
+
+        }
+
         protected void OnDestroy()
         {
-            var activeSoundIds = new List<int>(_activeSounds.Keys);
-            foreach (int id in activeSoundIds)
+            var activeSoundIds = new List<AudioID>(_activeSounds.Keys);
+            foreach (AudioID id in activeSoundIds)
             {
                 StopSound(id);
             }
@@ -114,24 +141,6 @@ namespace GameControllers
             GameObject obj = Instantiate(_audioSourcePrefab);
             var source = obj.GetComponent<AudioSource>();
             _audioSourcePool.Enqueue(source);
-        }
-
-        private AudioID LaunchSoundOnSource(AudioSource source, SoundType type, OnAudioEndedDelegate onAudioEnded)
-        {
-            AudioID id = source.GetInstanceID();
-
-            _activeSounds.Add(id, new ActiveSoundData()
-            {
-                source = source
-            });
-
-            Coroutine coroutine = StartCoroutine(SoundPlayingCoroutine(source, type, onAudioEnded));
-            if (_activeSounds.TryGetValue(id, out ActiveSoundData data))
-            {
-                data.coroutine = coroutine;
-            }
-
-            return id;
         }
 
         private AudioSource GetAvailableSource(bool isVolumetric)
@@ -147,7 +156,35 @@ namespace GameControllers
             return source;
         }
 
-        private System.Collections.IEnumerator SoundPlayingCoroutine(AudioSource source, SoundType soundType, OnAudioEndedDelegate onAudioEnded)
+        private void UpdateMaxUsedSources()
+        {
+            _maxUsedAudioSources = Math.Max(_maxUsedAudioSources, _activeSounds.Count);
+        }
+
+        private AudioID LaunchSoundOnSource(AudioSource source, SoundType type, OnAudioEndedDelegate onAudioEnded)
+        {
+            AudioID id = _currentAudioId;
+            _currentAudioId++;
+
+            _activeSounds.Add(id, new ActiveSoundData()
+            {
+                source = source
+            });
+
+            Coroutine coroutine = StartCoroutine(SoundPlayingCoroutine(source, id, type, onAudioEnded));
+            if (!_activeSounds.TryGetValue(id, out ActiveSoundData data))
+            {
+                // The sound was not found or another error happened
+                return -1;
+            }
+
+            UpdateMaxUsedSources();
+
+            data.coroutine = coroutine;
+            return id;
+        }
+
+        private System.Collections.IEnumerator SoundPlayingCoroutine(AudioSource source, AudioID audioID, SoundType soundType, OnAudioEndedDelegate onAudioEnded)
         {
             while (source != null && soundType != SoundType.COUNT)
             {
@@ -171,7 +208,7 @@ namespace GameControllers
             {
                 source.Stop();
                 _audioSourcePool.Enqueue(source);
-                _activeSounds.Remove(source.GetInstanceID());
+                _activeSounds.Remove(audioID);
             }
         }
     }
