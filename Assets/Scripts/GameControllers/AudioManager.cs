@@ -3,23 +3,39 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 
-namespace GameControllers
+namespace GameControllers.Audio
 {
-    using AudioID = System.Int64;
+    using IDType = System.Int64;
+
+    public struct AudioID
+    {
+        private readonly IDType _value;
+
+        public AudioID(IDType value)
+        {
+            _value = value;
+        }
+
+        public static implicit operator IDType(AudioID id) => id._value;
+        public static implicit operator AudioID(IDType value) => new AudioID(value);
+    }
+
+    public enum SoundType
+    {
+        GunShot,
+        EmptyGunShot,
+        GunReload,
+        Step,
+        MusicIdle,
+        COUNT
+    }
+
+    public delegate SoundType OnAudioEndedDelegate(SoundType endedSound);
 
     public class AudioManager : MonoBehaviour
     {
-        public enum SoundType
-        {
-            GunShot,
-            EmptyGunShot,
-            GunReload,
-            Step,
-            COUNT
-        }
-
         [System.Serializable]
-        public class Sound
+        private class Sound
         {
             public SoundType type;
             public AudioClip clip;
@@ -30,9 +46,8 @@ namespace GameControllers
         {
             public AudioSource source;
             public Coroutine coroutine;
+            public Transform transformToFollow;
         }
-
-        public delegate SoundType OnAudioEndedDelegate(SoundType endedSound);
 
         private static readonly string VolumeParameterTemplate = "{0}_Volume";
         private static readonly float AudioSourceDestroyingInterval = 30.0f;
@@ -49,25 +64,25 @@ namespace GameControllers
         private int _maxUsedAudioSources = 0;
         private float _timeTillAudioSourcesDestroying = AudioSourceDestroyingInterval;
 
+        // Public Methods
         public AudioID PlaySound(SoundType type, OnAudioEndedDelegate onAudioEnded)
         {
             AudioSource source = GetAvailableSource(false);
-            return LaunchSoundOnSource(source, type, onAudioEnded);
+            return LaunchSoundOnSource(source, type, null, onAudioEnded);
         }
 
-        public AudioID PlaySound(SoundType type, Transform parentTransform, OnAudioEndedDelegate onAudioEnded)
+        public AudioID PlaySound(SoundType type, Transform toFollow, OnAudioEndedDelegate onAudioEnded)
         {
             AudioSource source = GetAvailableSource(true);
-            source.transform.SetParent(parentTransform);
-            source.transform.localPosition = Vector3.zero;
-            return LaunchSoundOnSource(source, type, onAudioEnded);
+            source.transform.position = toFollow.position;
+            return LaunchSoundOnSource(source, type, toFollow, onAudioEnded);
         }
 
         public AudioID PlaySound(SoundType type, Vector3 position, OnAudioEndedDelegate onAudioEnded)
         {
             AudioSource source = GetAvailableSource(true);
             source.transform.position = position;
-            return LaunchSoundOnSource(source, type, onAudioEnded);
+            return LaunchSoundOnSource(source, type, null, onAudioEnded);
         }
 
         public bool StopSound(AudioID id)
@@ -80,6 +95,11 @@ namespace GameControllers
                 return _activeSounds.Remove(id);
             }
             return false;
+        }
+
+        public bool IsPlaying(AudioID id)
+        {
+            return _activeSounds.ContainsKey(id);
         }
 
         public void SetGroupVolume(string groupName, float volume)
@@ -98,6 +118,8 @@ namespace GameControllers
             return volume;
         }
 
+
+        // Unity methods
         protected void Awake()
         {
             for (int i = 0; i < _initialPoolSize; i++)
@@ -108,34 +130,22 @@ namespace GameControllers
 
         protected void FixedUpdate()
         {
+            UpdateSourcesPositions();
+
             if (_timeTillAudioSourcesDestroying >= 0)
             {
                 _timeTillAudioSourcesDestroying -= Time.fixedDeltaTime;
             }
             else
             {
-                _maxUsedAudioSources = Math.Max(_maxUsedAudioSources, _initialPoolSize);
-                int unusedSourcesCount = _activeSounds.Count + _audioSourcePool.Count - _maxUsedAudioSources;
-                for (int i = 0; i < unusedSourcesCount; i++)
-                {
-                    AudioSource source = _audioSourcePool.Dequeue();
-                    Destroy(source.gameObject);
-                }
-                _maxUsedAudioSources = 0;
+                DestroyUnusedAudioSources();
                 _timeTillAudioSourcesDestroying = AudioSourceDestroyingInterval;
             }
 
         }
 
-        protected void OnDestroy()
-        {
-            var activeSoundIds = new List<AudioID>(_activeSounds.Keys);
-            foreach (AudioID id in activeSoundIds)
-            {
-                StopSound(id);
-            }
-        }
 
+        // Private methods;
         private void CreateNewAudioSource()
         {
             GameObject obj = Instantiate(_audioSourcePrefab);
@@ -152,7 +162,6 @@ namespace GameControllers
 
             AudioSource source = _audioSourcePool.Dequeue();
             source.spatialBlend = isVolumetric ? 1.0f : 0.0f;
-            source.transform.SetParent(null);
             return source;
         }
 
@@ -161,14 +170,15 @@ namespace GameControllers
             _maxUsedAudioSources = Math.Max(_maxUsedAudioSources, _activeSounds.Count);
         }
 
-        private AudioID LaunchSoundOnSource(AudioSource source, SoundType type, OnAudioEndedDelegate onAudioEnded)
+        private AudioID LaunchSoundOnSource(AudioSource source, SoundType type, Transform toFollow, OnAudioEndedDelegate onAudioEnded)
         {
             AudioID id = _currentAudioId;
             _currentAudioId++;
 
             _activeSounds.Add(id, new ActiveSoundData()
             {
-                source = source
+                source = source,
+                transformToFollow = toFollow
             });
 
             Coroutine coroutine = StartCoroutine(SoundPlayingCoroutine(source, id, type, onAudioEnded));
@@ -204,11 +214,31 @@ namespace GameControllers
                 soundType = onAudioEnded.Invoke(soundType);
             }
 
-            if (source != null)
+            source.Stop();
+            _audioSourcePool.Enqueue(source);
+            _activeSounds.Remove(audioID);
+        }
+
+        private void DestroyUnusedAudioSources()
+        {
+            _maxUsedAudioSources = Math.Max(_maxUsedAudioSources, _initialPoolSize);
+            int unusedSourcesCount = _activeSounds.Count + _audioSourcePool.Count - _maxUsedAudioSources;
+            for (int i = 0; i < unusedSourcesCount; i++)
             {
-                source.Stop();
-                _audioSourcePool.Enqueue(source);
-                _activeSounds.Remove(audioID);
+                AudioSource source = _audioSourcePool.Dequeue();
+                Destroy(source.gameObject);
+            }
+            _maxUsedAudioSources = 0;
+        }
+
+        private void UpdateSourcesPositions()
+        {
+            foreach (ActiveSoundData data in _activeSounds.Values)
+            {
+                if (data.transformToFollow != null)
+                {
+                    data.source.transform.position = data.transformToFollow.position;
+                }
             }
         }
     }
