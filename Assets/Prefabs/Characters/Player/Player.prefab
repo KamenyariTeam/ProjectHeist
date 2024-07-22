@@ -299,9 +299,12 @@ MonoBehaviour:
   firePoint: {fileID: 5981334608794442887}
   bulletPrefab: {fileID: 1291077028596044639, guid: efa31b17a0ede034fb6b34c9707e9e42, type: 3}
   flashPrefab: {fileID: 6387391009917682901, guid: 5555927b07d7c714fbaf022bf34f7c4a, type: 3}
-  _shotSound: 0
-  _emptyShotSound: 1
-  _reloadSound: 2
+  _shotSound:
+    ID: GunShot
+  _emptyShotSound:
+    ID: EmptyGunShot
+  _reloadSound:
+    ID: GunReload
   _currentAmmo: 7
 --- !u!114 &1032356728065387743
 MonoBehaviour:

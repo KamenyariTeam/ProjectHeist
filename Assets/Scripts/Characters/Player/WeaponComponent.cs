@@ -2,6 +2,7 @@ using SaveSystem;
 using UnityEngine;
 using GameControllers.Audio;
 using GameControllers;
+using DataStorage.Generated;
 
 namespace Characters.Player
 {
@@ -78,11 +79,11 @@ namespace Characters.Player
 
                 --_currentAmmo;
                 CanShoot = false;
-                _audioManager.PlaySound(_shotSound, transform.position, s => SoundType.COUNT);
+                _audioManager.PlaySound(_shotSound, transform.position, s => SoundType.NONE);
             }
             else
             {
-                _audioManager.PlaySound(_emptyShotSound, transform.position, s => SoundType.COUNT);
+                _audioManager.PlaySound(_emptyShotSound, transform.position, s => SoundType.NONE);
             }
 
         }
@@ -91,7 +92,7 @@ namespace Characters.Player
         {
             CanShoot = false;
             _currentAmmo = maxAmmo;
-            _audioManager.PlaySound(_reloadSound, transform, s => SoundType.COUNT);
+            _audioManager.PlaySound(_reloadSound, transform, s => SoundType.NONE);
         }
 
         public void ReloadEnded()

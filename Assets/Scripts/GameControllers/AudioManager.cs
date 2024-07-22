@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
+using DataStorage;
 
 namespace GameControllers.Audio
 {
-    using IDType = System.Int64;
+    using IDType = Int64;
 
     public struct AudioID
     {
@@ -17,31 +18,13 @@ namespace GameControllers.Audio
         }
 
         public static implicit operator IDType(AudioID id) => id._value;
-        public static implicit operator AudioID(IDType value) => new AudioID(value);
+        public static implicit operator AudioID(IDType value) => new(value);
     }
 
-    public enum SoundType
-    {
-        GunShot,
-        EmptyGunShot,
-        GunReload,
-        Step,
-        MusicIdle,
-        COUNT
-    }
-
-    public delegate SoundType OnAudioEndedDelegate(SoundType endedSound);
+    public delegate TableID OnAudioEndedDelegate(TableID endedSound);
 
     public class AudioManager : MonoBehaviour
     {
-        [System.Serializable]
-        private class Sound
-        {
-            public SoundType type;
-            public AudioClip clip;
-            public AudioMixerGroup mixerGroup;
-        }
-
         private class ActiveSoundData
         {
             public AudioSource source;
@@ -55,7 +38,7 @@ namespace GameControllers.Audio
         [SerializeField] private AudioMixer _audioMixer;
         [SerializeField] private GameObject _audioSourcePrefab;
         [SerializeField] private int _initialPoolSize = 10;
-        [SerializeField] private List<Sound> _sounds;
+        [SerializeField] private DataTablesSet _soundTable;
 
         private Dictionary<AudioID, ActiveSoundData> _activeSounds = new Dictionary<AudioID, ActiveSoundData>();
         private Queue<AudioSource> _audioSourcePool = new Queue<AudioSource>();
@@ -65,24 +48,24 @@ namespace GameControllers.Audio
         private float _timeTillAudioSourcesDestroying = AudioSourceDestroyingInterval;
 
         // Public Methods
-        public AudioID PlaySound(SoundType type, OnAudioEndedDelegate onAudioEnded)
+        public AudioID PlaySound(TableID soundTableID, OnAudioEndedDelegate onAudioEnded)
         {
             AudioSource source = GetAvailableSource(false);
-            return LaunchSoundOnSource(source, type, null, onAudioEnded);
+            return LaunchSoundOnSource(source, soundTableID, null, onAudioEnded);
         }
 
-        public AudioID PlaySound(SoundType type, Transform toFollow, OnAudioEndedDelegate onAudioEnded)
+        public AudioID PlaySound(TableID soundTableID, Transform toFollow, OnAudioEndedDelegate onAudioEnded)
         {
             AudioSource source = GetAvailableSource(true);
             source.transform.position = toFollow.position;
-            return LaunchSoundOnSource(source, type, toFollow, onAudioEnded);
+            return LaunchSoundOnSource(source, soundTableID, toFollow, onAudioEnded);
         }
 
-        public AudioID PlaySound(SoundType type, Vector3 position, OnAudioEndedDelegate onAudioEnded)
+        public AudioID PlaySound(TableID soundTableID, Vector3 position, OnAudioEndedDelegate onAudioEnded)
         {
             AudioSource source = GetAvailableSource(true);
             source.transform.position = position;
-            return LaunchSoundOnSource(source, type, null, onAudioEnded);
+            return LaunchSoundOnSource(source, soundTableID, null, onAudioEnded);
         }
 
         public bool StopSound(AudioID id)
@@ -170,7 +153,7 @@ namespace GameControllers.Audio
             _maxUsedAudioSources = Math.Max(_maxUsedAudioSources, _activeSounds.Count);
         }
 
-        private AudioID LaunchSoundOnSource(AudioSource source, SoundType type, Transform toFollow, OnAudioEndedDelegate onAudioEnded)
+        private AudioID LaunchSoundOnSource(AudioSource source, TableID soundTableID, Transform toFollow, OnAudioEndedDelegate onAudioEnded)
         {
             AudioID id = _currentAudioId;
             _currentAudioId++;
@@ -181,7 +164,7 @@ namespace GameControllers.Audio
                 transformToFollow = toFollow
             });
 
-            Coroutine coroutine = StartCoroutine(SoundPlayingCoroutine(source, id, type, onAudioEnded));
+            Coroutine coroutine = StartCoroutine(SoundPlayingCoroutine(source, id, soundTableID, onAudioEnded));
             if (!_activeSounds.TryGetValue(id, out ActiveSoundData data))
             {
                 // The sound was not found or another error happened
@@ -194,11 +177,11 @@ namespace GameControllers.Audio
             return id;
         }
 
-        private System.Collections.IEnumerator SoundPlayingCoroutine(AudioSource source, AudioID audioID, SoundType soundType, OnAudioEndedDelegate onAudioEnded)
+        private System.Collections.IEnumerator SoundPlayingCoroutine(AudioSource source, AudioID audioID, TableID soundTableID, OnAudioEndedDelegate onAudioEnded)
         {
-            while (source != null && soundType != SoundType.COUNT)
+            while (source != null && soundTableID != TableID.NONE)
             {
-                Sound sound = _sounds.Find(s => s.type == soundType);
+                SoundTableRow sound = _soundTable.Get(soundTableID.ID) as SoundTableRow;
                 if (sound == null)
                 {
                     break;
@@ -211,7 +194,7 @@ namespace GameControllers.Audio
 
                 yield return new WaitForSeconds(source.clip.length);
 
-                soundType = onAudioEnded.Invoke(soundType);
+                soundTableID = onAudioEnded.Invoke(soundTableID);
             }
 
             source.Stop();

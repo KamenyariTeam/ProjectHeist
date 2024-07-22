@@ -47,16 +47,6 @@ MonoBehaviour:
   _audioMixer: {fileID: 24100000, guid: daf6ca941928f1549ab4136d0a3177de, type: 2}
   _audioSourcePrefab: {fileID: 8957540551643416457, guid: f148bce0710b54dceb0717fdf7328388, type: 3}
   _initialPoolSize: 10
-  _sounds:
-  - type: 2
-    clip: {fileID: 8300000, guid: 8c585750ba9fa49a0bca994a3542e64c, type: 3}
-    mixerGroup: {fileID: -2844677377044231637, guid: daf6ca941928f1549ab4136d0a3177de, type: 2}
-  - type: 0
-    clip: {fileID: 8300000, guid: 2b90b172212a0445fab62f07daf36d0c, type: 3}
-    mixerGroup: {fileID: -2844677377044231637, guid: daf6ca941928f1549ab4136d0a3177de, type: 2}
-  - type: 1
-    clip: {fileID: 8300000, guid: bbc115058c8be417aae92d756090265a, type: 3}
-    mixerGroup: {fileID: -2844677377044231637, guid: daf6ca941928f1549ab4136d0a3177de, type: 2}
-  - type: 3
-    clip: {fileID: 8300000, guid: 979ac2191d3b6ec479e13e2d38c33695, type: 3}
-    mixerGroup: {fileID: -2844677377044231637, guid: daf6ca941928f1549ab4136d0a3177de, type: 2}
+  _soundTable:
+    dataTables:
+    - {fileID: 11400000, guid: 25d9cb35161164d12bcf03fcafc6a680, type: 2}
