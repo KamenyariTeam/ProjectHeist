@@ -196,7 +196,17 @@ namespace Characters.Player
         private bool IsComponentVisible(MonoBehaviour component)
         {
             RaycastHit2D hit = Physics2D.Linecast(transform.position, component.transform.position, wallLayer);
-            return !hit || hit.collider.gameObject.GetInstanceID() == component.gameObject.GetInstanceID();
+            if (!hit)
+            {
+                return true;
+            }
+
+            GameObject hitObject = hit.collider.gameObject;
+            GameObject interactableObject = component.gameObject;
+
+            // we hit the same object or a child of the interactable
+            return hitObject.GetInstanceID() == interactableObject.GetInstanceID()
+                   || hitObject.transform.IsChildOf(interactableObject.transform);
         }
 
         private void OnDeathHendler()

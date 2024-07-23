@@ -109,7 +109,7 @@ MonoBehaviour:
   moveSpeed: 1
   wallLayer:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 192
   currentWeapon: {fileID: 1741643135376574860}
   currentTool: {fileID: 6685619728529087177, guid: e24ee1ba5b32a43d7aa467dda042e29e, type: 3}
 --- !u!50 &879737215763683402
@@ -270,10 +270,10 @@ CircleCollider2D:
     m_Bits: 4294967295
   m_ContactCaptureLayers:
     serializedVersion: 2
-    m_Bits: 384
+    m_Bits: 256
   m_CallbackLayers:
     serializedVersion: 2
-    m_Bits: 384
+    m_Bits: 256
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
