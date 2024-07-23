@@ -8,18 +8,10 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 1fa25d03934ea624a82bf2fcee6f0873, type: 3}
-  missingFiles:
-  - ../OutdoorWalls.tsx
-  errors:
-  - 'Missing tileset asset: ../OutdoorWalls.tsx'
-  warnings: []
-  missingSortingLayers: []
-  missingLayers: []
-  missingTags: []
-  importerVersion: 27
+  importerVersion: 29
   pixelsPerUnit: 100
   edgesPerEllipse: 32
-  numberOfObjectsImported: 2
+  numberOfObjectsImported: 3
   tilesAsObjects: 0
   sortingMode: 0
   isIsometric: 0

@@ -177,7 +177,7 @@ MonoBehaviour:
   m_UseRendererSilhouette: 0
   m_CastsShadows: 1
   m_SelfShadows: 1
-  m_ApplyToSortingLayers: 
+  m_ApplyToSortingLayers: 7ffcec5a00000000cb14c7612d63b744cb728757
   m_ShapePath:
   - {x: -0.31999993, y: -0.01999998, z: 0}
   - {x: -0.31999993, y: 0.01999998, z: 0}
@@ -185,7 +185,7 @@ MonoBehaviour:
   - {x: 0.31999993, y: -0.01999998, z: 0}
   m_ShapePathHash: 0
   m_Mesh: {fileID: 0}
-  m_InstanceId: 40890
+  m_InstanceId: -1558
   m_LocalBounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0.31999993, y: 0.01999998, z: 0}
@@ -288,6 +288,7 @@ MonoBehaviour:
   - {fileID: 3836430576546111076}
   outlineMaterial: {fileID: 2100000, guid: f1495ff58e3584819960637c6975d71f, type: 2}
   maxTimeOpened: 3
+  movementTime: 1
 --- !u!1 &1666540238429085684
 GameObject:
   m_ObjectHideFlags: 0
@@ -465,7 +466,7 @@ MonoBehaviour:
   m_UseRendererSilhouette: 0
   m_CastsShadows: 1
   m_SelfShadows: 1
-  m_ApplyToSortingLayers: 
+  m_ApplyToSortingLayers: 7ffcec5a00000000cb14c7612d63b744cb728757
   m_ShapePath:
   - {x: -0.31999993, y: -0.01999998, z: 0}
   - {x: -0.31999993, y: 0.01999998, z: 0}
@@ -473,7 +474,7 @@ MonoBehaviour:
   - {x: 0.31999993, y: -0.01999998, z: 0}
   m_ShapePathHash: 0
   m_Mesh: {fileID: 0}
-  m_InstanceId: 40864
+  m_InstanceId: -1570
   m_LocalBounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0.31999993, y: 0.01999998, z: 0}
