@@ -108,7 +108,6 @@ MonoBehaviour:
     m_Bits: 192
   searchStateColor: {r: 0, g: 1, b: 0, a: 0.3137255}
   detectedStateColor: {r: 1, g: 0, b: 0, a: 0.3137255}
-  playerTransform: {fileID: 0}
 --- !u!1 &5767927152072428573
 GameObject:
   m_ObjectHideFlags: 0
