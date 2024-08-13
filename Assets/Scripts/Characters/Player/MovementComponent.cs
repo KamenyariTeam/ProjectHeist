@@ -13,10 +13,14 @@ namespace Characters.Player
         private UnityEngine.Camera _camera;
         private Vector2 _lookPosition;
         public Vector2 LookPosition => _lookPosition;
+        
+        // Animation
+        private AnimationComponent _animationComponent;
 
         private void Start()
         {
             _rigidbody = GetComponent<Rigidbody2D>();
+            _animationComponent = GetComponent<AnimationComponent>();
             _camera = UnityEngine.Camera.main;
         }
 
@@ -42,6 +46,7 @@ namespace Characters.Player
         private void UpdateMovement()
         {
             _rigidbody.velocity = _movementDirection * moveSpeed;
+            _animationComponent.UpdateMovementAnimation(_movementDirection != Vector2.zero);
         }
 
         private void UpdateRotation()
