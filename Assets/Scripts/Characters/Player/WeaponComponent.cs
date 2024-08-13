@@ -25,11 +25,14 @@ namespace Characters.Player
         private float _timeSinceLastShot;
 
         private AudioManager _audioManager;
+        private AnimationComponent _animationComponent;
 
         private void Start()
         {
-            _currentAmmo = maxAmmo;
             _audioManager = ManagersOwner.GetManager<AudioManager>();
+            _animationComponent = GetComponent<AnimationComponent>();
+            
+            _currentAmmo = maxAmmo;
             CanShoot = true;
         }
 
@@ -56,6 +59,16 @@ namespace Characters.Player
         }
 
         public bool CanShoot { get; private set; }
+        
+        public void HandleFire()
+        {
+            Shoot();
+        }
+        
+        public void HandleReload()
+        {
+            Reload();
+        }
 
         public void Shoot()
         {
@@ -93,6 +106,8 @@ namespace Characters.Player
             CanShoot = false;
             _currentAmmo = maxAmmo;
             _audioManager.PlaySound(_reloadSound, transform, s => SoundType.NONE);
+
+            _animationComponent.PlayReloadAnimation();
         }
 
         public void ReloadEnded()
