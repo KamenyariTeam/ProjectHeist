@@ -1,3 +1,4 @@
+using Characters.Player;
 using UnityEngine;
 
 namespace Tools.Scanner
@@ -12,15 +13,15 @@ namespace Tools.Scanner
 
         public bool UseTool(GameObject player)
         {
-            var playerController = player.GetComponent<Characters.Player.PlayerController>();
-            if (playerController == null)
+            var movementComponent = player.GetComponent<MovementComponent>();
+            if (movementComponent == null)
             {
                 return false;
             }
 
             var playerPosition3d = player.transform.position;
             Vector2 playerPosition2d = new Vector2(playerPosition3d.x, playerPosition3d.y);
-            Vector2 direction = (playerController.LookPosition - playerPosition2d).normalized;
+            Vector2 direction = (movementComponent.LookPosition - playerPosition2d).normalized;
             RaycastHit2D hit = Physics2D.Raycast(playerPosition2d, direction, maxUsageDistance, wallMask);
             if (!hit)
             {

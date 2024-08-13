@@ -50,7 +50,13 @@ namespace GameControllers
 
         private void SetCursor(Texture2D cursorTexture, CursorLockMode lockMode)
         {
-            Cursor.SetCursor(cursorTexture, Vector2.zero, CursorMode.Auto);
+            Vector2 hotSpot = Vector2.zero;
+            if (cursorTexture)
+            {
+                hotSpot = new Vector2(cursorTexture.width / 2, cursorTexture.height / 2);
+            }
+
+            Cursor.SetCursor(cursorTexture, hotSpot, CursorMode.Auto);
             Cursor.lockState = lockMode;
         }
 

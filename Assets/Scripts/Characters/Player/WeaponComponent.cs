@@ -56,6 +56,16 @@ namespace Characters.Player
         }
 
         public bool CanShoot { get; private set; }
+        
+        public void HandleFire()
+        {
+            Shoot();
+        }
+        
+        public void HandleReload()
+        {
+            Reload();
+        }
 
         public void Shoot()
         {
@@ -93,6 +103,8 @@ namespace Characters.Player
             CanShoot = false;
             _currentAmmo = maxAmmo;
             _audioManager.PlaySound(_reloadSound, transform, s => SoundType.NONE);
+
+            GetComponent<AnimationComponent>().PlayReloadAnimation();
         }
 
         public void ReloadEnded()
