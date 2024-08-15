@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Characters.Player;
+using GameManagers;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -21,7 +22,7 @@ namespace SaveSystem
 
         private void InitializeInput()
         {
-            _input = ScriptableObject.CreateInstance<InputReader>();
+            _input = ManagersOwner.GetManager<GameMode>().PlayerController.Input;
             _input.SaveGameEvent += SaveGame;
             _input.LoadGameEvent += LoadGame;
         }

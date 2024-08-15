@@ -1,4 +1,5 @@
 using System;
+using GameManagers;
 using UnityEngine;
 
 namespace UI
@@ -29,7 +30,7 @@ namespace UI
             {
                 if (_uiManager == null)
                 {
-                    _uiManager = GameControllers.ManagersOwner.GetManager<UIManager>();
+                    _uiManager = ManagersOwner.GetManager<UIManager>();
                     if (_uiManager == null)
                     {
                         Debug.LogError($"Managers owner doesn't contain {nameof(UIManager)}");

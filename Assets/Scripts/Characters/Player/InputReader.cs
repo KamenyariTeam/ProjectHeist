@@ -4,21 +4,18 @@ using UnityEngine.InputSystem;
 
 namespace Characters.Player
 {
-    public class InputReader : ScriptableObject, GameInput.IGameplayActions, GameInput.IUIActions
+    public class InputReader : GameInput.IGameplayActions, GameInput.IUIActions
     {
         private GameInput _gameInput;
 
-        private void OnEnable()
+        public InputReader()
         {
-            if (_gameInput == null)
-            {
-                _gameInput = new GameInput();
+            _gameInput = new GameInput();
 
-                _gameInput.Gameplay.SetCallbacks(this);
-                _gameInput.UI.SetCallbacks(this);
+            _gameInput.Gameplay.SetCallbacks(this);
+            _gameInput.UI.SetCallbacks(this);
 
-                SetGameplay();
-            }
+            SetGameplay();
         }
 
         private void SetGameplay()

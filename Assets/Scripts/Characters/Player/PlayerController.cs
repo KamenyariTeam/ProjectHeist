@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using InteractableObjects;
 using SaveSystem;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -8,14 +6,14 @@ namespace Characters.Player
 {
     public class PlayerController : MonoBehaviour
     {
-        private InputReader _input;
+        public InputReader Input { get; private set; }
         
         private MovementComponent _movementComponent;
         private InteractionComponent _interactionComponent;
         private WeaponComponent _weaponComponent;
         private HealthComponent _healthComponent;
 
-        private void Start()
+        private void Awake()
         {
             InitializeComponents();
             SetupInputHandlers();
@@ -32,12 +30,12 @@ namespace Characters.Player
 
         private void SetupInputHandlers()
         {
-            _input = ScriptableObject.CreateInstance<InputReader>();
-            _input.MoveEvent += _movementComponent.HandleMove;
-            _input.FireEvent += _weaponComponent.HandleFire;
-            _input.ReloadEvent += _weaponComponent.HandleReload;
-            _input.InteractEvent += _interactionComponent.HandleInteract;
-            _input.UseEvent += _interactionComponent.HandleUse;
+            Input = new InputReader();
+            Input.MoveEvent += _movementComponent.HandleMove;
+            Input.FireEvent += _weaponComponent.HandleFire;
+            Input.ReloadEvent += _weaponComponent.HandleReload;
+            Input.InteractEvent += _interactionComponent.HandleInteract;
+            Input.UseEvent += _interactionComponent.HandleUse;
         }
 
         private void OnDeathHandler()

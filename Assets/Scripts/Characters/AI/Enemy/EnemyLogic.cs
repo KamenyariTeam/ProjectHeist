@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Characters.Player;
+using GameManagers;
 using InteractableObjects.Door;
 using UI;
 using UnityEngine;
@@ -117,7 +118,7 @@ namespace Characters.AI.Enemy
             Agent.updateUpAxis = false;
             Agent.updateRotation = false;
 
-            var player = GameObject.FindGameObjectWithTag(playerTag);
+            var player = ManagersOwner.GetManager<GameMode>().PlayerController;;
             PlayerTransform = player.transform;
             PlayerStealthComponent = player.GetComponent<StealthComponent>();
             _activeInteracts = new List<InteractableObjects.IInteractable>();

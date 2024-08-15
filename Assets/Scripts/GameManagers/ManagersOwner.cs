@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace GameControllers
+namespace GameManagers
 {
     public class ManagersOwner : MonoBehaviour
     {
