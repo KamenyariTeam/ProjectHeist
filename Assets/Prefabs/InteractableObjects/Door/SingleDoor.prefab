@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4106393539113923071}
   - component: {fileID: 4589221635188701447}
   - component: {fileID: 6863200518552837091}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -123,7 +123,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.64, y: 0.04}
+    oldSize: {x: 0.66, y: 0.64}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -177,7 +177,7 @@ MonoBehaviour:
   m_UseRendererSilhouette: 0
   m_CastsShadows: 1
   m_SelfShadows: 1
-  m_ApplyToSortingLayers: 
+  m_ApplyToSortingLayers: 7ffcec5a00000000cb14c7612d63b744cb728757
   m_ShapePath:
   - {x: -0.31999993, y: -0.01999998, z: 0}
   - {x: -0.31999993, y: 0.01999998, z: 0}
@@ -185,7 +185,7 @@ MonoBehaviour:
   - {x: 0.31999993, y: -0.01999998, z: 0}
   m_ShapePathHash: 0
   m_Mesh: {fileID: 0}
-  m_InstanceId: 42834
+  m_InstanceId: 46778
   m_LocalBounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0.31999993, y: 0.01999998, z: 0}
@@ -200,7 +200,7 @@ GameObject:
   - component: {fileID: 8182132307907643691}
   - component: {fileID: 6881515458580862176}
   - component: {fileID: 2441078180892730672}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: SingleDoor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -296,7 +296,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6270615164199347422}
   - component: {fileID: 3632891943274295477}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MirageSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}

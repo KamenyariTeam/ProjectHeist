@@ -1,6 +1,8 @@
-using InteractableObjects.Weapon;
 using SaveSystem;
 using UnityEngine;
+using GameControllers.Audio;
+using GameControllers;
+using DataStorage.Generated;
 
 namespace Characters.Player
 {
@@ -15,11 +17,21 @@ namespace Characters.Player
         public GameObject bulletPrefab;
         public GameObject flashPrefab;
 
+        [SerializeField] private SoundType _shotSound;
+        [SerializeField] private SoundType _emptyShotSound;
+        [SerializeField] private SoundType _reloadSound;
+
         [SerializeField] private float _currentAmmo = 7f;
         private float _timeSinceLastShot;
 
+        private AudioManager _audioManager;
+        private AnimationComponent _animationComponent;
+
         private void Start()
         {
+            _audioManager = ManagersOwner.GetManager<AudioManager>();
+            _animationComponent = GetComponent<AnimationComponent>();
+            
             _currentAmmo = maxAmmo;
             CanShoot = true;
         }
@@ -47,10 +59,25 @@ namespace Characters.Player
         }
 
         public bool CanShoot { get; private set; }
+        
+        public void HandleFire()
+        {
+            Shoot();
+        }
+        
+        public void HandleReload()
+        {
+            Reload();
+        }
 
         public void Shoot()
         {
-            if (CanShoot && _currentAmmo > 0)
+            if (!CanShoot)
+            {
+                return;
+            }
+
+            if (_currentAmmo > 0)
             {
                 var firePointPosition = firePoint.position;
                 var firePointRotation = firePoint.rotation;
@@ -65,13 +92,22 @@ namespace Characters.Player
 
                 --_currentAmmo;
                 CanShoot = false;
+                _audioManager.PlaySound(_shotSound, transform.position, s => SoundType.NONE);
             }
+            else
+            {
+                _audioManager.PlaySound(_emptyShotSound, transform.position, s => SoundType.NONE);
+            }
+
         }
 
         public void Reload()
         {
             CanShoot = false;
             _currentAmmo = maxAmmo;
+            _audioManager.PlaySound(_reloadSound, transform, s => SoundType.NONE);
+
+            _animationComponent.PlayReloadAnimation();
         }
 
         public void ReloadEnded()

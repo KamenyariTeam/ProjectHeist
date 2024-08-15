@@ -5,12 +5,12 @@
     },
     "activeFile": "FirstLevel/FirstLevel.tmx",
     "expandedProjectPaths": [
-        "Tilesets",
-        ".",
         "Hideout",
-        "Tilesets/Rules",
         "FirstLevel",
-        "Placeholder"
+        "Tilesets/Rules",
+        ".",
+        "Placeholder",
+        "Tilesets"
     ],
     "fileStates": {
         ":/automap-tiles.tsx": {
@@ -18,11 +18,11 @@
             "scaleInEditor": 1
         },
         "FirstLevel/FirstLevel.tmx": {
-            "scale": 5.5,
-            "selectedLayer": 2,
+            "scale": 2,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 511.9090909090909,
-                "y": -0.09090909090909349
+                "x": 532.25,
+                "y": -49.25
             }
         },
         "Hideout/HideoutMap.tmx": {
@@ -38,7 +38,7 @@
             "scaleInDock": 1
         },
         "Tilesets/Floor.tsx": {
-            "scaleInDock": 1,
+            "scaleInDock": 3,
             "scaleInEditor": 1
         },
         "Tilesets/InnerWalls.tsx": {
@@ -66,7 +66,6 @@
         "FirstLevel/FirstLevel.tmx",
         "Tilesets/Rules/AutotileRules.tmx",
         "Tilesets/InnerWalls.tsx",
-        "Tilesets/OutdoorWalls.tsx",
         "Tilesets/Floor.tsx",
         "Hideout/HideoutMap.tmx"
     ],
@@ -74,10 +73,10 @@
     "recentFiles": [
         "Hideout/HideoutMap.tmx",
         "Tilesets/Floor.tsx",
-        "Tilesets/OutdoorWalls.tsx",
         "Tilesets/InnerWalls.tsx",
         "Tilesets/Rules/AutotileRules.tmx",
         "FirstLevel/FirstLevel.tmx",
+        "Tilesets/OutdoorWalls.tsx",
         ":/automap-tiles.tsx"
     ],
     "tileset.lastUsedFormat": "tsx"

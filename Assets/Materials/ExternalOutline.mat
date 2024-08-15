@@ -70,7 +70,7 @@ Material:
     - _EnableExternalAlpha: 0
     - _MainTex_TexelSize_x: 0.0078125
     - _MainTex_TexelSize_y: 0.015625
-    - _Offset: 4
+    - _Offset: 1
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Scale: 1.1

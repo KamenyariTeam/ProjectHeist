@@ -12,7 +12,7 @@ namespace UI
 
         public void OnPressSettings()
         {
-            _uiManager.PushUI(EUIType.SettingsMenu);
+            UserInterfaceManager.PushUI(EUIType.SettingsMenu);
         }
 
         public void OnPressQuit()

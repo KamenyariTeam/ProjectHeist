@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4106393539113923071}
   - component: {fileID: 4589221635188701447}
   - component: {fileID: 6863200518552837091}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: LeftDoor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -123,7 +123,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.64, y: 0.04}
+    oldSize: {x: 0.66, y: 0.64}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -177,7 +177,7 @@ MonoBehaviour:
   m_UseRendererSilhouette: 0
   m_CastsShadows: 1
   m_SelfShadows: 1
-  m_ApplyToSortingLayers: 
+  m_ApplyToSortingLayers: 7ffcec5a00000000cb14c7612d63b744cb728757
   m_ShapePath:
   - {x: -0.31999993, y: -0.01999998, z: 0}
   - {x: -0.31999993, y: 0.01999998, z: 0}
@@ -185,7 +185,7 @@ MonoBehaviour:
   - {x: 0.31999993, y: -0.01999998, z: 0}
   m_ShapePathHash: 0
   m_Mesh: {fileID: 0}
-  m_InstanceId: 40890
+  m_InstanceId: 46270
   m_LocalBounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0.31999993, y: 0.01999998, z: 0}
@@ -200,7 +200,7 @@ GameObject:
   - component: {fileID: 8182132307907643691}
   - component: {fileID: 6881515458580862176}
   - component: {fileID: 5291033074489983651}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: DoubleDoor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -288,6 +288,7 @@ MonoBehaviour:
   - {fileID: 3836430576546111076}
   outlineMaterial: {fileID: 2100000, guid: f1495ff58e3584819960637c6975d71f, type: 2}
   maxTimeOpened: 3
+  movementTime: 1
 --- !u!1 &1666540238429085684
 GameObject:
   m_ObjectHideFlags: 0
@@ -301,7 +302,7 @@ GameObject:
   - component: {fileID: 4141872817398628976}
   - component: {fileID: 6443359114621392078}
   - component: {fileID: 2109681573850988076}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: RightDoor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -411,7 +412,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.64, y: 0.04}
+    oldSize: {x: 0.66, y: 0.64}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -465,7 +466,7 @@ MonoBehaviour:
   m_UseRendererSilhouette: 0
   m_CastsShadows: 1
   m_SelfShadows: 1
-  m_ApplyToSortingLayers: 
+  m_ApplyToSortingLayers: 7ffcec5a00000000cb14c7612d63b744cb728757
   m_ShapePath:
   - {x: -0.31999993, y: -0.01999998, z: 0}
   - {x: -0.31999993, y: 0.01999998, z: 0}
@@ -473,7 +474,7 @@ MonoBehaviour:
   - {x: 0.31999993, y: -0.01999998, z: 0}
   m_ShapePathHash: 0
   m_Mesh: {fileID: 0}
-  m_InstanceId: 40864
+  m_InstanceId: 46246
   m_LocalBounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0.31999993, y: 0.01999998, z: 0}
@@ -487,7 +488,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4848922368324659669}
   - component: {fileID: 2349445551610014623}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: RightMirageSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -571,7 +572,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6270615164199347422}
   - component: {fileID: 3632891943274295477}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: LeftMirageSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -5,7 +5,7 @@ namespace UI
     {
         public void OnPressResume()
         {
-            _uiManager.PopUI();
+            UserInterfaceManager.PopUI();
         }
 
         public void OnPressMainMenu()

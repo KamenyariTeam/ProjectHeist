@@ -5,7 +5,7 @@ namespace UI
     {
         public void OnPressBack()
         {
-            _uiManager.PopUI();
+            UserInterfaceManager.PopUI();
         }
     }
 }
