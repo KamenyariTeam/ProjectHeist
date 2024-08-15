@@ -1,5 +1,6 @@
 using System;
 using Characters.Player;
+using GameManagers;
 using TMPro;
 using UnityEngine;
 
@@ -11,16 +12,15 @@ namespace UI
         [SerializeField] private TMP_Text ammoCount;
         [SerializeField] private TMP_Text healthCount;
         [SerializeField] private TMP_Text armorCount;
-        private GameObject _player;
 
         private WeaponComponent _weaponComponent;
         private HealthComponent _healthComponent;
 
         protected void Awake()
         {
-            _player = GameObject.FindGameObjectWithTag(playerTag);
-            _weaponComponent = _player.GetComponent<WeaponComponent>();
-            _healthComponent = _player.GetComponent<HealthComponent>();
+            var player = ManagersOwner.GetManager<GameMode>().PlayerController;
+            _weaponComponent = player.GetComponent<WeaponComponent>();
+            _healthComponent = player.GetComponent<HealthComponent>();
         }
 
         private void Update()

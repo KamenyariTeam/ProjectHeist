@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
+using DataStorage;
 using UnityEngine;
 using UnityEngine.Audio;
-using DataStorage;
 
-namespace GameControllers.Audio
+namespace GameManagers
 {
     using IDType = Int64;
 

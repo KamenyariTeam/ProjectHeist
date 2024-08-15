@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Characters.Player;
+using GameManagers;
 using UnityEngine;
 
 namespace Map
@@ -40,7 +41,7 @@ namespace Map
 
         private void InitializeReferences()
         {
-            var player = GameObject.FindGameObjectWithTag("Player");
+            var player = ManagersOwner.GetManager<GameMode>().PlayerController;
             _playerTransform = player.transform;
             _playerStealthComponent = player.GetComponent<StealthComponent>();
 
