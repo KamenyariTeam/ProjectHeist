@@ -32,6 +32,7 @@ namespace Characters.Player
 
         // Gameplay events
         public event Action<Vector2> MoveEvent;
+        public event Action SneakEvent; 
 
         public event Action FireEvent;
         public event Action ReloadEvent;
@@ -99,6 +100,14 @@ namespace Characters.Player
             if (context.performed)
             {
                 LoadGameEvent?.Invoke();
+            }
+        }
+
+        public void OnToggleSneaking(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                SneakEvent?.Invoke();
             }
         }
 

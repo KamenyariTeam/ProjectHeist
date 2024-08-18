@@ -15,9 +15,27 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "ToggleSneaking",
+                    "type": "Button",
+                    "id": "eb902dc5-9182-44c7-b6fb-5449353dfe73",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Fire",
                     "type": "Button",
                     "id": "32711266-347a-4ae3-ab8c-4e8ecb65907c",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Reload",
+                    "type": "Button",
+                    "id": "162c6a65-7b6d-4bda-b77d-8986043f7bda",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -36,15 +54,6 @@
                     "name": "Use",
                     "type": "Button",
                     "id": "d1f3a515-123e-4a1a-8314-1151118dcb40",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Reload",
-                    "type": "Button",
-                    "id": "162c6a65-7b6d-4bda-b77d-8986043f7bda",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -224,17 +233,6 @@
                 },
                 {
                     "name": "",
-                    "id": "cd9909c8-27de-42ce-8084-b0d5fb02ea42",
-                    "path": "<Keyboard>/r",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "Reload",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "0cb9072c-6ba4-4905-b204-bf11c7ee4aa5",
                     "path": "<Keyboard>/escape",
                     "interactions": "",
@@ -285,6 +283,28 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "Use",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "bc6f93f8-2ece-4b82-ad7b-bb7bf18bbc07",
+                    "path": "<Keyboard>/Ctrl",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "ToggleSneaking",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "cd9909c8-27de-42ce-8084-b0d5fb02ea42",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Reload",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

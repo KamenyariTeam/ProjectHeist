@@ -32,6 +32,7 @@ namespace Characters.Player
         {
             Input = new InputReader();
             Input.MoveEvent += _movementComponent.HandleMove;
+            Input.SneakEvent += _movementComponent.HandleSneak;
             Input.FireEvent += _weaponComponent.HandleFire;
             Input.ReloadEvent += _weaponComponent.HandleReload;
             Input.InteractEvent += _interactionComponent.HandleInteract;
