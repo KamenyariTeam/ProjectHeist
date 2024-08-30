@@ -87,7 +87,7 @@ namespace Characters.Player
                 rb.AddForce(throwDirection.normalized * throwForce, ForceMode2D.Impulse);
 
                 // Apply torque to add rotation to the weapon
-                float rotationForce = 1f; // Adjust rotation force as needed
+                float rotationForce = 0.5f; // Adjust rotation force as needed
                 rb.AddTorque(rotationForce, ForceMode2D.Impulse);
             }
 
