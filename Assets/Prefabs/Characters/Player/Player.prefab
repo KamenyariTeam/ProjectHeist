@@ -17,10 +17,11 @@ GameObject:
   - component: {fileID: 1751294011846522657}
   - component: {fileID: 2186307488949967935}
   - component: {fileID: 1032356728065387743}
-  - component: {fileID: 1741643135376574860}
+  - component: {fileID: 1482641977949355441}
   - component: {fileID: 4713633352631910244}
   - component: {fileID: 8617484324941117248}
   - component: {fileID: -6619163746556755249}
+  - component: {fileID: 4369250948466394390}
   - component: {fileID: 2208192294827886583}
   m_Layer: 0
   m_Name: Player
@@ -42,7 +43,7 @@ Transform:
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 1
   m_Children:
-  - {fileID: 5981334608794442887}
+  - {fileID: 3492529440244552813}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &3346710801103524113
@@ -253,7 +254,7 @@ MonoBehaviour:
   regenerationRate: 1
   currentHealth: 100
   currentArmor: 0
---- !u!114 &1741643135376574860
+--- !u!114 &1482641977949355441
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -262,23 +263,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1189712299164168322}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: de7a1c7a424036f4e8f58327b9edca14, type: 3}
+  m_Script: {fileID: 11500000, guid: d06ac82c98364e4cb8de7f1fd8330491, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 1
-  maxAmmo: 7
-  angleInaccuracy: 5
-  shotCooldown: 1
-  firePoint: {fileID: 5981334608794442887}
-  bulletPrefab: {fileID: 1291077028596044639, guid: efa31b17a0ede034fb6b34c9707e9e42, type: 3}
-  flashPrefab: {fileID: 6387391009917682901, guid: 5555927b07d7c714fbaf022bf34f7c4a, type: 3}
-  _shotSound:
-    ID: GunShot
-  _emptyShotSound:
-    ID: EmptyGunShot
-  _reloadSound:
-    ID: GunReload
-  _currentAmmo: 7
+  equippedWeapon: {fileID: 0}
+  firePoint: {fileID: 3492529440244552813}
 --- !u!114 &4713633352631910244
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -363,6 +352,20 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4369250948466394390
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1189712299164168322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d06ac82c98364e4cb8de7f1fd8330491, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  equippedWeapon: {fileID: 0}
+  firePoint: {fileID: 3492529440244552813}
 --- !u!114 &2208192294827886583
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -375,69 +378,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a3988e856f3452f8198c64a077306b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1001 &3223852948751945598
-PrefabInstance:
+--- !u!1 &5161143473464675566
+GameObject:
   m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 7286542278315617595}
-    m_Modifications:
-    - target: {fileID: 5312940086966852244, guid: c9abe47179978934b9abcde8fa624f89, type: 3}
-      propertyPath: m_Name
-      value: PistolFirePoint
-      objectReference: {fileID: 0}
-    - target: {fileID: 9204395633409381369, guid: c9abe47179978934b9abcde8fa624f89, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9204395633409381369, guid: c9abe47179978934b9abcde8fa624f89, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 1.72
-      objectReference: {fileID: 0}
-    - target: {fileID: 9204395633409381369, guid: c9abe47179978934b9abcde8fa624f89, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.54
-      objectReference: {fileID: 0}
-    - target: {fileID: 9204395633409381369, guid: c9abe47179978934b9abcde8fa624f89, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9204395633409381369, guid: c9abe47179978934b9abcde8fa624f89, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9204395633409381369, guid: c9abe47179978934b9abcde8fa624f89, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9204395633409381369, guid: c9abe47179978934b9abcde8fa624f89, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9204395633409381369, guid: c9abe47179978934b9abcde8fa624f89, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9204395633409381369, guid: c9abe47179978934b9abcde8fa624f89, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9204395633409381369, guid: c9abe47179978934b9abcde8fa624f89, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9204395633409381369, guid: c9abe47179978934b9abcde8fa624f89, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: c9abe47179978934b9abcde8fa624f89, type: 3}
---- !u!4 &5981334608794442887 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 9204395633409381369, guid: c9abe47179978934b9abcde8fa624f89, type: 3}
-  m_PrefabInstance: {fileID: 3223852948751945598}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3492529440244552813}
+  m_Layer: 0
+  m_Name: FirePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3492529440244552813
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5161143473464675566}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0, y: 0, z: 5}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7286542278315617595}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
