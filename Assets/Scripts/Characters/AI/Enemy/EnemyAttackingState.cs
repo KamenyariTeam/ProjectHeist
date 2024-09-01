@@ -42,7 +42,7 @@ namespace Characters.AI.Enemy
                         _weapon.Reload();
                         EnemyLogic.Animator.Play(ReloadAnimation);
                     }
-                    else if (_weapon.equippedWeapon.CanShoot)
+                    else if (_weapon.equippedWeapon.CanAttack)
                     {
                         _weapon.Shoot();
                     }

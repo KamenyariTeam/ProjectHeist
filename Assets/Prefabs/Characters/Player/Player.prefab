@@ -17,11 +17,10 @@ GameObject:
   - component: {fileID: 1751294011846522657}
   - component: {fileID: 2186307488949967935}
   - component: {fileID: 1032356728065387743}
-  - component: {fileID: 1482641977949355441}
+  - component: {fileID: 4369250948466394390}
   - component: {fileID: 4713633352631910244}
   - component: {fileID: 8617484324941117248}
   - component: {fileID: -6619163746556755249}
-  - component: {fileID: 4369250948466394390}
   - component: {fileID: 2208192294827886583}
   m_Layer: 0
   m_Name: Player
@@ -254,7 +253,7 @@ MonoBehaviour:
   regenerationRate: 1
   currentHealth: 100
   currentArmor: 0
---- !u!114 &1482641977949355441
+--- !u!114 &4369250948466394390
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -352,20 +351,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &4369250948466394390
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1189712299164168322}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d06ac82c98364e4cb8de7f1fd8330491, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  equippedWeapon: {fileID: 0}
-  firePoint: {fileID: 3492529440244552813}
 --- !u!114 &2208192294827886583
 MonoBehaviour:
   m_ObjectHideFlags: 0
