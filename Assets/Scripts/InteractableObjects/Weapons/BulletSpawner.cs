@@ -14,8 +14,8 @@ namespace InteractableObjects.Weapons
             _weapon = GetComponent<BaseWeapon>();
             Pool = new ObjectPool<Bullet>(CreateBullet, OnTakeBulletFromPool, OnReturnBulletToPool, OnDestroyBullet, true, 30, 100);
         }
-        
-        Bullet CreateBullet()
+
+        private Bullet CreateBullet()
         {
             var bullet = Instantiate(_weapon.bullet, _weapon.BulletSpawnPoint.position, _weapon.BulletSpawnPoint.rotation);
             

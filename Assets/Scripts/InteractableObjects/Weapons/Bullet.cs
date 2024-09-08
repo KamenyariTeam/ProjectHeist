@@ -49,12 +49,9 @@ namespace InteractableObjects.Weapons
 
             if ((destroyLayers.value & (1 << collision.gameObject.layer)) > 0)
             {
-                var healthComponent = collision.collider.GetComponent<HealthComponent>();
+                var healthComponent = collision.collider.GetComponent<IDamageable>();
 
-                if (healthComponent != null)
-                {
-                    healthComponent.TakeDamage(damage);
-                }
+                healthComponent?.TakeDamage(damage);
 
                 ReleaseBullet();
             }

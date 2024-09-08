@@ -15,7 +15,7 @@ namespace InteractableObjects.Weapons
             Pool = new ObjectPool<Flash>(CreateFlash, OnTakeFlashFromPool, OnReturnFlashToPool, OnDestroyFlash, true, 30, 100);
         }
         
-        Flash CreateFlash()
+        private Flash CreateFlash()
         {
             var flash = Instantiate(_weapon.flash, _weapon.BulletSpawnPoint.position, _weapon.BulletSpawnPoint.rotation);
             
