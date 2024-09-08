@@ -1,4 +1,4 @@
-﻿using Items.Weapons;
+﻿using InteractableObjects.Weapons;
 using UnityEngine;
 
 namespace Characters.Player

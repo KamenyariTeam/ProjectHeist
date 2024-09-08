@@ -2,7 +2,7 @@ using Characters.Player;
 using DataStorage;
 using UnityEngine;
 using GameManagers;
-using Items.Weapons;
+using InteractableObjects.Weapons;
 
 namespace Characters
 {
@@ -34,6 +34,7 @@ namespace Characters
 
             firePoint.localPosition = equippedWeapon.firePointPosition;
             firePoint.localRotation = equippedWeapon.firePointRotation;
+            equippedWeapon.BulletSpawnPoint = firePoint;
             
             equippedWeapon.transform.SetParent(transform);
             equippedWeapon.transform.localPosition = Vector3.zero;
@@ -48,7 +49,7 @@ namespace Characters
         {
             if (!equippedWeapon) return;
 
-            var weaponState = equippedWeapon.Shoot(firePoint, MovementComponent);
+            var weaponState = equippedWeapon.Shoot(MovementComponent);
             HandleWeaponState(weaponState);
         }
 

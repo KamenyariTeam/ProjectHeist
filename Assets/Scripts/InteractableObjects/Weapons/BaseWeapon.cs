@@ -6,90 +6,118 @@ using DataStorage.Generated;
 using InteractableObjects.Pickups;
 using SaveSystem;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
-namespace Items.Weapons
+namespace InteractableObjects.Weapons
 {
+    [RequireComponent(typeof(BulletSpawner), typeof(FlashSpawner))]
     public class BaseWeapon : Pickup, ISavableComponent
     {
-        public float damage = 1f; // Base damage of the weapon
         [SerializeField] protected float angleInaccuracy = 1.5f; // Angle inaccuracy for shooting, affecting bullet spread
-        [SerializeField] protected float currentAmmo = 7f; // Current ammo count in the weapon
-        [SerializeField] protected float maxAmmo = 7f; // Maximum ammo capacity of the weapon
-        
+
+        [SerializeField] protected int currentAmmo = 7; // Current ammo count in the weapon
+        [SerializeField] protected int maxAmmo = 7; // Maximum ammo capacity of the weapon
+
         [SerializeField] protected float shotCooldown = 1f; // Cooldown time between shots
-        
+
         public Vector2 firePointPosition;
         public Quaternion firePointRotation;
-        [SerializeField] protected GameObject bulletPrefab; // Prefab for bullets spawned when shooting
-        [SerializeField] protected GameObject flashPrefab; // Prefab for muzzle flash effects
 
-        [SerializedDictionary("State", "Data")] 
+        public Bullet bullet;
+        public Flash flash;
+        [NonSerialized] public Transform BulletSpawnPoint;
+
+        [SerializedDictionary("State", "Data")]
         public SerializedDictionary<WeaponState, WeaponStateData> weaponStates = new()
         {
-            {WeaponState.None, new WeaponStateData()},
+            { WeaponState.None, new WeaponStateData() }
         };
-        
+
         private bool _isDelayedBetweenShots;
         private bool _isReloading;
 
+        private BulletSpawner _bulletSpawner;
+        private FlashSpawner _flashSpawner;
+
         public bool CanAttack => !_isDelayedBetweenShots && !_isReloading;
 
-        public float CurrentAmmo
+        public int CurrentAmmo
         {
             get => currentAmmo;
-            private set => currentAmmo = value < 0f ? 0f : value;
+            private set
+            {
+                if (value < 0)
+                {
+                    Debug.LogWarning("Ammo count below zero; setting to 0.");
+                    currentAmmo = 0;
+                }
+                else
+                {
+                    currentAmmo = value;
+                }
+            }
         }
-        
-        public float MaxAmmo => maxAmmo;
+
+        public int MaxAmmo => maxAmmo;
+
+        protected override void Start()
+        {
+            base.Start();
+
+            _bulletSpawner = GetComponent<BulletSpawner>();
+            _flashSpawner = GetComponent<FlashSpawner>();
+        }
 
         public override void Interact(GameObject character)
         {
-            PlayerWeaponComponent weaponComponent = character.GetComponent<PlayerWeaponComponent>();
+            var weaponComponent = character.GetComponent<PlayerWeaponComponent>();
 
-            if (weaponComponent != null)
-            {
-                weaponComponent.EquipWeapon(this);
-            }
+            if (weaponComponent != null) weaponComponent.EquipWeapon(this);
         }
-        
-        public WeaponStateData Shoot(Transform bulletSpawnPoint, MovementComponent movementComponent)
+
+        public WeaponStateData Shoot(MovementComponent movementComponent)
         {
-            if (!CanAttack)
-            {
-                return null;
-            }
+            if (!CanAttack) return null;
 
             if (CurrentAmmo > 0)
             {
-                var bullet = Instantiate(bulletPrefab, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
-                Instantiate(flashPrefab, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
-
-                var directionVector = GetShootingDirection(bulletSpawnPoint, movementComponent);
-
-                bullet.GetComponent<BulletComponent>().direction = directionVector;
+                SpawnBullet(movementComponent);
+                SpawnMuzzleFlashEffect();
 
                 --CurrentAmmo;
                 StartCoroutine(ShotCooldownCoroutine());
 
                 return GetWeaponState(WeaponState.Shoot);
             }
-            
+
             return GetWeaponState(WeaponState.EmptyMagazine);
+        }
+        
+        private void SpawnBullet(MovementComponent movementComponent)
+        {
+            Bullet bulletInstance = _bulletSpawner.Pool.Get();
+            bulletInstance.SetDirection(GetShootingDirection(movementComponent));
+        }
+
+        private void SpawnMuzzleFlashEffect()
+        {
+            _flashSpawner.Pool.Get();
         }
 
         // Calculates the direction for the bullet to travel
-        private Vector3 GetShootingDirection(Transform bulletSpawnPoint, MovementComponent movementComponent)
+        private Vector3 GetShootingDirection(MovementComponent movementComponent)
         {
-            var directionVector = bulletSpawnPoint.right;
-    
+            var directionVector = BulletSpawnPoint.right;
+
             if (!movementComponent.IsSneaking && movementComponent.MovementDirection != Vector2.zero)
             {
-                var randomInaccuracy = UnityEngine.Random.Range(-angleInaccuracy, angleInaccuracy);
-                directionVector = Quaternion.Euler(0, 0, randomInaccuracy) * directionVector;
+                var randomInaccuracy = Random.insideUnitCircle * angleInaccuracy;
+                directionVector = Quaternion.Euler(randomInaccuracy.x, randomInaccuracy.y, 0) * directionVector;
             }
 
             return directionVector;
         }
+
 
         // Coroutine to handle the cooldown period between shots
         private IEnumerator ShotCooldownCoroutine()
@@ -98,7 +126,7 @@ namespace Items.Weapons
             yield return new WaitForSeconds(shotCooldown);
             _isDelayedBetweenShots = false;
         }
-        
+
         public WeaponStateData Reload()
         {
             _isReloading = true;
@@ -111,7 +139,7 @@ namespace Items.Weapons
             CurrentAmmo = MaxAmmo;
             _isReloading = false;
         }
-        
+
         // Retrieves the weapon state data for a given state
         private WeaponStateData GetWeaponState(WeaponState state)
         {
@@ -120,18 +148,18 @@ namespace Items.Weapons
 
         public ComponentData Serialize()
         {
-            ExtendedComponentData data = new ExtendedComponentData();
+            var data = new ExtendedComponentData();
 
-            data.SetFloat("currentAmmo", currentAmmo);
+            data.SetInt("currentAmmo", currentAmmo);
 
             return data;
         }
 
         public void Deserialize(ComponentData data)
         {
-            ExtendedComponentData unpacked = (ExtendedComponentData)data;
+            var unpacked = (ExtendedComponentData)data;
 
-            currentAmmo = unpacked.GetFloat("currentAmmo");
+            currentAmmo = unpacked.GetInt("currentAmmo");
         }
     }
 
@@ -143,7 +171,7 @@ namespace Items.Weapons
         Reload,
         EmptyMagazine
     }
-    
+
     [Serializable]
     public class WeaponStateData
     {

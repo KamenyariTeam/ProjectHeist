@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: -4234818609001509992}
   - component: {fileID: -1056975447698136836}
   - component: {fileID: 7271918400932195049}
+  - component: {fileID: 4902240071738289382}
+  - component: {fileID: 8545103759093186300}
   m_Layer: 8
   m_Name: Pistol
   m_TagString: Untagged
@@ -50,15 +52,14 @@ MonoBehaviour:
   renderers:
   - {fileID: -1056975447698136836}
   outlineMaterial: {fileID: 2100000, guid: 0f277b87587334f4da0925b3011b83a0, type: 2}
-  damage: 1
   angleInaccuracy: 1.5
   currentAmmo: 7
   maxAmmo: 7
-  shotCooldown: 1
+  shotCooldown: 0.5
   firePointPosition: {x: 1.15, y: -0.554}
   firePointRotation: {x: 0, y: 0, z: 0, w: 0}
-  bulletPrefab: {fileID: 1291077028596044639, guid: efa31b17a0ede034fb6b34c9707e9e42, type: 3}
-  flashPrefab: {fileID: 6387391009917682901, guid: 5555927b07d7c714fbaf022bf34f7c4a, type: 3}
+  bullet: {fileID: 357107284770129053, guid: efa31b17a0ede034fb6b34c9707e9e42, type: 3}
+  flash: {fileID: -1374825141351807487, guid: 5555927b07d7c714fbaf022bf34f7c4a, type: 3}
   weaponStates:
     _serializedList:
     - Key: 0
@@ -205,3 +206,27 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &4902240071738289382
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6844595711768909591}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56f04a4de25c451e91d449ea02ce4baa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8545103759093186300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6844595711768909591}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a480996f46bc4883a1ac90755ae627ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

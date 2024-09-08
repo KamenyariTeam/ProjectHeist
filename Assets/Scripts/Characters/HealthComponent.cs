@@ -1,14 +1,13 @@
+using InteractableObjects;
 using SaveSystem;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 
-namespace Characters.Player
+namespace Characters
 {
     public delegate void FOnDeath();
 
-    public class HealthComponent : MonoBehaviour, ISavableComponent
+    public class HealthComponent : MonoBehaviour, IDamageable, ISavableComponent
     {
         public float maxHealth = 100f;
         public float maxArmor = 100f;
