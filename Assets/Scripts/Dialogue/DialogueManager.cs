@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using Ink.Runtime;
 using Characters.Player;
+using GameControllers;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -65,6 +66,13 @@ public class DialogueManager : MonoBehaviour
         dialoguePanel.SetActive(true);
 
         ContinueStory();
+
+        _input.SetUI();
+        PlayerController pc = GameObject.FindObjectOfType<PlayerController>();
+        if (pc)
+        {
+            pc.SwitchInputMode(InputMode.UI);
+        }
     }
 
     private void ExitDialogueMode()
@@ -72,6 +80,13 @@ public class DialogueManager : MonoBehaviour
         isPlayingDialogue = false;
         dialoguePanel.SetActive(false);
         dialogueText.text = "";
+
+        //PlayerController pc = ManagersOwner.GetManager<PlayerController>();
+        //if (pc)
+        //{
+        //    pc.SwitchInputMode(InputMode.UI);
+        //}
+        _input.SetGameplay();
     }
 
     private void ContinueStory()

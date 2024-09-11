@@ -60,5 +60,17 @@ namespace Characters.Player
                 unpacked.GetTransform("transform", transform);
             }
         }
+
+        public void SwitchInputMode(InputMode inputMode)
+        {
+            if (inputMode == InputMode.GAMEPLAY)
+            {
+                _input.SetGameplay();
+            }
+            else if (inputMode == InputMode.UI)
+            {
+                _input.SetUI();
+            }
+        }
     }
 }

@@ -13,27 +13,13 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
     [SerializeField]
     private TextAsset inkJson;
 
-    private bool _playerInRange;
     private bool _isSelected;
 
     public bool IsSelected { get => _isSelected; set => _isSelected = value; }
 
     private void Awake()
     {
-        _playerInRange = false;
         visualCue.SetActive(false);
-    }
-
-    private void Update()
-    {
-        if (_playerInRange && !DialogueManager.GetInstance().isPlayingDialogue)
-        {
-            visualCue.SetActive(true);
-        }
-        else
-        {
-            visualCue.SetActive(false);
-        }
     }
 
     public void Interact(GameObject character)
@@ -46,9 +32,9 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "Player")
+        if (collision.gameObject.tag == "Player" && !DialogueManager.GetInstance().isPlayingDialogue)
         {
-            _playerInRange = true;
+            visualCue.SetActive(true);
         }    
     }
 
@@ -56,7 +42,7 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
     {
         if (collision.gameObject.tag == "Player")
         {
-            _playerInRange = false;
+            visualCue.SetActive(false);
         }
     }
 }
