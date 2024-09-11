@@ -18,13 +18,13 @@ namespace Characters.Player
             SetGameplay();
         }
 
-        private void SetGameplay()
+        public void SetGameplay()
         {
             _gameInput.Gameplay.Enable();
             _gameInput.UI.Disable();
         }
 
-        private void SetUI()
+        public void SetUI()
         {
             _gameInput.Gameplay.Disable();
             _gameInput.UI.Enable();
@@ -48,6 +48,7 @@ namespace Characters.Player
         // UI events
         public event Action ResumeEvent;
         public event Action AcceptEvent;
+        public event Action PressEvent;
 
         public void OnMove(InputAction.CallbackContext context)
         {
@@ -124,6 +125,12 @@ namespace Characters.Player
         {
             if (context.performed)
                 AcceptEvent?.Invoke();
+        }
+
+        public void OnPress(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+                PressEvent?.Invoke();
         }
     }
 }

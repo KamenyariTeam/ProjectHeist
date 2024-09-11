@@ -4,7 +4,7 @@ using UnityEngine;
 using TMPro;
 using Ink.Runtime;
 using Characters.Player;
-using GameControllers;
+using GameManagers;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -55,8 +55,9 @@ public class DialogueManager : MonoBehaviour
 
     private void SetupInputHandlers()
     {
-        _input = ScriptableObject.CreateInstance<InputReader>();
-        _input.FireEvent += ContinueStory;
+        var player = ManagersOwner.GetManager<GameMode>().PlayerController;
+        _input = player.Input;
+        _input.PressEvent += ContinueStory;
     }
 
     public void EnterDialogueMode(TextAsset inkJson)
@@ -68,11 +69,6 @@ public class DialogueManager : MonoBehaviour
         ContinueStory();
 
         _input.SetUI();
-        PlayerController pc = GameObject.FindObjectOfType<PlayerController>();
-        if (pc)
-        {
-            pc.SwitchInputMode(InputMode.UI);
-        }
     }
 
     private void ExitDialogueMode()
@@ -81,11 +77,6 @@ public class DialogueManager : MonoBehaviour
         dialoguePanel.SetActive(false);
         dialogueText.text = "";
 
-        //PlayerController pc = ManagersOwner.GetManager<PlayerController>();
-        //if (pc)
-        //{
-        //    pc.SwitchInputMode(InputMode.UI);
-        //}
         _input.SetGameplay();
     }
 
