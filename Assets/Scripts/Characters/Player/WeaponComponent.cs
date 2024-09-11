@@ -1,8 +1,7 @@
 using SaveSystem;
 using UnityEngine;
-using GameControllers.Audio;
-using GameControllers;
 using DataStorage.Generated;
+using GameManagers;
 
 namespace Characters.Player
 {
@@ -26,11 +25,13 @@ namespace Characters.Player
 
         private AudioManager _audioManager;
         private AnimationComponent _animationComponent;
+        private MovementComponent _movementComponent;
 
         private void Start()
         {
             _audioManager = ManagersOwner.GetManager<AudioManager>();
             _animationComponent = GetComponent<AnimationComponent>();
+            _movementComponent = GetComponent<MovementComponent>();
             
             _currentAmmo = maxAmmo;
             CanShoot = true;
@@ -84,9 +85,12 @@ namespace Characters.Player
                 var bullet = Instantiate(bulletPrefab, firePointPosition, firePointRotation);
                 var flash = Instantiate(flashPrefab, firePointPosition, firePointRotation);
 
-                var randomInaccuracy = Random.Range(-angleInaccuracy, angleInaccuracy);
                 var directionVector = firePoint.right;
-                directionVector = Quaternion.Euler(0, 0, randomInaccuracy) * directionVector;
+                if (!_movementComponent.IsSneaking && _movementComponent.MovementDirection != Vector2.zero)
+                {
+                    var randomInaccuracy = Random.Range(-angleInaccuracy, angleInaccuracy);
+                    directionVector = Quaternion.Euler(0, 0, randomInaccuracy) * directionVector;
+                }
 
                 bullet.GetComponent<BulletComponent>().direction = directionVector;
 

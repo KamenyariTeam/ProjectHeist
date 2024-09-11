@@ -4,36 +4,27 @@ using UnityEngine.InputSystem;
 
 namespace Characters.Player
 {
-    public enum InputMode
-    {
-        GAMEPLAY,
-        UI
-    }
-
-    public class InputReader : ScriptableObject, GameInput.IGameplayActions, GameInput.IUIActions
+    public class InputReader : GameInput.IGameplayActions, GameInput.IUIActions
     {
         private GameInput _gameInput;
 
-        private void OnEnable()
+        public InputReader()
         {
-            if (_gameInput == null)
-            {
-                _gameInput = new GameInput();
+            _gameInput = new GameInput();
 
-                _gameInput.Gameplay.SetCallbacks(this);
-                _gameInput.UI.SetCallbacks(this);
+            _gameInput.Gameplay.SetCallbacks(this);
+            _gameInput.UI.SetCallbacks(this);
 
-                SetGameplay();
-            }
+            SetGameplay();
         }
 
-        public void SetGameplay()
+        private void SetGameplay()
         {
             _gameInput.Gameplay.Enable();
             _gameInput.UI.Disable();
         }
 
-        public void SetUI()
+        private void SetUI()
         {
             _gameInput.Gameplay.Disable();
             _gameInput.UI.Enable();
@@ -41,6 +32,7 @@ namespace Characters.Player
 
         // Gameplay events
         public event Action<Vector2> MoveEvent;
+        public event Action SneakEvent; 
 
         public event Action FireEvent;
         public event Action ReloadEvent;
@@ -108,6 +100,14 @@ namespace Characters.Player
             if (context.performed)
             {
                 LoadGameEvent?.Invoke();
+            }
+        }
+
+        public void OnToggleSneaking(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                SneakEvent?.Invoke();
             }
         }
 

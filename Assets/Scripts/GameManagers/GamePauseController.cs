@@ -1,7 +1,7 @@
 using Characters.Player;
 using UnityEngine;
 
-namespace GameControllers
+namespace GameManagers
 {
     public class GamePauseController : MonoBehaviour
     {
@@ -19,7 +19,7 @@ namespace GameControllers
 
         private void InitializeInput()
         {
-            _input = ScriptableObject.CreateInstance<InputReader>();
+            _input = ManagersOwner.GetManager<GameMode>().PlayerController.Input;
             _input.PauseEvent += HandlePause;
             _input.ResumeEvent += HandlePause;
         }

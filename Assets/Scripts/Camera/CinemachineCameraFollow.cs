@@ -1,20 +1,20 @@
 using Characters.Player;
 using Cinemachine;
+using GameManagers;
 using UnityEngine;
 
 namespace Camera
 {
     public class CinemachineCameraFollow : MonoBehaviour
     {
-        private GameObject _player;
         private GameObject _pointToFollow;
         private MovementComponent _movementComponent;
 
         // Start is called before the first frame update
         void Start()
         {
-            _player = GameObject.FindWithTag("Player");
-            _movementComponent = _player.GetComponent<MovementComponent>();
+            var player = ManagersOwner.GetManager<GameMode>().PlayerController;
+            _movementComponent = player.GetComponent<MovementComponent>();
 
             _pointToFollow = new GameObject("PointToFollow");
             
@@ -25,7 +25,7 @@ namespace Camera
         // Update is called once per frame
         void Update()
         {
-            var playerPosition = _player.transform.position;
+            var playerPosition = _movementComponent.transform.position;
             var lookPosition = _movementComponent.LookPosition;
             var targetPosition = Vector3.Lerp(playerPosition, lookPosition, 1/3f);
 

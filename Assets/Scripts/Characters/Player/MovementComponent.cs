@@ -5,9 +5,10 @@ namespace Characters.Player
     public class MovementComponent : MonoBehaviour
     {
         // Movement
-        public float moveSpeed = 1f;
+        [SerializeField] private float moveSpeed = 1f;
+        public bool IsSneaking { get; private set; }
+        public Vector2 MovementDirection { get; private set; }
         private Rigidbody2D _rigidbody;
-        private Vector2 _movementDirection;
 
         // Look and Aim
         private UnityEngine.Camera _camera;
@@ -45,8 +46,16 @@ namespace Characters.Player
 
         private void UpdateMovement()
         {
-            _rigidbody.velocity = _movementDirection * moveSpeed;
-            _animationComponent.UpdateMovementAnimation(_movementDirection != Vector2.zero);
+            if (IsSneaking)
+            {
+                _rigidbody.velocity = MovementDirection * (moveSpeed * 0.5f);
+            }
+            else
+            {
+                _rigidbody.velocity = MovementDirection * moveSpeed;
+            }
+            
+            _animationComponent.UpdateMovementAnimation(MovementDirection != Vector2.zero);
         }
 
         private void UpdateRotation()
@@ -58,7 +67,12 @@ namespace Characters.Player
 
         public void HandleMove(Vector2 direction)
         {
-            _movementDirection = direction;
+            MovementDirection = direction;
+        }
+        
+        public void HandleSneak()
+        {
+            IsSneaking = !IsSneaking;
         }
     }
 }

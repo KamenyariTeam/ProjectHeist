@@ -37,9 +37,27 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
+                    ""name"": ""ToggleSneaking"",
+                    ""type"": ""Button"",
+                    ""id"": ""eb902dc5-9182-44c7-b6fb-5449353dfe73"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""Fire"",
                     ""type"": ""Button"",
                     ""id"": ""32711266-347a-4ae3-ab8c-4e8ecb65907c"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Reload"",
+                    ""type"": ""Button"",
+                    ""id"": ""162c6a65-7b6d-4bda-b77d-8986043f7bda"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -58,15 +76,6 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                     ""name"": ""Use"",
                     ""type"": ""Button"",
                     ""id"": ""d1f3a515-123e-4a1a-8314-1151118dcb40"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Reload"",
-                    ""type"": ""Button"",
-                    ""id"": ""162c6a65-7b6d-4bda-b77d-8986043f7bda"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -246,17 +255,6 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""cd9909c8-27de-42ce-8084-b0d5fb02ea42"",
-                    ""path"": ""<Keyboard>/r"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard&Mouse"",
-                    ""action"": ""Reload"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""0cb9072c-6ba4-4905-b204-bf11c7ee4aa5"",
                     ""path"": ""<Keyboard>/escape"",
                     ""interactions"": """",
@@ -307,6 +305,28 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Use"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bc6f93f8-2ece-4b82-ad7b-bb7bf18bbc07"",
+                    ""path"": ""<Keyboard>/Ctrl"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""ToggleSneaking"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cd9909c8-27de-42ce-8084-b0d5fb02ea42"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Reload"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -449,10 +469,11 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         // Gameplay
         m_Gameplay = asset.FindActionMap("Gameplay", throwIfNotFound: true);
         m_Gameplay_Move = m_Gameplay.FindAction("Move", throwIfNotFound: true);
+        m_Gameplay_ToggleSneaking = m_Gameplay.FindAction("ToggleSneaking", throwIfNotFound: true);
         m_Gameplay_Fire = m_Gameplay.FindAction("Fire", throwIfNotFound: true);
+        m_Gameplay_Reload = m_Gameplay.FindAction("Reload", throwIfNotFound: true);
         m_Gameplay_Interact = m_Gameplay.FindAction("Interact", throwIfNotFound: true);
         m_Gameplay_Use = m_Gameplay.FindAction("Use", throwIfNotFound: true);
-        m_Gameplay_Reload = m_Gameplay.FindAction("Reload", throwIfNotFound: true);
         m_Gameplay_Pause = m_Gameplay.FindAction("Pause", throwIfNotFound: true);
         m_Gameplay_SaveGame = m_Gameplay.FindAction("SaveGame", throwIfNotFound: true);
         m_Gameplay_LoadGame = m_Gameplay.FindAction("LoadGame", throwIfNotFound: true);
@@ -522,10 +543,11 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Gameplay;
     private List<IGameplayActions> m_GameplayActionsCallbackInterfaces = new List<IGameplayActions>();
     private readonly InputAction m_Gameplay_Move;
+    private readonly InputAction m_Gameplay_ToggleSneaking;
     private readonly InputAction m_Gameplay_Fire;
+    private readonly InputAction m_Gameplay_Reload;
     private readonly InputAction m_Gameplay_Interact;
     private readonly InputAction m_Gameplay_Use;
-    private readonly InputAction m_Gameplay_Reload;
     private readonly InputAction m_Gameplay_Pause;
     private readonly InputAction m_Gameplay_SaveGame;
     private readonly InputAction m_Gameplay_LoadGame;
@@ -534,10 +556,11 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         private @GameInput m_Wrapper;
         public GameplayActions(@GameInput wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_Gameplay_Move;
+        public InputAction @ToggleSneaking => m_Wrapper.m_Gameplay_ToggleSneaking;
         public InputAction @Fire => m_Wrapper.m_Gameplay_Fire;
+        public InputAction @Reload => m_Wrapper.m_Gameplay_Reload;
         public InputAction @Interact => m_Wrapper.m_Gameplay_Interact;
         public InputAction @Use => m_Wrapper.m_Gameplay_Use;
-        public InputAction @Reload => m_Wrapper.m_Gameplay_Reload;
         public InputAction @Pause => m_Wrapper.m_Gameplay_Pause;
         public InputAction @SaveGame => m_Wrapper.m_Gameplay_SaveGame;
         public InputAction @LoadGame => m_Wrapper.m_Gameplay_LoadGame;
@@ -553,18 +576,21 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
             @Move.started += instance.OnMove;
             @Move.performed += instance.OnMove;
             @Move.canceled += instance.OnMove;
+            @ToggleSneaking.started += instance.OnToggleSneaking;
+            @ToggleSneaking.performed += instance.OnToggleSneaking;
+            @ToggleSneaking.canceled += instance.OnToggleSneaking;
             @Fire.started += instance.OnFire;
             @Fire.performed += instance.OnFire;
             @Fire.canceled += instance.OnFire;
+            @Reload.started += instance.OnReload;
+            @Reload.performed += instance.OnReload;
+            @Reload.canceled += instance.OnReload;
             @Interact.started += instance.OnInteract;
             @Interact.performed += instance.OnInteract;
             @Interact.canceled += instance.OnInteract;
             @Use.started += instance.OnUse;
             @Use.performed += instance.OnUse;
             @Use.canceled += instance.OnUse;
-            @Reload.started += instance.OnReload;
-            @Reload.performed += instance.OnReload;
-            @Reload.canceled += instance.OnReload;
             @Pause.started += instance.OnPause;
             @Pause.performed += instance.OnPause;
             @Pause.canceled += instance.OnPause;
@@ -581,18 +607,21 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
             @Move.started -= instance.OnMove;
             @Move.performed -= instance.OnMove;
             @Move.canceled -= instance.OnMove;
+            @ToggleSneaking.started -= instance.OnToggleSneaking;
+            @ToggleSneaking.performed -= instance.OnToggleSneaking;
+            @ToggleSneaking.canceled -= instance.OnToggleSneaking;
             @Fire.started -= instance.OnFire;
             @Fire.performed -= instance.OnFire;
             @Fire.canceled -= instance.OnFire;
+            @Reload.started -= instance.OnReload;
+            @Reload.performed -= instance.OnReload;
+            @Reload.canceled -= instance.OnReload;
             @Interact.started -= instance.OnInteract;
             @Interact.performed -= instance.OnInteract;
             @Interact.canceled -= instance.OnInteract;
             @Use.started -= instance.OnUse;
             @Use.performed -= instance.OnUse;
             @Use.canceled -= instance.OnUse;
-            @Reload.started -= instance.OnReload;
-            @Reload.performed -= instance.OnReload;
-            @Reload.canceled -= instance.OnReload;
             @Pause.started -= instance.OnPause;
             @Pause.performed -= instance.OnPause;
             @Pause.canceled -= instance.OnPause;
@@ -721,10 +750,11 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
     public interface IGameplayActions
     {
         void OnMove(InputAction.CallbackContext context);
+        void OnToggleSneaking(InputAction.CallbackContext context);
         void OnFire(InputAction.CallbackContext context);
+        void OnReload(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
         void OnUse(InputAction.CallbackContext context);
-        void OnReload(InputAction.CallbackContext context);
         void OnPause(InputAction.CallbackContext context);
         void OnSaveGame(InputAction.CallbackContext context);
         void OnLoadGame(InputAction.CallbackContext context);
