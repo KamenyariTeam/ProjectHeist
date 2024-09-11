@@ -4,6 +4,12 @@ using UnityEngine.InputSystem;
 
 namespace Characters.Player
 {
+    public enum InputMode
+    {
+        GAMEPLAY,
+        UI
+    }
+
     public class InputReader : ScriptableObject, GameInput.IGameplayActions, GameInput.IUIActions
     {
         private GameInput _gameInput;
@@ -21,13 +27,13 @@ namespace Characters.Player
             }
         }
 
-        private void SetGameplay()
+        public void SetGameplay()
         {
             _gameInput.Gameplay.Enable();
             _gameInput.UI.Disable();
         }
 
-        private void SetUI()
+        public void SetUI()
         {
             _gameInput.Gameplay.Disable();
             _gameInput.UI.Enable();
