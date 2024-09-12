@@ -36,6 +36,7 @@ namespace Characters.Player
 
         public event Action FireEvent;
         public event Action ReloadEvent;
+        public event Action ThrowWeaponEvent; 
 
         public event Action InteractEvent;
         public event Action UseEvent;
@@ -100,6 +101,14 @@ namespace Characters.Player
             if (context.performed)
             {
                 LoadGameEvent?.Invoke();
+            }
+        }
+
+        public void OnThrowWeapon(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                ThrowWeaponEvent?.Invoke();
             }
         }
 

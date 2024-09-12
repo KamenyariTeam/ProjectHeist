@@ -10,7 +10,7 @@ namespace Characters.Player
         
         private MovementComponent _movementComponent;
         private InteractionComponent _interactionComponent;
-        private WeaponComponent _weaponComponent;
+        private PlayerWeaponComponent _weaponComponent;
         private HealthComponent _healthComponent;
 
         private void Awake()
@@ -23,7 +23,7 @@ namespace Characters.Player
         {
             _movementComponent = GetComponent<MovementComponent>();
             _interactionComponent = GetComponent<InteractionComponent>();
-            _weaponComponent = GetComponent<WeaponComponent>();
+            _weaponComponent = GetComponent<PlayerWeaponComponent>();
             _healthComponent = GetComponent<HealthComponent>();
             _healthComponent.OnDeath += OnDeathHandler;
         }
@@ -35,6 +35,7 @@ namespace Characters.Player
             Input.SneakEvent += _movementComponent.HandleSneak;
             Input.FireEvent += _weaponComponent.HandleFire;
             Input.ReloadEvent += _weaponComponent.HandleReload;
+            Input.ThrowWeaponEvent += _weaponComponent.HandleThrowWeapon;
             Input.InteractEvent += _interactionComponent.HandleInteract;
             Input.UseEvent += _interactionComponent.HandleUse;
         }

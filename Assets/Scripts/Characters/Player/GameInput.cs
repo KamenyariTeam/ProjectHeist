@@ -107,6 +107,15 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ThrowWeapon"",
+                    ""type"": ""Button"",
+                    ""id"": ""43505b92-e2ec-4f7e-80a5-afdd9e3b5f83"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -329,6 +338,17 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                     ""action"": ""Reload"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5e498d0c-059f-4a44-909b-be05be517f3b"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""ThrowWeapon"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -477,6 +497,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         m_Gameplay_Pause = m_Gameplay.FindAction("Pause", throwIfNotFound: true);
         m_Gameplay_SaveGame = m_Gameplay.FindAction("SaveGame", throwIfNotFound: true);
         m_Gameplay_LoadGame = m_Gameplay.FindAction("LoadGame", throwIfNotFound: true);
+        m_Gameplay_ThrowWeapon = m_Gameplay.FindAction("ThrowWeapon", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Resume = m_UI.FindAction("Resume", throwIfNotFound: true);
@@ -551,6 +572,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_Pause;
     private readonly InputAction m_Gameplay_SaveGame;
     private readonly InputAction m_Gameplay_LoadGame;
+    private readonly InputAction m_Gameplay_ThrowWeapon;
     public struct GameplayActions
     {
         private @GameInput m_Wrapper;
@@ -564,6 +586,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         public InputAction @Pause => m_Wrapper.m_Gameplay_Pause;
         public InputAction @SaveGame => m_Wrapper.m_Gameplay_SaveGame;
         public InputAction @LoadGame => m_Wrapper.m_Gameplay_LoadGame;
+        public InputAction @ThrowWeapon => m_Wrapper.m_Gameplay_ThrowWeapon;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -600,6 +623,9 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
             @LoadGame.started += instance.OnLoadGame;
             @LoadGame.performed += instance.OnLoadGame;
             @LoadGame.canceled += instance.OnLoadGame;
+            @ThrowWeapon.started += instance.OnThrowWeapon;
+            @ThrowWeapon.performed += instance.OnThrowWeapon;
+            @ThrowWeapon.canceled += instance.OnThrowWeapon;
         }
 
         private void UnregisterCallbacks(IGameplayActions instance)
@@ -631,6 +657,9 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
             @LoadGame.started -= instance.OnLoadGame;
             @LoadGame.performed -= instance.OnLoadGame;
             @LoadGame.canceled -= instance.OnLoadGame;
+            @ThrowWeapon.started -= instance.OnThrowWeapon;
+            @ThrowWeapon.performed -= instance.OnThrowWeapon;
+            @ThrowWeapon.canceled -= instance.OnThrowWeapon;
         }
 
         public void RemoveCallbacks(IGameplayActions instance)
@@ -758,6 +787,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         void OnPause(InputAction.CallbackContext context);
         void OnSaveGame(InputAction.CallbackContext context);
         void OnLoadGame(InputAction.CallbackContext context);
+        void OnThrowWeapon(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

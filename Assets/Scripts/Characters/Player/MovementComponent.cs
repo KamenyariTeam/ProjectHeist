@@ -12,6 +12,7 @@ namespace Characters.Player
 
         // Look and Aim
         private UnityEngine.Camera _camera;
+        private Transform _firePoint;
         private Vector2 _lookPosition;
         public Vector2 LookPosition => _lookPosition;
         
@@ -23,6 +24,9 @@ namespace Characters.Player
             _rigidbody = GetComponent<Rigidbody2D>();
             _animationComponent = GetComponent<AnimationComponent>();
             _camera = UnityEngine.Camera.main;
+            
+            var weaponComponent = GetComponent<PlayerWeaponComponent>();
+            _firePoint = weaponComponent.firePoint;
         }
 
         private void Update()
@@ -60,7 +64,8 @@ namespace Characters.Player
 
         private void UpdateRotation()
         {
-            var lookDirection = _lookPosition - _rigidbody.position;
+            Vector2 firePointPosition = _firePoint.position;
+            var lookDirection = _lookPosition - firePointPosition;
             var angle = Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg;
             _rigidbody.rotation = angle;
         }

@@ -37,12 +37,12 @@ namespace Characters.AI.Enemy
                 if (distanceToPlayer < _shootingDistance)
                 {
                     EnemyLogic.Agent.isStopped = true;
-                    if (_weapon.CurrentAmmo == 0)
+                    if (_weapon.equippedWeapon.CurrentAmmo == 0)
                     {
                         _weapon.Reload();
                         EnemyLogic.Animator.Play(ReloadAnimation);
                     }
-                    else if (_weapon.CanShoot)
+                    else if (_weapon.equippedWeapon.CanAttack)
                     {
                         _weapon.Shoot();
                     }
