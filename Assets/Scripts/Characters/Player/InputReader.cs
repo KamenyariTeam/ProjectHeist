@@ -34,7 +34,8 @@ namespace Characters.Player
         public event Action<Vector2> MoveEvent;
         public event Action SneakEvent; 
 
-        public event Action FireEvent;
+        public event Action FireStartedEvent;
+        public event Action FireCanceledEvent;
         public event Action ReloadEvent;
         public event Action ThrowWeaponEvent; 
 
@@ -58,7 +59,13 @@ namespace Characters.Player
         public void OnFire(InputAction.CallbackContext context)
         {
             if (context.performed)
-                FireEvent?.Invoke();
+            {
+                FireStartedEvent?.Invoke(); // Start firing when the button is pressed
+            }
+            else if (context.canceled)
+            {
+                FireCanceledEvent?.Invoke(); // Stop firing when the button is released
+            }
         }
 
         public void OnInteract(InputAction.CallbackContext context)

@@ -1,6 +1,4 @@
 using System.Collections;
-using Characters;
-using Characters.Player;
 using UnityEngine;
 using UnityEngine.Pool;
 
