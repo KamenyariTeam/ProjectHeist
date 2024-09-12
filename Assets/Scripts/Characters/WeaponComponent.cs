@@ -1,3 +1,4 @@
+using System.Collections;
 using Characters.Player;
 using DataStorage;
 using UnityEngine;
@@ -11,6 +12,8 @@ namespace Characters
         public BaseWeapon equippedWeapon;
         public Transform firePoint;
 
+        private bool _isAutoFiring;
+
         protected MovementComponent MovementComponent;
         private AudioManager _audioManager;
         private AnimationComponent _animationComponent;
@@ -19,6 +22,14 @@ namespace Characters
         {
             InitializeComponents();
             SetupEquippedWeapon();
+        }
+        
+        private void Update()
+        {
+            if (_isAutoFiring)
+            {
+                HandleFire();
+            }
         }
 
         private void InitializeComponents()
@@ -45,12 +56,32 @@ namespace Characters
             equippedWeapon.GetComponent<Rigidbody2D>().simulated = false;
         }
 
-        public void Shoot()
+        public void StartFire()
         {
             if (!equippedWeapon) return;
+            
+            switch (equippedWeapon.fireMode)
+            {
+                case FireMode.SingleShot:
+                    HandleFire();
+                    break;
+                case FireMode.SemiAuto:
+                    HandleFire(); // Fires on each button press
+                    break;
+                case FireMode.FullAuto:
+                    _isAutoFiring = true;
+                    break;
+            }
+        }
 
-            var weaponState = equippedWeapon.Shoot(MovementComponent);
-            HandleWeaponState(weaponState);
+        protected void StopFire()
+        {
+            _isAutoFiring = false;
+        }
+
+        private void HandleFire()
+        {
+            equippedWeapon?.Shoot(MovementComponent);
         }
 
         public void Reload()

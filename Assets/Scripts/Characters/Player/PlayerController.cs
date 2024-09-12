@@ -31,11 +31,15 @@ namespace Characters.Player
         private void SetupInputHandlers()
         {
             Input = new InputReader();
+            
             Input.MoveEvent += _movementComponent.HandleMove;
             Input.SneakEvent += _movementComponent.HandleSneak;
-            Input.FireEvent += _weaponComponent.HandleFire;
+            
+            Input.FireStartedEvent += _weaponComponent.HandleFireStarted;
+            Input.FireCanceledEvent += _weaponComponent.HandleFireCanceled;
             Input.ReloadEvent += _weaponComponent.HandleReload;
             Input.ThrowWeaponEvent += _weaponComponent.HandleThrowWeapon;
+            
             Input.InteractEvent += _interactionComponent.HandleInteract;
             Input.UseEvent += _interactionComponent.HandleUse;
         }

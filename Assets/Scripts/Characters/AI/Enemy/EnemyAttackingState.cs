@@ -44,7 +44,7 @@ namespace Characters.AI.Enemy
                     }
                     else if (_weapon.equippedWeapon.CanAttack)
                     {
-                        _weapon.Shoot();
+                        _weapon.StartFire();
                     }
                 }
                 else if (!EnemyLogic.Agent.pathPending)

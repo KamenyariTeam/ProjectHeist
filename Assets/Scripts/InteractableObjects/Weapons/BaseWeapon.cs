@@ -10,6 +10,13 @@ using Random = UnityEngine.Random;
 
 namespace InteractableObjects.Weapons
 {
+    public enum FireMode
+    {
+        SingleShot,
+        SemiAuto,
+        FullAuto
+    }
+    
     [RequireComponent(typeof(BulletSpawner), typeof(FlashSpawner))]
     public class BaseWeapon : Pickup, ISavableComponent
     {
@@ -19,6 +26,7 @@ namespace InteractableObjects.Weapons
         [SerializeField] protected int maxAmmo = 7; // Maximum ammo capacity of the weapon
 
         [SerializeField] protected float shotCooldown = 1f; // Cooldown time between shots
+        [SerializeField] public FireMode fireMode = FireMode.SingleShot; // Fire mode of the weapon
 
         public Vector2 firePointPosition;
         public Quaternion firePointRotation;
@@ -111,13 +119,12 @@ namespace InteractableObjects.Weapons
 
             if (!movementComponent.IsSneaking && movementComponent.MovementDirection != Vector2.zero)
             {
-                var randomInaccuracy = Random.insideUnitCircle * angleInaccuracy;
-                directionVector = Quaternion.Euler(randomInaccuracy.x, randomInaccuracy.y, 0) * directionVector;
+                var randomInaccuracy = Random.Range(-angleInaccuracy, angleInaccuracy);
+                directionVector = Quaternion.Euler(0, 0, randomInaccuracy) * directionVector;
             }
 
             return directionVector;
         }
-
 
         // Coroutine to handle the cooldown period between shots
         private IEnumerator ShotCooldownCoroutine()

@@ -44,9 +44,14 @@ namespace Characters.Player
             equippedWeapon = null;
         }
         
-        public void HandleFire()
+        public void HandleFireStarted()
         {
-            Shoot();
+            StartFire();
+        }
+
+        public void HandleFireCanceled()
+        {
+            StopFire();
         }
         
         public void HandleReload()

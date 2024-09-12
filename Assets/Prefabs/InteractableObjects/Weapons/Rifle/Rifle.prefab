@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 4902240071738289382}
   - component: {fileID: 8545103759093186300}
   m_Layer: 8
-  m_Name: Pistol
+  m_Name: Rifle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -52,15 +52,15 @@ MonoBehaviour:
   renderers:
   - {fileID: -1056975447698136836}
   outlineMaterial: {fileID: 2100000, guid: 0f277b87587334f4da0925b3011b83a0, type: 2}
-  angleInaccuracy: 1.5
-  currentAmmo: 7
-  maxAmmo: 7
-  shotCooldown: 0.5
+  angleInaccuracy: 3
+  currentAmmo: 30
+  maxAmmo: 30
+  shotCooldown: 0.075
   fireMode: 2
-  firePointPosition: {x: 1.15, y: -0.554}
+  firePointPosition: {x: 1.17, y: -0.554}
   firePointRotation: {x: 0, y: 0, z: 0, w: 0}
-  bullet: {fileID: 357107284770129053, guid: efa31b17a0ede034fb6b34c9707e9e42, type: 3}
-  flash: {fileID: -1374825141351807487, guid: 5555927b07d7c714fbaf022bf34f7c4a, type: 3}
+  bullet: {fileID: 357107284770129053, guid: 59eb8f51e75c6f44ebd0bd33c7de5a29, type: 3}
+  flash: {fileID: -1374825141351807487, guid: d62e2848d72e08e41b1960ad6305c457, type: 3}
   weaponStates:
     _serializedList:
     - Key: 0
@@ -115,18 +115,18 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.00079131126, y: 0.0010094643}
+  m_Offset: {x: 0.00009000301, y: 0.0010094643}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.16, y: 0.16}
+    oldSize: {x: 0.32, y: 0.16}
     newSize: {x: 8.1, y: 4.06}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.18142271, y: 0.12764883}
+  m_Size: {x: 0.32418275, y: 0.12764883}
   m_EdgeRadius: 0
 --- !u!212 &-1056975447698136836
 SpriteRenderer:
@@ -169,7 +169,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 5d161d0550ec23b4bbc12386123be450, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f2b1ccebfb0e4924cb1ea0c0667d8379, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
