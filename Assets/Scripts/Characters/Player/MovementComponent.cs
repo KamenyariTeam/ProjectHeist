@@ -41,6 +41,7 @@ namespace Characters.Player
         {
             UpdateMovement();
             UpdateRotation();
+            Debug.Log("No");
         }
 
         private void UpdateLookPosition()
@@ -64,10 +65,32 @@ namespace Characters.Player
 
         private void UpdateRotation()
         {
-            Vector2 firePointPosition = _firePoint.position;
-            var lookDirection = _lookPosition - firePointPosition;
-            var angle = Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg;
-            _rigidbody.rotation = angle;
+            
+            Vector2 firePointPos = transform.InverseTransformPoint(_firePoint.position);
+            Vector2 lookPos = transform.InverseTransformPoint(_lookPosition);
+
+            // it is assumed that the weapon direction is OY (relatively to the player)
+            float ySign = Mathf.Sign(firePointPos.y);
+            firePointPos.y *= ySign;
+            lookPos.y *= ySign;
+
+            float firePointRadius = firePointPos.y;
+            float lookDistance = lookPos.magnitude;
+            if (lookDistance < firePointRadius)
+            {
+                if (lookDistance == 0.0f)
+                {
+                    return;
+                }
+
+                lookPos = lookPos.normalized * firePointRadius;
+                lookDistance = firePointRadius;
+            }
+
+            float originalRotation = Mathf.Atan2(lookPos.x, lookPos.y);
+            float requiredRotation = Mathf.Acos(firePointRadius / lookDistance);
+            float deltaRotationAngle = (requiredRotation - originalRotation) * Mathf.Rad2Deg;
+            _rigidbody.rotation += ySign * deltaRotationAngle;
         }
 
         public void HandleMove(Vector2 direction)
