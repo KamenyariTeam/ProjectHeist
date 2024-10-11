@@ -41,7 +41,6 @@ namespace Characters.Player
         {
             UpdateMovement();
             UpdateRotation();
-            Debug.Log("No");
         }
 
         private void UpdateLookPosition()
