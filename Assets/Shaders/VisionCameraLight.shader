@@ -1,11 +1,10 @@
-﻿Shader "Project Heist/Sprite-Lit-Mirage"
+﻿Shader "Project Heist/Sprite-Lit-CameraLight"
 {
     Properties
     {
         _MainTex("Diffuse", 2D) = "white" {}
         _MaskTex("Mask", 2D) = "white" {}
         _NormalMap("Normal Map", 2D) = "bump" {}
-        _Brightness("Gray brightness", Float) = 0.3
 
         // Legacy properties. They're here so that materials using this shader can gracefully fallback to the legacy sprite shader.
         [HideInInspector] _Color("Tint", Color) = (1,1,1,1)
@@ -68,7 +67,6 @@
             half4 _MainTex_ST;
             float4 _Color;
             half4 _RendererColor;
-            float _Brightness;
 
             #if USE_SHAPE_LIGHT_TYPE_0
             SHAPE_LIGHT(0)
@@ -103,7 +101,7 @@
                 return o;
             }
 
-            #include "Include/ShapeLightVisionMirage.hlsl"
+            #include "Include/ShapeLightVisionCameraLight.hlsl"
 
             half4 CombinedShapeLightFragment(Varyings i) : SV_Target
             {
