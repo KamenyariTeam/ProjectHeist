@@ -14,6 +14,7 @@ namespace Map
         [SerializeField] private float deadZoneDistance = 0.5f; // Inner radius of the truncated cone
         [SerializeField] private float viewAngle = 45f; // Angle of the view cone
         [SerializeField] private LayerMask obstacleMask;
+        [SerializeField] private Shader cameraLightShader;
         [SerializeField] private Color searchStateColor = Color.green;
         [SerializeField] private Color detectedStateColor = Color.red;
 
@@ -58,7 +59,7 @@ namespace Map
             if (meshFilter != null && _meshRenderer != null)
             {
                 meshFilter.mesh = _viewConeMesh = new Mesh();
-                _meshRenderer.material = new Material(Shader.Find("Sprites/Default")) { color = searchStateColor };
+                _meshRenderer.material = new Material(cameraLightShader) { color = searchStateColor };
                 
                 CreateViewConeMesh();
             }

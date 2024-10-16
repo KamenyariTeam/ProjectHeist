@@ -55,7 +55,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 908d79952cc41704c835cb1ecc1527fc, type: 2}
+  - {fileID: 2100000, guid: 9e3dddc4722cfea419926d22c8a59437, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -176,7 +176,7 @@ MonoBehaviour:
   m_HasRenderer: 1
   m_UseRendererSilhouette: 0
   m_CastsShadows: 1
-  m_SelfShadows: 1
+  m_SelfShadows: 0
   m_ApplyToSortingLayers: 7ffcec5a00000000cb14c7612d63b744cb728757
   m_ShapePath:
   - {x: -0.31999993, y: -0.01999998, z: 0}
@@ -185,7 +185,7 @@ MonoBehaviour:
   - {x: 0.31999993, y: -0.01999998, z: 0}
   m_ShapePathHash: 0
   m_Mesh: {fileID: 0}
-  m_InstanceId: 46270
+  m_InstanceId: 33402
   m_LocalBounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0.31999993, y: 0.01999998, z: 0}
@@ -344,7 +344,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 908d79952cc41704c835cb1ecc1527fc, type: 2}
+  - {fileID: 2100000, guid: 9e3dddc4722cfea419926d22c8a59437, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -465,7 +465,7 @@ MonoBehaviour:
   m_HasRenderer: 1
   m_UseRendererSilhouette: 0
   m_CastsShadows: 1
-  m_SelfShadows: 1
+  m_SelfShadows: 0
   m_ApplyToSortingLayers: 7ffcec5a00000000cb14c7612d63b744cb728757
   m_ShapePath:
   - {x: -0.31999993, y: -0.01999998, z: 0}
@@ -474,7 +474,7 @@ MonoBehaviour:
   - {x: 0.31999993, y: -0.01999998, z: 0}
   m_ShapePathHash: 0
   m_Mesh: {fileID: 0}
-  m_InstanceId: 46246
+  m_InstanceId: 33378
   m_LocalBounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0.31999993, y: 0.01999998, z: 0}
