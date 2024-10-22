@@ -1,29 +1,30 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
+using AYellowpaper.SerializedCollections;
 
 namespace DataStorage
 {
 
-    [CreateAssetMenu(fileName = "DataTable", menuName = "ScriptableObjects/DataTable", order = 1)]
-    public class DataTable : ScriptableObject, IDataStorable
+    public class DataTable<T> : IDataContainer<T> where T: TableRowBase
     {
-        public static readonly string RowsPropertyName = nameof(_rows);
-
         [SerializeField]
-        private List<TableRowBase> _rows;
+        private SerializedDictionary<TableID, T> _data = new();
 
-        public IEnumerable<TableRowBase> Rows {
+        public override IEnumerable<KeyValuePair<TableID, T>> Rows {
             get
             {
-                return _rows;
+                return _data;
             }
         }
 
-        public TableRowBase Get(string id)
+        public override IEnumerable<TableID> Identifiers => _data.Keys;
+
+        public override bool Get(TableID id, out T row)
         {
-            return Rows.First(row => row.id == id);
+            return _data.TryGetValue(id, out row);
         }
+
+
     }
 
 }

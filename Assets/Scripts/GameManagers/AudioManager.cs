@@ -38,7 +38,7 @@ namespace GameManagers
         [SerializeField] private AudioMixer _audioMixer;
         [SerializeField] private GameObject _audioSourcePrefab;
         [SerializeField] private int _initialPoolSize = 10;
-        [SerializeField] private DataTablesSet _soundTable;
+        [SerializeField] private IDataContainer<SoundTableRow> _soundTable;
 
         private Dictionary<AudioID, ActiveSoundData> _activeSounds = new Dictionary<AudioID, ActiveSoundData>();
         private Queue<AudioSource> _audioSourcePool = new Queue<AudioSource>();
@@ -181,8 +181,8 @@ namespace GameManagers
         {
             while (source != null && soundTableID != TableID.NONE)
             {
-                SoundTableRow sound = _soundTable.Get(soundTableID.ID) as SoundTableRow;
-                if (sound == null)
+
+                if (!_soundTable.Get(soundTableID, out SoundTableRow sound))
                 {
                     break;
                 }
