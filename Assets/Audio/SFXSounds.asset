@@ -1,65 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-8821912600318206173
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b5b60f6b40cc34cef8a796fe50e7eb69, type: 3}
-  m_Name: SoundTableRow
-  m_EditorClassIdentifier: 
-  id: GunReload
-  clip: {fileID: 8300000, guid: 8c585750ba9fa49a0bca994a3542e64c, type: 3}
-  mixerGroup: {fileID: -2844677377044231637, guid: daf6ca941928f1549ab4136d0a3177de, type: 2}
---- !u!114 &-5127642550227419696
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b5b60f6b40cc34cef8a796fe50e7eb69, type: 3}
-  m_Name: SoundTableRow
-  m_EditorClassIdentifier: 
-  id: GunShot
-  clip: {fileID: 8300000, guid: 2b90b172212a0445fab62f07daf36d0c, type: 3}
-  mixerGroup: {fileID: -2844677377044231637, guid: daf6ca941928f1549ab4136d0a3177de, type: 2}
---- !u!114 &-4995353188108642489
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b5b60f6b40cc34cef8a796fe50e7eb69, type: 3}
-  m_Name: SoundTableRow
-  m_EditorClassIdentifier: 
-  id: EmptyGunShot
-  clip: {fileID: 8300000, guid: bbc115058c8be417aae92d756090265a, type: 3}
-  mixerGroup: {fileID: -2844677377044231637, guid: daf6ca941928f1549ab4136d0a3177de, type: 2}
---- !u!114 &-4082965948952782864
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b5b60f6b40cc34cef8a796fe50e7eb69, type: 3}
-  m_Name: SoundTableRow
-  m_EditorClassIdentifier: 
-  id: GunShot
-  clip: {fileID: 8300000, guid: 2b90b172212a0445fab62f07daf36d0c, type: 3}
-  mixerGroup: {fileID: -2844677377044231637, guid: daf6ca941928f1549ab4136d0a3177de, type: 2}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -69,70 +9,28 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe353a60f1b194d93b8e01f28c310669, type: 3}
+  m_Script: {fileID: 11500000, guid: 1d0f5c1271abb481f811a6a0f8368dd6, type: 3}
   m_Name: SFXSounds
   m_EditorClassIdentifier: 
-  _rows:
-  - {fileID: -4082965948952782864}
-  - {fileID: -8821912600318206173}
-  - {fileID: -4995353188108642489}
---- !u!114 &371252997456579707
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b5b60f6b40cc34cef8a796fe50e7eb69, type: 3}
-  m_Name: SoundTableRow
-  m_EditorClassIdentifier: 
-  id: EmptyGunShot
-  clip: {fileID: 8300000, guid: bbc115058c8be417aae92d756090265a, type: 3}
-  mixerGroup: {fileID: -2844677377044231637, guid: daf6ca941928f1549ab4136d0a3177de, type: 2}
---- !u!114 &534079358371753305
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b5b60f6b40cc34cef8a796fe50e7eb69, type: 3}
-  m_Name: SoundTableRow
-  m_EditorClassIdentifier: 
-  id: Step
-  clip: {fileID: 8300000, guid: 979ac2191d3b6ec479e13e2d38c33695, type: 3}
-  mixerGroup: {fileID: -2844677377044231637, guid: daf6ca941928f1549ab4136d0a3177de, type: 2}
---- !u!114 &3269371470321992947
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b5b60f6b40cc34cef8a796fe50e7eb69, type: 3}
-  m_Name: SoundTableRow
-  m_EditorClassIdentifier: 
-  id: GunReload
-  clip: {fileID: 8300000, guid: 8c585750ba9fa49a0bca994a3542e64c, type: 3}
-  mixerGroup: {fileID: -2844677377044231637, guid: daf6ca941928f1549ab4136d0a3177de, type: 2}
---- !u!114 &8115793991600785370
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b5b60f6b40cc34cef8a796fe50e7eb69, type: 3}
-  m_Name: SoundTableRow
-  m_EditorClassIdentifier: 
-  id: 
-  clip: {fileID: 0}
-  mixerGroup: {fileID: 0}
+  _data:
+    _serializedList:
+    - Key:
+        _id: GunReload
+      Value:
+        clip: {fileID: 8300000, guid: 8c585750ba9fa49a0bca994a3542e64c, type: 3}
+        mixerGroup: {fileID: -2844677377044231637, guid: daf6ca941928f1549ab4136d0a3177de, type: 2}
+    - Key:
+        _id: GunShot
+      Value:
+        clip: {fileID: 8300000, guid: 2b90b172212a0445fab62f07daf36d0c, type: 3}
+        mixerGroup: {fileID: -2844677377044231637, guid: daf6ca941928f1549ab4136d0a3177de, type: 2}
+    - Key:
+        _id: EmptyGunShot
+      Value:
+        clip: {fileID: 8300000, guid: bbc115058c8be417aae92d756090265a, type: 3}
+        mixerGroup: {fileID: -2844677377044231637, guid: daf6ca941928f1549ab4136d0a3177de, type: 2}
+    - Key:
+        _id: Step
+      Value:
+        clip: {fileID: 8300000, guid: 979ac2191d3b6ec479e13e2d38c33695, type: 3}
+        mixerGroup: {fileID: -2844677377044231637, guid: daf6ca941928f1549ab4136d0a3177de, type: 2}
