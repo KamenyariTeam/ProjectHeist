@@ -1,11 +1,15 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
 
-namespace Characters.AI.Enemy
+namespace Characters.AI
 {
     [System.Serializable]
     public class PatrollingState : BaseAIStateLogic
     {
+        public interface IStateProperties : IPlayerDetector
+        {
+        }
+
         [SerializeField] private AIState alarmedState = AIState.Attacking;
         [SerializeField] private AIState suspicionState = AIState.Suspicion;
         [SerializeField] private Transform[] path;
@@ -13,7 +17,8 @@ namespace Characters.AI.Enemy
 
         private NavMeshAgent _agent;
         private Rigidbody2D _rigidBody;
-        private IAIPlayerDetectable _playerDetector;
+        private IStateProperties _properties;
+
         private int _pathIndex;
 
         public override void Init(IAILogic aiLogic)
@@ -21,7 +26,7 @@ namespace Characters.AI.Enemy
             base.Init(aiLogic);
             _agent = _aiLogic.GetComponent<NavMeshAgent>();
             _rigidBody = _aiLogic.GetComponent<Rigidbody2D>();
-            _playerDetector = aiLogic as IAIPlayerDetectable;
+            _properties = aiLogic as IStateProperties;
         }
 
         public override void OnEnter()
@@ -33,14 +38,14 @@ namespace Characters.AI.Enemy
 
         public override AIState OnUpdate(float deltaTime)
         {
-            if (_playerDetector.IsPlayerInSight && _playerDetector.PlayerStealthComponent.IsNoticeable)
+            if (_properties.IsPlayerInSight && _properties.PlayerStealthComponent.IsNoticeable)
             {
-                return _playerDetector.IsOnAlert ? alarmedState : suspicionState;
+                return _properties.IsOnAlert ? alarmedState : suspicionState;
             }
 
-            if (!_playerDetector.IsOnAlert)
+            if (!_properties.IsOnAlert)
             {
-                _playerDetector.SuspicionLevel -= deltaTime * _playerDetector.SuspicionIncreaseRate;
+                _properties.SuspicionLevel -= deltaTime * _properties.SuspicionIncreaseRate;
             }
             
             MoveAlongPath();

@@ -1,25 +1,28 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
 
-namespace Characters.AI.Enemy
+namespace Characters.AI
 {
     [System.Serializable]
     public class SuspicionState : BaseAIStateLogic
     {
+        public interface IStateProperties : IPlayerDetector
+        {
+        }
 
         [SerializeField] private AIState idleState = AIState.Patrolling;
         [SerializeField] private AIState alarmedState = AIState.Attacking;
 
         private NavMeshAgent _agent;
-        private IAIPlayerDetectable _playerDetector;
         private Rigidbody2D _rigidBody;
+        private IStateProperties _properties;
 
         public override void Init(IAILogic aiLogic)
         {
             base.Init(aiLogic);
             _agent = _aiLogic.GetComponent<NavMeshAgent>();
             _rigidBody = _aiLogic.GetComponent<Rigidbody2D>();
-            _playerDetector = aiLogic as IAIPlayerDetectable;
+            _properties = aiLogic as IStateProperties;
         }
 
         public override void OnEnter()
@@ -29,19 +32,18 @@ namespace Characters.AI.Enemy
 
         public override AIState OnUpdate(float deltaTime)
         {
-            if (_playerDetector.IsPlayerInSight && _playerDetector.PlayerStealthComponent.IsNoticeable)
+            if (_properties.IsPlayerInSight && _properties.PlayerStealthComponent.IsNoticeable)
             {
-                if (_playerDetector.IsOnAlert)
+                if (_properties.IsOnAlert)
                 {
                     return alarmedState;
                 }
                 
-                _rigidBody.rotation = AIHelpers.RotateToObject(_aiLogic.transform.position, _playerDetector.PlayerTransform.position);
-
-                _playerDetector.SuspicionLevel += deltaTime * _playerDetector.SuspicionIncreaseRate * _playerDetector.PlayerStealthComponent.Noticeability;
+                _rigidBody.rotation = AIHelpers.RotateToObject(_aiLogic.transform.position, _properties.PlayerTransform.position);
+                _properties.SuspicionLevel += deltaTime * _properties.SuspicionIncreaseRate * _properties.PlayerStealthComponent.Noticeability;
 
                 // Transition to attack state if suspicion reaches 1
-                if (_playerDetector.SuspicionLevel >= 1.0f)
+                if (_properties.SuspicionLevel >= 1.0f)
                 {
                     return alarmedState;
                 }

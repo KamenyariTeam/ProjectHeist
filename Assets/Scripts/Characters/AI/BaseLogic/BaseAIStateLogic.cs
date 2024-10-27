@@ -1,6 +1,3 @@
-using UnityEngine;
-using UnityEngine.AI;
-
 namespace Characters.AI
 {
 

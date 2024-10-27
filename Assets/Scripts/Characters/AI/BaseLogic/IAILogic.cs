@@ -8,7 +8,6 @@ namespace Characters.AI
         public abstract AIState State { get; set; }
         public abstract bool HasState(AIState state);
         public abstract bool CanContact(IAILogic other);
-
     }
 
 }

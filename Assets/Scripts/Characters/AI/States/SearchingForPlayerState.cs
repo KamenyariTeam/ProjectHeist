@@ -1,19 +1,24 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
 
-namespace Characters.AI.Enemy
+namespace Characters.AI
 {
     [System.Serializable]
     public class SearchingForPlayerState : BaseAIStateLogic
     {
+        public interface IStateProperties : IPlayerDetector
+        {
+        }
+
         [SerializeField] private AIState foundState = AIState.Attacking;
         [SerializeField] private AIState notFoundState = AIState.Patrolling;
         [SerializeField] private float searchingRotationSpeed = 45.0f;
         [SerializeField] private float totalRotationAngle = 360.0f;
 
         private NavMeshAgent _agent;
-        private IAIPlayerDetectable _playerDetector;
         private Rigidbody2D _rigidBody;
+        private IStateProperties _properties;
+
         private float _totalRotation;
 
         public override void Init(IAILogic aiLogic)
@@ -21,7 +26,7 @@ namespace Characters.AI.Enemy
             base.Init(aiLogic);
             _agent = _aiLogic.GetComponent<NavMeshAgent>();
             _rigidBody = _aiLogic.GetComponent<Rigidbody2D>();
-            _playerDetector = aiLogic as IAIPlayerDetectable;
+            _properties = aiLogic as IStateProperties;
         }
 
         public override void OnEnter()
@@ -32,7 +37,7 @@ namespace Characters.AI.Enemy
 
         public override AIState OnUpdate(float deltaTime)
         {
-            if (_playerDetector.IsPlayerInSight)
+            if (_properties.IsPlayerInSight)
             {
                 return foundState;
             }

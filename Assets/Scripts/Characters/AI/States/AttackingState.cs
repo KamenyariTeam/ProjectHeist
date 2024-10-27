@@ -1,17 +1,19 @@
-﻿using Characters.Player;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AI;
 
-namespace Characters.AI.Enemy
+namespace Characters.AI
 {
     //TODO: reimplement using new weapon system
 
     [System.Serializable]
     public class AttackingState : BaseAIStateLogic
     {
+        public interface IStateProperties : IPlayerDetector
+        {
+        }
+
         // Hashes for animator parameters
         //private static readonly int ReloadAnimation = Animator.StringToHash("PlayerPlaceholder_HandGun_Reload");
-
         //private WeaponComponent _weapon;
 
         [SerializeField] private AIState lostPlayerState = AIState.ChasingPlayer;
@@ -20,31 +22,31 @@ namespace Characters.AI.Enemy
 
         private NavMeshAgent _agent;
         private Rigidbody2D _rigidBody;
-        private IAIPlayerDetectable _playerDetector;
+        private IStateProperties _properties;
 
         public override void Init(IAILogic aiLogic)
         {
             base.Init(aiLogic);
             _agent = _aiLogic.GetComponent<NavMeshAgent>();
             _rigidBody = _aiLogic.GetComponent<Rigidbody2D>();
-            _playerDetector = aiLogic as IAIPlayerDetectable;
+            _properties = aiLogic as IStateProperties;
         }
 
         public override void OnEnter()
         {
-            _playerDetector.IsOnAlert = true;
+            _properties.IsOnAlert = true;
             _agent.isStopped = false;
             _agent.speed = speed;
-            _agent.SetDestination(_playerDetector.PlayerTransform.position);
+            _agent.SetDestination(_properties.PlayerTransform.position);
         }
 
         public override AIState OnUpdate(float deltaTime)
         {
-            _rigidBody.rotation = AIHelpers.RotateToObject(_aiLogic.transform.position, _playerDetector.PlayerTransform.position);
+            _rigidBody.rotation = AIHelpers.RotateToObject(_aiLogic.transform.position, _properties.PlayerTransform.position);
 
-            if (_playerDetector.IsPlayerInSight)
+            if (_properties.IsPlayerInSight)
             {
-                float distanceToPlayer = (_aiLogic.transform.position - _playerDetector.PlayerTransform.position).magnitude;
+                float distanceToPlayer = (_aiLogic.transform.position - _properties.PlayerTransform.position).magnitude;
                 if (distanceToPlayer < shootingDistance)
                 {
                     _agent.isStopped = true;
@@ -61,7 +63,7 @@ namespace Characters.AI.Enemy
                 else if (!_agent.pathPending)
                 {
                     _agent.isStopped = false;
-                    _agent.SetDestination(_playerDetector.PlayerTransform.position);
+                    _agent.SetDestination(_properties.PlayerTransform.position);
                 }
                 return _aiLogic.State;
             }

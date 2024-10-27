@@ -59,23 +59,23 @@ MonoBehaviour:
     - Key: 0
       Value:
         StateLogic:
-          rid: 3318125507893002255
+          rid: 3318125509730631682
     - Key: 4
       Value:
         StateLogic:
-          rid: 3318125507893002257
+          rid: 3318125509730631684
     - Key: 3
       Value:
         StateLogic:
-          rid: 3318125507893002258
+          rid: 3318125509730631685
     - Key: 1
       Value:
         StateLogic:
-          rid: 3318125507893002259
+          rid: 3318125509730631683
     - Key: 2
       Value:
         StateLogic:
-          rid: 3318125507893002260
+          rid: 3318125509730631686
   initialState: 0
   wallMask:
     serializedVersion: 2
@@ -89,37 +89,37 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 3318125507893002255
-      type: {class: PatrollingState, ns: Characters.AI.Enemy, asm: Assembly-CSharp}
+    - rid: 3318125509730631682
+      type: {class: PatrollingState, ns: Characters.AI, asm: Assembly-CSharp}
       data:
         alarmedState: 1
         suspicionState: 4
         path: []
-        speed: 3
-    - rid: 3318125507893002257
-      type: {class: SuspicionState, ns: Characters.AI.Enemy, asm: Assembly-CSharp}
+        speed: 1.2
+    - rid: 3318125509730631683
+      type: {class: AttackingState, ns: Characters.AI, asm: Assembly-CSharp}
+      data:
+        lostPlayerState: 2
+        speed: 1.2
+        shootingDistance: 3
+    - rid: 3318125509730631684
+      type: {class: SuspicionState, ns: Characters.AI, asm: Assembly-CSharp}
       data:
         idleState: 0
         alarmedState: 1
-    - rid: 3318125507893002258
-      type: {class: SearchingForPlayerState, ns: Characters.AI.Enemy, asm: Assembly-CSharp}
+    - rid: 3318125509730631685
+      type: {class: SearchingForPlayerState, ns: Characters.AI, asm: Assembly-CSharp}
       data:
         foundState: 1
         notFoundState: 0
         searchingRotationSpeed: 45
         totalRotationAngle: 360
-    - rid: 3318125507893002259
-      type: {class: AttackingState, ns: Characters.AI.Enemy, asm: Assembly-CSharp}
-      data:
-        lostPlayerState: 2
-        speed: 3
-        shootingDistance: 3
-    - rid: 3318125507893002260
-      type: {class: ChasingState, ns: Characters.AI.Enemy, asm: Assembly-CSharp}
+    - rid: 3318125509730631686
+      type: {class: ChasingState, ns: Characters.AI, asm: Assembly-CSharp}
       data:
         foundState: 1
         notFoundState: 3
-        speed: 3
+        speed: 1.4
 --- !u!195 &-1750824310462091876
 NavMeshAgent:
   m_ObjectHideFlags: 0
