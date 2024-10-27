@@ -35,7 +35,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 5190977686472949946}
@@ -54,24 +54,72 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54cb7e0572c7841e494a50d2604369c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerTag: Player
+  statesLogic:
+    _serializedList:
+    - Key: 0
+      Value:
+        StateLogic:
+          rid: 3318125507893002255
+    - Key: 4
+      Value:
+        StateLogic:
+          rid: 3318125507893002257
+    - Key: 3
+      Value:
+        StateLogic:
+          rid: 3318125507893002258
+    - Key: 1
+      Value:
+        StateLogic:
+          rid: 3318125507893002259
+    - Key: 2
+      Value:
+        StateLogic:
+          rid: 3318125507893002260
+  initialState: 0
   wallMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 192
   playerDetectionInterval: 0.1
   viewDistance: 1.5
   viewAngle: 160
   guaranteedDetectDistance: 0.35
   suspicionIncreaseRate: 0.05
   suspicionMeter: {fileID: 2444621701975547721}
-  patrollingSpeed: 0.3
-  chasingSpeed: 0.5
-  weapon: {fileID: 2490446724334395613}
-  shootingDistance: 1.5
-  searchingRotationSpeed: 180
-  searchingTotalRotation: 90
-  initialPath: []
-  isOnAlert: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 3318125507893002255
+      type: {class: PatrollingState, ns: Characters.AI.Enemy, asm: Assembly-CSharp}
+      data:
+        alarmedState: 1
+        suspicionState: 4
+        path: []
+        speed: 3
+    - rid: 3318125507893002257
+      type: {class: SuspicionState, ns: Characters.AI.Enemy, asm: Assembly-CSharp}
+      data:
+        idleState: 0
+        alarmedState: 1
+    - rid: 3318125507893002258
+      type: {class: SearchingForPlayerState, ns: Characters.AI.Enemy, asm: Assembly-CSharp}
+      data:
+        foundState: 1
+        notFoundState: 0
+        searchingRotationSpeed: 45
+        totalRotationAngle: 360
+    - rid: 3318125507893002259
+      type: {class: AttackingState, ns: Characters.AI.Enemy, asm: Assembly-CSharp}
+      data:
+        lostPlayerState: 2
+        speed: 3
+        shootingDistance: 3
+    - rid: 3318125507893002260
+      type: {class: ChasingState, ns: Characters.AI.Enemy, asm: Assembly-CSharp}
+      data:
+        foundState: 1
+        notFoundState: 3
+        speed: 3
 --- !u!195 &-1750824310462091876
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -241,20 +289,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de7a1c7a424036f4e8f58327b9edca14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 1
-  maxAmmo: 7
-  angleInaccuracy: 1.5
-  shotCooldown: 1
+  equippedWeapon: {fileID: 0}
   firePoint: {fileID: 5190977686472949946}
-  bulletPrefab: {fileID: 1291077028596044639, guid: efa31b17a0ede034fb6b34c9707e9e42, type: 3}
-  flashPrefab: {fileID: 6387391009917682901, guid: 5555927b07d7c714fbaf022bf34f7c4a, type: 3}
-  shotSound:
-    ID: NONE
-  emptyShotSound:
-    ID: NONE
-  reloadSound:
-    ID: NONE
-  currentAmmo: 7
 --- !u!58 &3920292067767012545
 CircleCollider2D:
   m_ObjectHideFlags: 0

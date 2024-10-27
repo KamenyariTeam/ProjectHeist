@@ -9,13 +9,12 @@ using UnityEngine.AI;
 
 namespace Characters.AI.Enemy
 {
-    public class EnemyLogic : MonoBehaviour, IAILogic
+    public class EnemyLogic : BaseAILogic, IAIPlayerDetectable
     {
         private static readonly int IsMoving = Animator.StringToHash("isMoving");
 
         // Serialized fields grouped for clarity
         [Header("Detection Settings")]
-        [SerializeField] private string playerTag;
         [SerializeField] private LayerMask wallMask;
         [SerializeField] private float playerDetectionInterval;
         [SerializeField] private float viewDistance;
@@ -23,31 +22,10 @@ namespace Characters.AI.Enemy
         [SerializeField] private float guaranteedDetectDistance;
         [SerializeField] private float suspicionIncreaseRate = 0.1f;
         [SerializeField] private SuspicionMeter suspicionMeter;
-
-        [Header("Movement Settings")]
-        [SerializeField] private float patrollingSpeed;
-        [SerializeField] private float chasingSpeed;
-
-        [Header("Combat Settings")]
-        [SerializeField] private WeaponComponent weapon;
-        [SerializeField] private float shootingDistance;
-
-        [Header("Search Settings")]
-        [SerializeField] private float searchingRotationSpeed;
-        [SerializeField] private float searchingTotalRotation;
-
-        [Header("Patrolling Settings")]
-        [SerializeField] private Transform[] initialPath; // Initial path for patrolling
-
-        public bool isOnAlert; // shows if the enemy is aware of the player's presence
         
         private HealthComponent _healthComponent;
-        private bool _isDetectingPlayer;
-        private float _timeTillPlayerDetection;
         
         private List<InteractableObjects.IInteractable> _activeInteracts;
-        private AIState _state;
-        private Dictionary<AIState, BaseEnemyState> _statesLogic;
 
         public Rigidbody2D Rigidbody { get; private set; }
         public NavMeshAgent Agent { get; private set; }
@@ -55,29 +33,28 @@ namespace Characters.AI.Enemy
         public StealthComponent PlayerStealthComponent { get; private set; }
         public Animator Animator { get; private set; }
         public bool IsPlayerInSight { get; private set; }
-        public float SuspicionLevel { get; private set; }
 
-        public AIState State
-        {
-            get => _state;
+        private float _suspicionLevel = 0.0f;
+
+        public float SuspicionLevel {
+            get
+            {
+                return _suspicionLevel;
+            }
             set
             {
-                if (_state == value)
-                {
-                    return;
-                }
-                _statesLogic[_state].OnExit();
-                _state = value;
-                _statesLogic[_state].OnEnter();
+                _suspicionLevel = Mathf.Clamp(_suspicionLevel, 0.0f, 1.0f);
+
+                suspicionMeter.SetVisibility(_suspicionLevel is < 1.0f and > 0.0f);
+                suspicionMeter.SetBarFillAmount(_suspicionLevel);
             }
         }
 
-        public bool HasState(AIState state)
-        {
-            return _statesLogic.ContainsKey(state);
-        }
+        public bool IsOnAlert { get; set; } = false;
 
-        public bool CanContact(IAILogic other)
+        public float SuspicionIncreaseRate => suspicionIncreaseRate;
+
+        public override bool CanContact(IAILogic other)
         {
             var enemy = other as EnemyLogic;
             if (!enemy)
@@ -88,25 +65,11 @@ namespace Characters.AI.Enemy
             return (transform.position - enemy.transform.position).magnitude < viewDistance;
         }
         
-        public void RotateToObject(Transform objectTransform)
-        {
-            Vector3 direction = (objectTransform.position - transform.position).normalized;
-            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            Rigidbody.rotation = angle;
-        }
-        
-        public void ChangeSuspicionLevel(float deltaValue)
-        {
-            SuspicionLevel = Mathf.Clamp(SuspicionLevel + deltaValue, 0.0f, 1.0f);
 
-            suspicionMeter.SetVisibility(SuspicionLevel is < 1.0f and > 0.0f);
-            suspicionMeter.SetBarFillAmount(SuspicionLevel);
-        }
-
-        private void Start()
+        protected override void Start()
         {
+            base.Start();
             InitializeComponents();
-            InitializeStates();
             StartCoroutine(PlayerDetectionCoroutine());
         }
 
@@ -127,39 +90,12 @@ namespace Characters.AI.Enemy
             _healthComponent.OnDeath += OnDeathHandler;
         }
 
-        private void InitializeStates()
+
+        protected override void Update()
         {
-            _statesLogic = new Dictionary<AIState, BaseEnemyState>
-            {
-                [AIState.Patrolling] = new EnemyPatrollingState(initialPath, patrollingSpeed, suspicionIncreaseRate),
-                [AIState.Attacking] = new EnemyAttackingState(weapon, chasingSpeed, shootingDistance),
-                [AIState.ChasingPlayer] = new EnemyChasingState(chasingSpeed),
-                [AIState.SearchingForPlayer] = new EnemySearchingForPlayerState(searchingRotationSpeed, searchingTotalRotation),
-                [AIState.Suspicion] = new EnemySuspicionState(suspicionIncreaseRate)
-            };
-
-            foreach (BaseEnemyState state in _statesLogic.Values)
-            {
-                state.Init(this);
-            }
-
-            State = AIState.Patrolling;
-        }
-
-        private void Update()
-        {
+            base.Update();
             CheckForDoors();
-            UpdateState();
             UpdateAnimator();
-        }
-
-        private void UpdateState()
-        {
-            AIState newState = _statesLogic[_state].OnUpdate(Time.deltaTime);
-            if (newState != _state)
-            {
-                State = newState;
-            }
         }
 
         private void UpdateAnimator()
@@ -218,7 +154,7 @@ namespace Characters.AI.Enemy
         {
             foreach (var interactable in _activeInteracts)
             {
-                var door = interactable as SingleDoor;
+                var door = interactable as DoorBase;
 
                 if (door)
                 {
