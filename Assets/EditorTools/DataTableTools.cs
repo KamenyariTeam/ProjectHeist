@@ -26,13 +26,26 @@ namespace DataStorage
         {
             string path = $"{GENERATED_PATH}/DataTableTypes.cs";
             var derivedTypes = typeof(TableRowBase).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(TableRowBase)) && !t.IsAbstract);
+            foreach (Type type in derivedTypes)
+            {
+                CreateDataTableFile(type, false);
+                CreateDataTableFile(type, true);
+            }
+
+            AssetDatabase.Refresh();
+
+        }
+
+        private static void CreateDataTableFile(Type type, bool isSet)
+        {
+            string path = $"{GENERATED_PATH}/{type.Name}{(isSet ? "TableSet" : "Table")}.cs";
             using (StreamWriter writer = new(path))
             {
                 writer.WriteLine("using UnityEngine;\n");
                 writer.WriteLine($"namespace {nameof(DataStorage)}.{nameof(Generated)}");
                 writer.WriteLine("{");
 
-                foreach (Type type in derivedTypes)
+                if (!isSet)
                 {
                     Type genericTableClass = typeof(DataTable<>);
                     string genericTableTypeName = GetGenericTypeName(genericTableClass, type);
@@ -40,22 +53,19 @@ namespace DataStorage
 
                     writer.WriteLine($"\n    [CreateAssetMenu(fileName = \"{createdTableClassName}\", menuName = \"DataTables/{type.Name}\")]");
                     writer.WriteLine($"    public class {createdTableClassName}: {genericTableTypeName} {{ }}");
-
+                }
+                else
+                {
                     Type genericTableSetClass = typeof(DataTablesSet<>);
                     string genericTableSetTypeName = GetGenericTypeName(genericTableSetClass, type);
                     string createdTableSetClassName = $"{type.Name}TableSet";
 
                     writer.WriteLine($"\n    [CreateAssetMenu(fileName = \"{createdTableSetClassName}\", menuName = \"DataTablesSets/{type.Name}\")]");
                     writer.WriteLine($"    public class {createdTableSetClassName}: {genericTableSetTypeName} {{ }}");
-
-
                 }
 
                 writer.WriteLine("}");
             }
-
-            AssetDatabase.Refresh();
-
         }
 
         [MenuItem("Assets/Generate table IDs", priority = 0)]
@@ -102,9 +112,10 @@ namespace DataStorage
                 writer.WriteLine(doubleIdentation + $"public {className}(string id): base(id){{}}");
 
                 writer.WriteLine(identation + "}");
+                writer.WriteLine("#if UNITY_EDITOR");
                 writer.WriteLine(identation + $"[UnityEditor.CustomPropertyDrawer(typeof({className}))]");
                 writer.WriteLine(identation + $"public class {className}PropertyDrawer : TableIDProperyDrawer<{className}> {{ }}");
-
+                writer.WriteLine("#endif");
                 writer.WriteLine("}");
 
             }
@@ -129,12 +140,11 @@ namespace DataStorage
 #endif
 
     }
-
+#if UNITY_EDITOR
     public class TableIDProperyDrawer<T> : PropertyDrawer
     where T : TableID
     {
 
-#if UNITY_EDITOR
 
         private static List<TableID> _ids;
         private static string[] _options;
@@ -199,8 +209,7 @@ namespace DataStorage
         {
             _requiresInitialization = true;
         }
-#endif
     }
 
-
+#endif
 }

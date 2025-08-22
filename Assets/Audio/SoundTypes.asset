@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1d0f5c1271abb481f811a6a0f8368dd6, type: 3}
-  m_Name: SFXSounds
+  m_Script: {fileID: 11500000, guid: 01e72158dbf216b429668ded9892a31d, type: 3}
+  m_Name: SoundTypes
   m_EditorClassIdentifier: 
   _data:
     _serializedList:
@@ -22,15 +22,15 @@ MonoBehaviour:
     - Key:
         _id: GunShot
       Value:
-        clip: {fileID: 8300000, guid: 2b90b172212a0445fab62f07daf36d0c, type: 3}
+        clip: {fileID: 8300000, guid: 8c585750ba9fa49a0bca994a3542e64c, type: 3}
         mixerGroup: {fileID: -2844677377044231637, guid: daf6ca941928f1549ab4136d0a3177de, type: 2}
     - Key:
         _id: EmptyGunShot
       Value:
-        clip: {fileID: 8300000, guid: bbc115058c8be417aae92d756090265a, type: 3}
+        clip: {fileID: 8300000, guid: 8c585750ba9fa49a0bca994a3542e64c, type: 3}
         mixerGroup: {fileID: -2844677377044231637, guid: daf6ca941928f1549ab4136d0a3177de, type: 2}
     - Key:
         _id: Step
       Value:
-        clip: {fileID: 8300000, guid: 979ac2191d3b6ec479e13e2d38c33695, type: 3}
+        clip: {fileID: 8300000, guid: 8c585750ba9fa49a0bca994a3542e64c, type: 3}
         mixerGroup: {fileID: -2844677377044231637, guid: daf6ca941928f1549ab4136d0a3177de, type: 2}

@@ -1,14 +1,12 @@
-using System;
 using System.Collections.Generic;
+using AYellowpaper.SerializedCollections;
 using UnityEngine;
-using UnityEngine.Assertions;
 
 namespace UI
 {
     public class UIManager : MonoBehaviour
     {
-        [SerializeField] private EUIType[] windowTypes;
-        [SerializeField] private GameObject[] windowPrefabs;
+        [SerializeField] protected SerializedDictionary<EUIType, GameObject> m_windowPrefabs;
 
         [SerializeField] private EUIType initialMenu;
 
@@ -27,14 +25,11 @@ namespace UI
                 Debug.Log("Can't push UI window, because another operation is in progress");
                 return;
             }
-            int index = Array.FindIndex(windowTypes, 0, windowTypes.Length, (type) => type == windowType);
-            if (index == -1)
+            if (!m_windowPrefabs.TryGetValue(windowType, out GameObject prefab))
             {
                 EndOperation();
                 return;
             }
-
-            GameObject prefab = windowPrefabs[index];
 
             if (!_openedWindows.TryPeek(out IUIWindow currentWindow))
             {
@@ -65,8 +60,6 @@ namespace UI
 
         private void Start()
         {
-            Assert.AreEqual(windowTypes.Length, windowPrefabs.Length);
-            
             PushUI(initialMenu);
         }
 
